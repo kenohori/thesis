@@ -1,0 +1,169 @@
+% !TEX root = thesis.tex
+
+\chapter{Implementing higher-dimensional representations and operations}
+\label{ch:implementation}
+
+The higher-dimensional representations described in \refpa{pa:representation} and the operations described in \refpa{pa:operations} can be difficult to implement, especially when we expect these implementations to be fast, robust, generic, compact and dimension-independent.
+This is true even when the basic ideas and algorithms are provided, as has been done in this thesis.
+
+For the sake of full reproducibility, this chapter shows some of the key implementation details that are used to efficiently implement the representations and operations described in this thesis.
+\refse{se:libraries} lists the main libraries that were used and how they were used.
+\refse{se:computerarithmetic} explains the main techniques that are used to perform arithmetic and geometric operations robustly.
+Finally, \refse{se:traits} describes the traits programming technique and its use in CGAL and this thesis to produce dimension-independent efficient implementations.
+
+\section{Main libraries used within this thesis}
+\label{se:libraries}
+
+\begin{description}
+
+\item[CGAL\footnotemark]
+\footnotetext{\url{http://www.cgal.org}}
+(the Computational Geometry Algorithms Library) contains a wide variety of 2D/3D/$n$D data structures and computational geometry algorithms.
+Some of its basic packages are directly used within this thesis to store and manipulate numbers and basic shapes, namely: Algebraic Foundations, Number Types, 2D and 3D Linear Geometry Kernel, and $d$D Geometry Kernel.
+Most significantly, the packages Combinatorial Maps and Linear Cell Complex are used in most of the implementations described in the previous chapters.
+Finally, other packages are used as temporary data structures and to process and clean input data: 3D Polyhedral Surface, Halfedge Data Structures, 3D Boolean Operations on Nef Polyhedra, 2D Triangulation, and Principal Component Analysis.
+A few other packages are used as dependencies of the aforementioned packages.
+
+\item[GDAL\footnotemark]
+\footnotetext{\url{http://www.gdal.org}}
+(the Geospatial Data Abstraction Library) reads and writes commonly used GIS file formats.
+Within this thesis, it is mainly used to read and write polygons described as well-known text \citep{SimpleFeatures1}, or in Esri Shapefile \citep{Shapefile} and FileGDB files.
+
+\item[IfcOpenShell\footnotemark]
+\footnotetext{\url{http://www.ifcopenshell.org}}
+is a library that is able to read and write IFC files \citep{ISO16739:2013}.
+It internally uses the Open CASCADE geometry types, including to convert implicit geometries (\eg\ those built using constructive-solid geometry or sweeps as in \reffig{fig:ifc}) into explicit ones that can be stored using boundary representation, or to create meshes of a given degree of accuracy from curved surfaces.
+
+\item[Open CASCADE\footnotemark]
+\footnotetext{\url{http://www.opencascade.org}}
+is a library that is able to manipulate geometric representations in CAD applications.
+In theory, it supports complex geometric operations between implicit geometries, including Boolean set operations with 3D point sets.
+However, in practice it performs poorly with GIS data, often failing due to numerical errors or imperfect data.
+
+\end{description}
+
+\section{Geometric operations using computer arithmetic}
+\label{se:computerarithmetic}
+
+Theoretical descriptions of geometric objects and geometric algorithms generally start from the notions of the Euclidean space $\mathbb{R}^n$, in which the coordinates of a point can be described precisely using real numbers $\in \mathbb{R}$.
+However, as real numbers cannot be represented on (digital) computers, implementations usually opt for a combination of \emph{integer numbers} to represent whole numbers of known precision that are known to fall within a given interval and \emph{floating-point numbers} in all other cases.
+While integers can be precisely expressed as a sequence of binary digits of a given length, floating-point numbers often cannot.
+The latter are therefore usually\footnote{This is only the most common representation among those provided by the much broader IEEE 754 standard \citep{IEEE754-2008}, which provides for decimal numbers as well as special values for $\pm \infty$ and NaN (not a number), among other features.} expressed using binary numbers with a predefined number of bits.
+% as:
+
+% \begin{equation*}
+% {(-1)}^\mathrm{sign} \times 2^\mathrm{exponent} \times \mathrm{significand}
+% \end{equation*}
+
+% where the exponent is a positive integer and the significand is expressed as a normalised number.
+% As a normalised binary number always begins with \texttt{1.}, the first binary digit is known and therefore not stored.
+% The \emph{fraction} of the number (\ie\ the digits following the \texttt{1.}) is stored instead.
+% Single precision (or 32-bit) floating-point numbers use 1 bit for the sign, 8 bits for the exponent and 23 bits for the significand.
+% Double precision (or 64-bit) floating-point numbers use 1 bit for the sign, 11 bits for the exponent and 52 bits for the significand.
+
+Floating-point numbers can represent a wide range of values and work well in many instances.
+However, arithmetic performed using floating-point numbers needs special care, as it often leads to a loss of precision \citep{Goldberg91}.
+While this is a problem for all kinds of algorithms \citep{Hoffmann88}, geometric operations are particularly vulnerable as they often rely on getting a correct result for a large number of predicates, which can fail when dealing with edge cases \citep{Kettner08}, such as almost collinear or coplanar points.
+
+Many alternatives have been developed to deal with various limitations of integer and floating-point numbers.
+Among these, the ones described below are those that have been used for the implementations related to this thesis.
+\emph{Multiple precision arithmetic} is a generic solution that can achieve an arbitrary level of precision by using numbers with a user-definable number of digits.
+It is widely implemented in libraries such as GMP\footnote{\url{https://gmplib.org/}} and MPFR\footnote{\url{http://www.mpfr.org}}.
+
+Simple arithmetic operations can be computed precisely by using \emph{rational arithmetic}, where a number is stored as a ratio of two other numbers, most commonly integers.
+In a geometric context, this type of representation is often used in the form of homogeneous coordinates, where a single number is used as a common denominator for all of the coordinates.
+This common denominator can be used to represent special values, such as a point at infinity by setting it to zero.
+
+In \emph{interval arithmetic} numbers are substituted with intervals.
+When these are used to represent the error bounds of an operation\footnote{combined with correct rounding in the case of floating-point numbers}, it is possible to compute arithmetic operations with provably correct results \citep[Ch.~2]{Ratschek88}, such as those provided by the MPFI library\footnote{\url{https://perso.ens-lyon.fr/nathalie.revol/software.html}}.
+Unfortunately, while this setup using multiple precision interval arithmetic can be applied to most problems with relative ease, it is also very slow.
+For instance, \citet{Held11} reports a factor of 70 for the computation of Voronoi diagrams.
+
+It is possible to go around this problem by fine-tuning a multiple-precision approach to a specific problem.
+Notably, this is done with very good results for a few geometric predicates by \citet{Shewchuk97}, and the simulation of simplicity paradigm advocated by \citep{Edelsbrunner90}.
+A more generic and easier to implement solution is provided by the lazy evaluation scheme used in CGAL \citep{Pion11}, which is based on interval arithmetic and is the one used in this thesis.
+% , which is used in the implementations mentioned in this thesis.
+In it, the computationally expensive multiple precision operations are only computed when floating-point precision is not sufficient.
+As these cases are important to get correct results, but also relatively rare, it significantly improves the performance of most operations while maintaining their correctness.
+
+\section{Efficient and flexible dimension-independent programming}
+\label{se:traits}
+
+Previously, \refse{ss:dimensions} discussed how higher-dimensional representations have large sizes and methods using them have high computational complexities, which often increase exponentially on the dimension.
+However, there are also practical obstacles that make it difficult to implement dimension-independent structures and methods efficiently, especially when these have to be used in a generic setting such as in GIS, where varied objects of different dimensions need to be dynamically created and modified, as well as appended with possibly multiple attributes of various types.
+
+One of these obstacles is the need to allocate and use structures that are dimension- and data-independent, and therefore flexible enough to cover all the aforementioned use cases, but at the same time remain compact and allow their contents to be accessed efficiently.
+These structures can range from simple ones that can be handled by standard data types and containers, to more complex ones that need to be dynamically defined.
+For instance, some simple types are directly dependent on the dimension, such as $n$-tuples storing the coordinates of a point in $\mathbb{R}^n$, and can thus be stored as arrays or vectors.
+
+At the opposite end, consider the sets of extrusion intervals that were associated to each cell in \refch{ch:extrusion}, where an unknown number of cells need to be each associated with an unknown number of intervals.
+As the number of intervals per cell is not known, it is not possible to store the intervals in a fixed-length structure that is integrated into the embedding structure of each cell.
+Also, while it is possible to directly link a cell to its set of intervals from its embedding structure, these intervals are only temporarily needed, so allocating space for the link (\eg\ a pointer) in the embedding structure is wasteful at all other times and thus difficult to justify.
+The end result was that the intervals per cell were kept in an external structure, where a \texttt{map} linked a cell embedding to a \texttt{set} of intervals.
+As \reftab{tab:complexitystd} shows, this means that accessing a given interval of a given cell---an operation that is performed a very large number of times---, takes logarithmic rather than constant time, significantly slowing the extrusion algorithm in practice.
+\marginpar{
+\captionsetup{type=table}
+\centering
+\caption[Computational complexity of accessing an element in C++ containers]{The typical computational complexity of accessing a given element in common C++ containers \citep{ISO14882:2015}}
+\label{tab:complexitystd}
+\small
+\begin{tabular}{cc}
+\toprule
+structure & complexity \\
+\midrule
+hard-coded & $O(1)$ \\
+array/vector & $O(1)$ \\
+map/set & $O(\log n)$ \\
+list & $O(n)$ \\
+\bottomrule
+\end{tabular}
+}
+
+A possible solution to the aforementioned problems is based on \emph{template meta-programming}.
+Template meta-programming is a technique that uses templates to generate certain data structures or perform certain computations during the compilation of a program rather than during its execution.
+Templates are normally used as a way to support generic programming, enabling the creation of functions that can deal with different data types indistinctly.
+A template might thus be instantiated with the dimension of an object or a particular attribute type, thus generating a data structure of the appropriate size and disposition whose members can be accessed in constant time.
+\reffig{fig:template-conversion} shows a slightly more complex example, where a template can be used to convert a string into any number type, which is used in this thesis to parse numbers from various types of files (\eg\ coordinates and identifiers).
+\begin{figure}[tb]
+\centering
+\small
+\lstinputlisting[language=C++]{figs/templateconversion.txt}
+\caption[Using C++ templates to convert a \texttt{string} into any number type]{Using C++ templates to convert a \texttt{string} containing a number into any number type $T$, including scientific notation. Adapted from \url{http://www.cplusplus.com/forum/articles/9645/}.}
+\label{fig:template-conversion}
+\end{figure}
+
+However, apart from their use in generic programming, templates can also be used to create complex dimension-dependent structures, such as through the use of the traits programming technique \citep{Myers95} used in CGAL, which exploits C++'s \texttt{typedef} declarations to create custom dependent types.\@
+As an example, \reffig{fig:extrudedlcc} shows how the implementation of the extrusion algorithm defines a combinatorial map that is one dimension higher than the input, which is created during compilation.
+\begin{figure*}[tb]
+\centering
+\small
+\lstinputlisting[language=C++,numbers=left]{figs/extrudedlcc.txt}
+\caption[Creating a dependent type using C++ templates]{Using C++ templates it is possible to create dependent types such as the \texttt{Higher\_dimensional\_cell\_complex} defined in line 5 and used in line 15.}
+\label{fig:extrudedlcc}
+\end{figure*}
+
+This type of mechanism can be used to a much higher degree by defining \emph{recursive templates}, which are used extensively in the CGAL Combinatorial Maps package.
+As an example, \reffig{fig:dimensionindependent} shows how this was applied in order to store the extrusion ranges maps for each dimension separately, which is necessary because the embedding structures of each cell are different depending on the dimension.
+\begin{figure*}[tb]
+\centering
+\small
+\lstinputlisting[language=C++,numbers=left]{figs/dimensionindependent.txt}
+\caption[Using recursive C++ templates to produce dimension independent code]{Recursive C++ templates can be used to generate dimension independent code.
+The first structure \texttt{Extrusion\_ranges\_map\_of\_dimension} (lines 1--8) contains the extrusion map for a single dimension.
+The second structure \texttt{Extrusion\_ranges\_tuple\_per\_dimension\_up\_to} (lines 10--23) uses as a triplet of definitions to create copies of the first for every dimension up to a given one.
+This is done using a template specialisation for dimension 0 which stops the recursion.
+The last structure \texttt{Extrusion\_ranges\_tuple\_per\_dimension} (lines 25--32) creates all structures using the dimension of a passed combinatorial map \texttt{LCC}.
+Note the non-ideal use of \texttt{std::map} in line 5.}
+\label{fig:dimensionindependent}
+\end{figure*}
+
+The same technique can be used to create algorithms that are also fully dimension-independent.
+In fact, C++ templates are known to be Turing-complete \citep{Veldhuizen03}, and thus can be used to compute general-purpose problems.
+\reffig{fig:manifoldvalidation} shows one such example from the implementation of the incremental construction algorithm of \refch{ch:incremental-construction}, which shows the validation that a set of $(n-1)$-cells form a quasi-$n$-manifold.
+\begin{figure*}[tb]
+\centering
+\small
+\lstinputlisting[language=C++]{figs/manifoldvalidation.txt}
+\caption[Dimension-independent algorithms using recursive C++ templates]{Recursive C++ templates can also be used to implement dimension-independent algorithms. In this case, the \texttt{dimension} that is passed to the templated function is passed on to other functions to obtain appropriate orbits for a given facet (\texttt{dimension-1}) or ridge (\texttt{dimension-2}), which are then compared dart by dart.}
+\label{fig:manifoldvalidation}
+\end{figure*}

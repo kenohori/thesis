@@ -1,0 +1,615 @@
+% !TEX root = thesis.tex
+
+\chapter{Processing real-world datasets into clean geometric models}
+\label{ch:cleaning}
+
+The representations described in \refpa{pa:representation} and the operations described in \refpa{pa:operations} work well on perfectly \emph{valid} data.
+Objects are assumed not to overlap each other, to be properly closed with no degenerate geometries, and to have perfectly planar faces which are consistently oriented, among many other validity criteria.
+Unfortunately, as \refse{se:repair-motivation} explains, GIS tools often fail to clearly specify which criteria are expected and real-world data often fails to meet them, with consequences ranging from the innocuous to a complete inability to use a desired tool, including instances where software gives erroneous results unbeknownst to the user.
+As GIS datasets can be rather intricate and expensive to acquire, they are not easily replaceable and must therefore be \emph{repaired}, \ie\ they must be processed into geometric models that conform to certain validity specifications.
+
+In the context of this thesis, clean geometric models are important as they are the base for the higher-dimensional models using the representations and operations described in previous chapters.
+The following sections thus describe the background and a particular solution used in this thesis to obtain valid polygons and planar partitions in \refse{se:pprepair}, and valid polyhedra and 3D space partitions in \refse{se:3drepair}.
+The chapter concludes with a generalisation of the definition of validity in arbitrary dimensions in \refse{se:ndrepair}, which can be used for both higher-dimensional objects and space partitions.
+
+\refse{se:pprepair} is largely based on the papers:
+\begin{itemize}
+\paperpfgpprepair%
+\papercgeoprepair%
+\end{itemize}
+
+\section{Motivation}
+\label{se:repair-motivation}
+
+The representations described in \refpa{pa:representation} are each able to effectively represent a particular class of objects.
+For example, most data structures are intended for 3D space partitions whose 3D objects have surfaces that form 2-manifolds, and $n$D combinatorial maps are capable of representing subdivisions of orientable quasi-manifolds, which in this thesis are moreover limited to having linear geometries.
+
+Similarly, the operations described in \refpa{pa:operations} can only return good results when the input fulfils certain requirements.
+For instance, the extrusion operation from \refch{ch:extrusion} requires the input data to form a space partition, the incremental construction algorithm from \refch{ch:incremental-construction} requires the ridges of the facets of an object to form matching pairs (\ie\ a quasi-manifold), and the linking approach from \refch{ch:linking-lods} will only form a valid 4D cell complex if a matching scheme that preserves all topological relationships between cells can be found or is provided.
+All these operations are also based on the assumption that the input cells themselves are valid, and are being completely bounded by valid lower-dimensional cells (\ie\ facets, ridges, etc.) so as to form a valid cell complex.
+
+The representations and operations presented in this thesis are not special in this sense.
+Validity assumptions are widely used in all software, especially when complex data is used as input, and are used to make many tasks more manageable, such as to interpret a dataset and load it into a particular data structure for internal usage, as well as for further operations that may be performed using this structure.
+However, GIS datasets are more complex than most other data\footnote{For instance, unlike other types of datasets, GIS objects often cannot be stored directly as a plain list of tuples, but are instead decomposed into primitives of a certain shape (\refse{se:spatial-modelling}), sometimes recursively, and these have to be defined in terms of its dimension and structure, topological relations, geometry and attributes, sometimes including rich semantics as well.}, and GIS software thus tends to make more assumptions than most other software.
+
+Moreover, though making sure that these assumptions are true is highly desirable, testing for every possible invalid configuration in a spatial dataset is cumbersome and often unnecessary for a particular task at hand, while testing for only some invalid configurations depending on what needs to be done can easily become intractable and can result in a large number of redundant tests.
+Running these validation tests can also be difficult and computationally expensive, as many tests take longer to execute than some of the common tasks that a GIS is used for (\eg\ visualisation of a dataset, simple statistical analyses, or checking the attributes of some objects).
+
+At the same time, the datasets found in the GIS world are very diverse and their properties vary significantly.
+They can be generated using a large variety of GIS, CAD and 3D modelling software based on different processes, complying to different specifications and stored in different formats, each of which follows its own internal logic and structure.
+Most importantly, GIS datasets are created for different purposes or meant for general-purpose applications (\eg\ CityGML \citep{CityGML2}).
+As such, a dataset's specifications are often only vaguely defined, are defined only with regard for a particular application, or are not conformed with in practice.
+
+\footnotetext[108]{\url{http://www.esri.com/software/arcgis/}}
+\footnotetext[109]{\url{http://www.qgis.org}}
+\footnotetext[110]{\url{http://www.safe.com/fme/}}
+\footnotetext[111]{\url{http://grass.osgeo.org/}}
+
+It is thus perhaps unsurprising that invalid GIS datasets are prevalent \citep[Ch.~7]{Panigrahi14} and a major source of problems for those who work with them.
+As shown in \reffig{fig:partially}, invalid datasets can be interpreted inconsistently in different software, leading to inconsistent or erroneous results.
+They can also make it impossible to perform a certain operation, either due to a failing precondition check or due to software crashes.
+% \footnote{Admittedly based on anecdotal evidence. However, it seems to be a consensus opinion.}.
+A partial solution to this issue lies in \emph{validating} these datasets, \ie\ identifying the problematic objects in the data so that they can be discarded or (manually) fixed.
+There are a variety of checklists and (semi) automatic tools for this purpose, such as those provided by SAFE\footnote{\url{http://blog.safe.com/2014/11/data-quality-checklist/}} and ESRI\footnote{\url{http://www.esri.com/software/arcgis/extensions/arcgis-data-reviewer/~/media/Files/Pdfs/library/fliers/pdfs/arcgis-data-reviewer-checks.pdf}}.
+\begin{figure}[tbp]
+\centering
+\subfloat[]{
+\includegraphics[height=0.35\linewidth]{figs/part-arcgis}
+\label{fig:part-arcgis}}
+\quad
+\subfloat[]{
+\includegraphics[height=0.35\linewidth]{figs/part-grass}
+\label{fig:part-grass}}
+\caption[Different interpretations of a polygon]{Different interpretations of a polygon with a hole that is partly outside its outer boundary ($p_3$ in \reffig{fig:p}).
+(a) ArcGIS\protect\footnotemark\ considers the overlapping region as a hole, but the non-overlapping part of the hole as a new polygon (QGIS\protect\footnotemark\ and FME\protect\footnotemark\ do this as well).
+(b) GRASS\protect\footnotemark\ removes the overlapping part from the polygon, becoming a new polygon with a different shape. No warning is shown in any software.}
+\label{fig:partially}
+\end{figure}
+
+For example, it is possible to incorporate a set of formal preconditions for every operation, as is done in the design by contract software engineering pattern \citep{Meyer86} or the Eiffel programming language \citep{ISO/IEC25436:2007}.
+However, simply discarding problematic (subsets of) datasets is not always feasible and manually fixing errors can be an extremely time-consuming process.
+In fact, according to \citet{McKenney98}, users of 3D CAD models for finite element analysis---which has similar requirements as certain computations in GIS, such as well-shaped and non-overlapping mesh elements---spend up to 70\% of their time fixing the input CAD models.
+While similar figures for GIS are to the best of my knowledge not available, it is worth noting that CAD software tends to produce better quality models than GIS software\footnote{There are many reasons for this. For instance, CAD software makes wider use of topological data structures, and also has topology-aware and smart interactive editing tools (\eg\ snapping to guide lines and nearby objects), which help to avoid problems where objects seem to be valid but have small errors, such as sliver polygons and shells that are not properly closed.}.
+
+A more complete solution therefore lies in using methods to automatically \emph{repair} a dataset, \ie\ to make it conform to a particular set of validity criteria, enabling the full use of many more datasets than would otherwise be possible.
+As this requires a rather complex defensive programming approach, testing for various types of partially overlapping cascading errors and fixing them accordingly, it is best performed separately and called as needed rather than integrated into every operation of a GIS.\@
+The following sections describe such independent repair methods as were used in this thesis, which involve the creation of valid (multi)polygons and planar partitions from 2D GIS datasets (\refse{se:pprepair}), and the creation of valid polyhedra and 3D space partitions from 3D BIM datasets (\refse{se:3drepair}).
+These were then used as input for the different experiments described in \refpa{pa:operations}.
+
+\section{Creating valid (multi)polygons and planar partitions}
+\label{se:pprepair}
+
+\subsection{What is a valid (multi)polygon or planar partition?}
+
+In most GIS file formats and the software that reads and writes them, polygons and multipolygons are defined in a manner that is consistent with the definitions in the Simple Features Specification \citep{SimpleFeatures1,ISO19125-1:2006}---an implementation of the ISO 19107 standard \citep{ISO19107:2005}.
+The specification states that: `\emph{A \texttt{Polygon} is a planar \texttt{Surface} defined by 1 exterior boundary and 0 or more interior boundaries. Each interior boundary defines a hole in the \texttt{Polygon}}'.
+Each of these boundaries is described as a \texttt{LinearRing} (\cf\ \reffigp{fig:sfs}).
+According to the specification, an outer ring should be oriented \emph{anticlockwise} when viewed from a predefined \emph{top} direction, which is generally (but not necessarily) the viewing direction in 2D or \emph{outwards} when the polygon specifies part of the boundary of a polyhedron.
+Inner rings should be oppositely oriented, \ie\ generally \emph{clockwise} when viewed from the top direction.
+
+The Simple Features Specification provides several \textbf{validity rules for polygons}, the most relevant of which are described below with examples of invalid polygons provided in \reffig{fig:p}.
+The rules can be summarised as follows:
+\marginpar{
+\captionsetup{type=figure}
+\centering
+  \includegraphics[width=\marginparwidth]{figs/unitpolygons}
+  \caption[Several invalid polygons]{Several invalid polygons, with their outer boundaries shown in black and their inner boundaries in grey. The orange areas represent one possible interpretation of the interior of the polygons. Polygon $p_{12}$ has an exterior and an interior boundary with the same geometry.}
+\label{fig:p}
+}
+\begin{itemize}
+\item Each ring defining the exterior and interior boundaries is \emph{simple}, \ie\ non-self-intersecting ($p_{1}$ and $p_{10}$).
+\item Each ring is closed ($p_{11}$), \ie\ its first and its last points should be the same.
+\item The rings of a polygon do not cross ($p_{3}$, $p_{7}$, $p_{8}$ and $p_{12}$), but they may intersect at one tangent point.
+\item A polygon does not have cut lines, spikes or punctures ($p_{5}$ and $p_{6}$).
+\item The interior of every polygon is a connected point set ($p_{4}$).
+\item Each interior ring creates a new area that is disconnected from the exterior ($p_{2}$ and $p_{9}$).
+\end{itemize}
+
+Similarly, the specification provides a definition and some \textbf{validity rules for multipolygons}.
+A \texttt{MultiPolygon} is defined as a \texttt{MultiSurface} forming an aggregation of \texttt{Polygons}, which also follows certain validity criteria, which can be summarised as follows:
+
+\begin{itemize}
+\item The interiors of its polygons do not overlap, \ie\ their point set intersection should be empty.
+\item The boundaries of its polygons may only touch at a finite number of points.
+\item A multipolygon does not have cut lines, spikes or punctures.
+\item The interior of a multipolygon with more than one polygon is \emph{not} a connected point set.
+\end{itemize}
+
+Intuitively, a \emph{planar partition} is a set of polygons that form a subdivision of a region of the plane.
+Planar partitions are thus commonly used to model concepts where objects are expected not to overlap, such as land cover, cadastral parcels, or the administrative boundaries of a given country.
+Despite being a very frequently used representation in GIS, planar partitions are not explicitly defined in the main GIS standards.
+
+Within the classes in the ISO 19107 standard \citep[\S{}6.6]{ISO19107:2005}, a planar partition could be considered as a \texttt{GM\_CompositeSurface}, defined in the standard as `\emph{a collection of oriented surfaces that join in pairs on common boundary curves and which, when considered as a whole, form a single surface}'.
+By following this definition, overlaps between polygons are explicitly forbidden, as a \texttt{GM\_Complex} (a parent of \texttt{GM\_CompositeSurface}) is defined as `\emph{a set of primitive geometric objects (in a common coordinate system) whose interiors are disjoint}'.
+However, a \texttt{GM\_CompositeSurface} explicitly allows gaps between the surfaces, as these would simply result in inner rings within the overarching single surface.
+
+An alternative definition could be created based on the ISO 19123 standard \citep[\S{}6.8]{ISO19123:2007}---a standard focusing on coverages of various types.
+According to the standard, a planar partition can be considered as a type of \texttt{CV\_DiscreteSurfaceCoverage} where `\emph{the surfaces that constitute the domain of a coverage are mutually exclusive and exhaustively partition the extent of the coverage}'.
+Overlapping polygons are disallowed by them being \emph{mutually exclusive} and gaps are disallowed by the surfaces \emph{exhaustively partitioning} the extent.
+However, the standard states these conditions as something that occurs `\emph{in most cases}', whereas in a planar partition it should be considered as a strict prerequisite.
+
+In a \textbf{valid planar partition}, there should thus be no overlapping polygons, and no gaps between them either unless these gaps are considered to be outside of the region.
+These two conditions are covered by the ISO 19107 standard in a different context, when it lists some possible inconsistencies of `spaghetti' datasets represented as a \texttt{GM\_Complex}, stating that `\emph{slivers and gaps are multiple lines that should represent the same geometry, but do not coincide, leaving areas of overlap between two surface boundaries (slivers), and gaps between them}' \citep[\S{}6.2.2.6]{ISO19107:2005}.
+
+\subsection{Commonly used validation and repair methods}
+
+Starting from an arrangement of line segments that are meant to define the boundary of a (multi)polygon, there are various rules that can be used to define its interior and exterior.
+\citet{Foley95} discusses two commonly used sets of rules in vector-based graphic software, which are shown in \reffig{fig:polygoninterpretation}\footnote{\citet{Foley95} considers only polygons, but the rules as explained here also cover holes in polygons and multipolygons.}.
+\marginpar{
+\captionsetup{type=figure}
+\centering
+  \subfloat[]{\includegraphics[width=\marginparwidth]{figs/oddeven}} \\
+  \subfloat[]{\includegraphics[width=\marginparwidth]{figs/nonzerowinding}}
+  \caption[Rules used to interpret the interior of a polygon]{(a) According to the \emph{odd-even rule}, a polygon's interior is the region(s) that can be accessed by passing through an odd number of edges from its exterior. (b) According to the \emph{non-zero winding rule}, a polygon's interior is the region(s) around which the boundaries of a polygon do a non-zero number of revolutions.}
+\label{fig:polygoninterpretation}
+}
+
+In practice, GIS users often repair invalid polygons manually.
+Among the few documented automatic solutions, it is possible to use a `buffer-by-0' operation \citep{Ramsey10} or PostGIS 2.0's \texttt{ST\_MakeValid} function\footnote{\url{http://postgis.org/documentation/manual-svn/ST_MakeValid.html}}.
+
+The validation of planar partitions is usually performed using a checklist of individual tests that together ensure its validity.
+For instance, \citet{Plumer97} specify that a valid planar partition consists of: no dangling edges, no zero-length edges, planarity, no holes, no self-intersections, no overlaps, and having a connected graph.
+However, it is worth noting that without the use of a supporting structure, some of these tests can be problematic or computationally expensive.
+For instance, checking whether any possible pair of polygons overlap can have quadratic behaviour even when heuristics to speed up the process are used \citep{Badawy99,Kirkpatrick00}, and robustness issues are significant in polygon intersection tests \citep{Hoffmann88}.
+Finding the potential gaps in a planar partition is also a problem, as it can require computing the union of the entire set of polygons \citep{Margalit89,Rivero00}.
+
+The most common method used to repair a planar partition is based on the assumption that polygons \emph{approximately} match each other at their common boundaries.
+If the adjacent polygons are within a certain distance \emph{threshold} of each other along their common boundaries (\reffig{subfig:threshold-gap}), and all parts further apart than this threshold are known not to be common boundaries (\reffig{subfig:threshold-overlap}), it is possible to \emph{snap} together the polygons using this threshold, while in theory keeping the rest untouched.
+This method of planar partition repair is available in many GIS packages, including ArcGIS, FME, GRASS and Radius Topology\footnote{\url{http://www.1spatial.com/software/radius_topology/}}.
+\marginpar{
+\captionsetup{type=figure}
+\centering
+\subfloat[]{\includegraphics[scale=0.36]{figs/threshold-gap}\label{subfig:threshold-gap}} \\
+\subfloat[]{\includegraphics[scale=0.36]{figs/threshold-overlap}\label{subfig:threshold-overlap}}
+\caption[Defining a snapping threshold]{Defining a snapping threshold taking into account: (a) gaps and (b) overlaps.}
+\label{fig:threshold}
+}
+
+The threshold value for certain input dataset(s) is then usually manually determined, either by trial and error, or by analysing certain properties of the datasets involved (\eg\ point spacing, precision, or map scale).
+However, it is often hard to find an optimal threshold for certain datasets, and sometimes impossible as such a threshold does not even exist (\eg\ because point spacing in some places might be smaller than the width of the gaps and overlaps present).
+
+\subsection{Repair using a constrained triangulation}
+
+The method developed to repair polygons and planar partitions uses a constrained triangulation of the input polygons as a base structure.
+Constrained triangulations have distinct properties that make them useful as a base for a repair algorithm.
+The can be built efficiently with a variety of approaches \citep{Guibas85,Clarkson92}, can easily be made numerically robust\footnote{Based on one robust geometric predicate that tests whether three successive points are collinear, have a clockwise or a anticlockwise orientation (\eg\ \citet{Shewchuk96a}) and the computation of new vertices at the intersections of line segments.
+A constrained Delaunay triangulation only requires an additional predicate that determines whether a point lies inside, on or outside the circle defined by three other points.}, can be used for quick traversal and point location \citep{Mucke99}, and have fast and robust implementations in several libraries, such as CGAL \citep{Boissonnat02}, Triangle\footnote{\url{https://www.cs.cmu.edu/~quake/triangle.html}} \citep{Shewchuk97} and GTS\footnote{\url{http://gts.sourceforge.net}}.
+
+The method used to \textbf{repair individual (multi)polygons} exploits these properties and consists of three broad steps, which are shown in \reffig{fig:prepair-workflow} and described as follows:
+\begin{enumerate}
+  \item construction of the constrained triangulation of the line segments in the input, processing outer and inner rings identically and including an extra edge that connects the first and last vertices of a ring when these are not the same (\reffig{subfig:prepair-workflow-3});
+  \item labelling of each triangle as either \emph{outside} or \emph{inside}, which is based on an extension of the odd-even rule that supports overlapping lines by adding or removing (parts of) constraints in the triangulation (\reffig{subfig:prepair-workflow-4}), taking only edges that are \emph{constraints} into account;
+  \item reconstruction of the interior areas as a repaired multipolygon\footnote{The output might only be representable as a multipolygon even if the input was a polygon} (\reffig{subfig:prepair-workflow-5}).
+\end{enumerate}
+\begin{figure}[b]
+\subfloat[]{\includegraphics[width=0.25\linewidth]{figs/prepair-workflow-1}\label{subfig:prepair-workflow-1}}
+% \subfloat[]{\includegraphics[width=0.2\linewidth]{figs/prepair-workflow-2}\label{subfig:prepair-workflow-2}}
+\subfloat[]{\includegraphics[width=0.25\linewidth]{figs/prepair-workflow-3}\label{subfig:prepair-workflow-3}}
+\subfloat[]{\includegraphics[width=0.25\linewidth]{figs/prepair-workflow-4}\label{subfig:prepair-workflow-4}}
+\subfloat[]{\includegraphics[width=0.25\linewidth]{figs/prepair-workflow-5}\label{subfig:prepair-workflow-5}}
+\caption[Steps to repair a (multi)polygon using a constrained triangulation]{Steps to repair a (multi)polygon using a constrained triangulation: (a) input data, (b) triangulation, (c) labelling, and (d) reconstruction.}
+\label{fig:prepair-workflow}
+\end{figure}
+
+This method is remarkably efficient, and its implementation based on CGAL classes is able to process large polygons quickly.
+As an example, \reffig{fig:prepair} shows the process on the largest polygon in the CORINE land cover dataset\footnote{\url{http://www.eea.europa.eu/publications/COR0-landcover}}, which consists of almost 1 189 903 vertices and 7 672 holes, which is processed in under a second.
+\begin{figure*}
+\subfloat[]{\includegraphics[width=0.25\linewidth]{figs/prepair-1}\label{subfig:prepair-1}}
+\subfloat[]{\includegraphics[width=0.25\linewidth]{figs/prepair-2}\label{subfig:prepair-2}}
+\subfloat[]{\includegraphics[width=0.25\linewidth]{figs/prepair-3}\label{subfig:prepair-3}}
+\subfloat[]{\includegraphics[width=0.25\linewidth]{figs/prepair-4}\label{subfig:prepair-4}}
+\caption[Processing the largest polygon in the CORINE land cover dataset]{Processing the largest polygon in the CORINE land cover dataset: (a) outer and inner boundaries, (b) triangulation, (c) labelling, (d) reconstruction.}
+\label{fig:prepair}
+\end{figure*}
+
+The method to \textbf{repair a planar partition} then uses polygons which are known to be valid based on the previous method.
+It consists of four main steps, shown in \reffig{fig:pprepair-workflow}, and is as follows: 
+\begin{enumerate}
+ \item the constrained triangulation of the input segments forming the (now valid) polygons is constructed;
+ \item each triangle is labelled with the labels of the polygons inside which it is located, such that problems are detected by identifying triangles having no or multiple labels;
+ \item problems are fixed by re-labelling triangles according to customisable criteria, such that each triangle has exactly one label;
+ \item the polygons are reconstructed from the triangulation.
+\end{enumerate}
+\begin{figure}
+\subfloat[]{\includegraphics[width=0.2\linewidth]{figs/pprepair-workflow-a}\label{subfig:prepair-workflow-a}}
+\subfloat[]{\includegraphics[width=0.2\linewidth]{figs/pprepair-workflow-b}\label{subfig:prepair-workflow-b}}
+\subfloat[]{\includegraphics[width=0.2\linewidth]{figs/pprepair-workflow-c}\label{subfig:prepair-workflow-c}}
+% \subfloat[]{\includegraphics[width=0.2\linewidth]{figs/pprepair-workflow-d}\label{subfig:prepair-workflow-d}}
+\subfloat[]{\includegraphics[width=0.2\linewidth]{figs/pprepair-workflow-e}\label{subfig:prepair-workflow-e}}
+\subfloat[]{\includegraphics[width=0.2\linewidth]{figs/pprepair-workflow-f}\label{subfig:prepair-workflow-f}}
+\caption[Steps to repair a planar partition using a constrained triangulation]{Steps to repair a planar partition using a constrained triangulation: (a) input data, (b) triangulation, (c) labelling, (d) relabelling problematic triangles, (e) reconstruction.}
+\label{fig:pprepair-workflow}
+\end{figure}
+
+Various local repair methods can thus be defined, all of which are based on choosing how to relabel a triangle which no label or with multiple labels.
+\reffig{fig:prepair-method} shows a few examples of such methods.
+\begin{figure*}
+\subfloat[]{\includegraphics[height=22mm]{figs/pprepair-method-a}\label{subfig:prepair-method-a}}
+\quad
+\subfloat[]{\includegraphics[height=22mm]{figs/pprepair-method-b}\label{subfig:prepair-method-b}}
+\quad
+\subfloat[]{\includegraphics[height=22mm]{figs/pprepair-method-d}\label{subfig:prepair-method-d}}
+\quad
+\subfloat[]{\includegraphics[height=22mm]{figs/pprepair-method-c}\label{subfig:prepair-method-c}}
+\caption[Various repair methods based on relabelling (sets of) triangles]{Various repair methods can be defined based on relabelling triangles or sets of connected triangles.
+For instance, based on (a) the input data, it is possible to relabel: (b) an invalid triangle based using its longest boundary with a neighbour, (c) an invalid region of connected triangles using its longest boundary with a neighbour, or (d) an invalid region of connected triangles using a random neighbour.}
+\label{fig:prepair-method}
+\end{figure*}
+Within this thesis, planar partitions are obtained by repairing invalid regions using the longest boundary with a neighbour (\reffig{subfig:prepair-method-d}) if possible, as this tends to produce a cartographically more pleasing result, and a random neighbour (\reffig{subfig:prepair-method-c}) otherwise.
+
+This method is able to process large datasets quickly, such as the one shown in \reffig{fig:16tiles}, which consists of 16 tiles of the CORINE land cover dataset in a 4$\times$4 configuration.
+It has 63 868 polygons with a total of 6 622 133 vertices and was processed in 4 minutes 47 seconds.
+By comparison, both ArcGIS and GRASS are unable to repair this dataset by snapping geometries, while FME repairs it in 15 minutes 48 seconds\footnote{On tests where ArcGIS and GRASS were able to process the data, they were slower than FME.}, also using snapping.
+Note that apart from the fact that snapping is slower, it does not guarantee a valid result.
+\marginpar{
+\captionsetup{type=figure}
+\centering
+\includegraphics[width=\marginparwidth]{figs/16tiles}
+\caption[A planar partition of 16 tiles of the CORINE land cover dataset]{A planar partition made from 16 tiles of the CORINE land cover dataset.}
+\label{fig:16tiles}
+}
+
+\section{Creating valid polyhedra and 3D space partitions}
+\label{se:3drepair}
+
+\subsection{Motivation: IFC input data}
+
+As discussed in \refse{ss:formats}, the data models used in 3D GIS have often favoured an approach where objects that are volumetric in reality are modelled as a set of their (visible) surfaces, which can be easily captured after the objects are built.
+In addition, the volumetric objects that are small, elongated or thin are sometimes not modelled as volumes, but they are instead respectively modelled as points, curves or surfaces.
+For instance, in 3D models encoded in CityGML \citep{CityGML2}, all objects are modelled as surfaces that do not necessarily form closed volumes, and thin objects (\eg\ roof overhangs, windows and doors) are often modelled as single surfaces.
+
+The volumetric models that are often used in CAD and BIM, such as those in IFC format \citep{ISO16739:2013}, follow a different approach, which is shown in \reffig{fig:volumetric}.
+In it, all real-world volumetric objects, \ie\ the objects with a non-zero volume, are modelled as volumes as well.
+This approach is more expensive in terms of space and makes certain computations more difficult, such as obtaining the volume of a room that is only represented implicitly by a set of (volumetric) walls, doors and windows around it.
+However, the approach is ultimately a more powerful representation that is closer to reality, enabling more complex operations, such as the structural analysis of a building, and eliminates the ambiguities inherent in interpreting volumetric real-world objects that have been modelled as points, curves or surfaces.
+\begin{figure}[tb]
+  \centering
+  \includegraphics[width=\linewidth]{figs/volumetric}
+  \caption[Surface-based models vs.\ volumetric models]{A surface-based model (left) consists of a set of semantically labelled surfaces, which are shown here in different colours. A volumetric model (centre+right) instead consists of a set of semantically labelled \emph{volumes}.}
+\label{fig:volumetric}
+\end{figure}
+
+Although the volumes in such a model do not generally fit together perfectly, they can nevertheless be better processed\footnote{Akin to how a set of polygons can be better processed into a planar partition compared to a rough line drawing with undershoots and overshoots (\ie\ a typical spaghetti dataset).} into a 3D space partition consisting of a set of non-overlapping 3D objects, where each of the volumes---and optionally also their vertices, edges and faces---is labelled with appropriate semantic information\footnote{As shown in \refse{se:duality}, these lower-dimensional cells can store important information about the relationships between them objects.}.
+The result is thus a \emph{space-partitioning 3D model}, which is analogous to the 2D planar partitions often used to model coverages in GIS.\@
+Such a model can be stored in a computer using the topological data structures for 3D (\refse{ss:data-structures}) or $n$D (\refse{ss:cell-complexes}) cell complexes.
+
+This makes a volumetric model \emph{a better base for a higher-dimensional representation}, as it fully exploits the properties of higher-dimensional data structures and their operations.
+For instance, taking the examples of this thesis, it can be extruded into higher dimensions (\refch{ch:extrusion}) or multiple such 3D models can be linked into a single 4D model (\refch{ch:linking-lods}).
+
+A space-partitioning model is also better able to take advantage of the complex 3D models that are already created during the design and construction processes of a building, such as the faces that form a room, storey or building.
+This avoids the need to extract or abstract appropriate surfaces for their recreation in a GIS model, such as was done by \citet{Donkers13}.
+Since architectural and BIM models have a strong emphasis on representing individual 3D elements that need to be designed, manufactured and put together, such as those shown in \reffig{fig:fzk}, as well as the fact that these elements generally do not overlap in reality (except as part of hierarchies), they are ideally suited to be used in a space-partitioning model.
+\begin{figure}[tbp]
+  \centering
+  \includegraphics[width=\linewidth]{figs/ifc}
+  \caption[An IFC model of the FZK-house]{An IFC model of the FZK-house\footnotemark\ contains a complex representation of the structural elements of the building. Note how the volumes in this model fit together, having no overlaps even in places that are normally not visible (\eg\ the beam ends which are embedded in the walls).}
+\label{fig:fzk}
+\end{figure}
+\footnotetext{\url{http://iai-typo3.iai.fzk.de/www-extern/index.php?id=1174&L=1}}
+
+\subsection{What is a valid solid or 3D space partition?}
+
+The ISO 19107 standard \citep[\S{}6.3.18]{ISO19107:2005} defines 3D objects with 3D holes that are known as \emph{solids}, which are specified based on a boundary representation scheme.
+As shown in \reffig{fig:iso-brep}, the standard thus defines a \texttt{GM\_Solid} with a \emph{boundary} operation returning a \texttt{GM\_SolidBoundary}, which is a `\emph{sequence of sets of \texttt{GM\_Surfaces} that limit the extent of [the] \texttt{GM\_Solid}}'.
+Each of these sets of surfaces describes one of the boundaries of the \texttt{GM\_Solid} as a \texttt{GM\_Shell}, corresponding to either the outer boundary for the solid\footnote{In some cases, there might not be an outer boundary of a solid, such as in non-Euclidean spaces or in the representation of unbounded solids. However, there is nearly always an outer boundary in the context of geographic information.} or one of its holes.
+
+\begin{figure}[tbp]
+\centering
+\includegraphics[width=\linewidth]{figs/iso-brep}
+\caption[The boundary representation scheme in ISO 19107]{The ISO 19107 standard \citep[\S{}6.3.2]{ISO19107:2005} is able to specify the boundaries of \texttt{GM\_Curve}, \texttt{GM\_Surface} and \texttt{GM\_Solid} as subclasses of \texttt{GM\_Boundary}, respectively a \texttt{GM\_CurveBoundary} linked to a pair of \texttt{GM\_Point} (the end-points of a line segment), \texttt{GM\_SurfaceBoundary} linked to a set of instances of \texttt{GM\_Ring}, and a \texttt{GM\_SolidBoundary} linked to set of instances of \texttt{GM\_Shell}.}
+\label{fig:iso-brep}
+\end{figure}
+
+A \texttt{GM\_Shell} \citep[\S{}6.3.8]{ISO19107:2005} thus represents `\emph{a single connected component of a \texttt{GM\_SolidBoundary}}'.
+It is known to be \emph{simple}, and consists of a set of oriented instances of \texttt{GM\_Surface} composed of instances of \texttt{GM\_SurfacePatch}, which intuitively form a cellular subdivision of the surface and themselves have a \texttt{GM\_SurfaceBoundary}.
+A \texttt{GM\_SurfaceBoundary} represents an area potentially with any number of holes, each of which is stored as a reference to a \texttt{GM\_Ring}.
+A \texttt{GM\_Ring} \citep[\S{}6.3.6]{ISO19107:2005} is defined as also also being \emph{simple}.
+
+\texttt{GM\_Object} \citep[\S{}6.2.2]{ISO19107:2005}, a parent class to all the classes previously mentioned, defines every object as a point set and provides the definition of simple as a `\emph{GM\_Object [that] has no interior point of self-intersection or self-tangency.
+In mathematical formalisms, this means that every point in the interior of the object must have a metric neighborhood whose intersection with the object is isomorphic to an $n$-sphere, where $n$ is the dimension of this \texttt{GM\_Object}}'.
+As discussed by \citet{Ledoux13}, this implies that shells are effectively 2-manifolds.
+Rings are similarly 1-manifolds.
+
+It is important to note that even though each \texttt{GM\_Ring} and \texttt{GM\_Shell} is individually simple, the boundary of the \texttt{GM\_Surface} or \texttt{GM\_Solid} that they together describe does not need to be simple.
+A common example would involve an inner ring/shell tangent to the outer ring/shell containing it.
+Arguably, the standard does appear to explicitly forbid intersections between the interior of rings or shells as \texttt{GM\_Complex} is a parent class of \texttt{GM\_SurfaceBoundary} and \texttt{GM\_SolidBoundary} and this class requires its composing primitives to be `\emph{geometrically disjoint}'.
+However, this interpretation is problematic as it would arguably also forbid inner rings being inside their containing outer ring.
+
+Alternatively, it is possible to consider that the standard does not specify \emph{any} restrictions regarding the interactions between rings of a surface or between shells of a solid.
+As the standard explicitly states that `\emph{implementations may enforce stronger restrictions on the interaction of boundary elements}', it might be the responsibility of other implementing standards to place appropriate restrictions.
+
+Although the GML standard \citep{GML3.2.1} implementing ISO 19107 does not specify such restrictions, it is possible to use those defined in the Simple Features Specification in 2D (\refse{se:pprepair}) and define analogous ones in 3D \citep{Ledoux13}.
+One formulation of these would be as follows:
+
+\begin{itemize}
+\item The shells of a solid do not cross, but the shells on the boundary of a solid may intersect only at a vertex or edge.
+\item The interior of every solid is a connected point set.
+\item Each interior shell creates a new volume that is disconnected from the exterior.
+\end{itemize}
+
+Intuitively, a 3D space partition is a subdivision of a region of 3D space into non-overlapping solids.
+However, just as with planar partitions, 3D space partitions are usually not strictly defined.
+Following the same logic as with planar partitions in \refse{se:pprepair}, a 3D space partition can be considered as an ISO 19107 \texttt{GM\_CompositeSolid} \citep[\S{}6.6.13]{ISO19107:2005}, which is defined in the standard as a `\emph{a set of solids that join in pairs on common boundary surfaces to form a single solid}'.
+While overlapping solids are explicitly forbidden by a \texttt{GM\_CompositeSolid} inheriting from \texttt{GM\_Complex} in which `\emph{[primitive] interiors are disjoint}', gaps between the solids are explicitly allowed.
+
+An alternative definition could also be created based on the ISO 19123 standard by considering a 3D space partition as a type of \texttt{CV\_DiscreteSolidCoverage} \citep[\S{}6.10]{ISO19123:2007}, which states that `\emph{generally, the solids that constitute the domain of a coverage are mutually exclusive and exhaustively partition the extent of the coverage}'.
+While overlaps and gaps are respectively eliminated in the \emph{mutually exclusive} and \emph{exhaustively partition} conditions, the word `\emph{generally}' means that these are not always enforced.
+
+\subsection{Common problems for 3D objects in an IFC file}
+
+An IFC model in theory consists of a set of 3D objects that mostly do not overlap.
+However, there are a few common problems that cause some of these 3D objects to be invalid or prevents them from forming a clean space partition.
+The most significant of these are the following:
+
+\begin{figure*}[tbp]
+\subfloat[]{\includegraphics[width=0.325\linewidth]{figs/ioh-diff-w}\label{subfig:ioh-diff-w}}
+\enspace%
+\subfloat[]{\includegraphics[width=0.325\linewidth]{figs/ioh-diff-wo}\label{subfig:ioh-diff-wo}}
+\enspace%
+\subfloat[]{\includegraphics[width=0.325\linewidth]{figs/ioh-diff-o}\label{subfig:ioh-diff-o}}
+\caption[Openings in the IfcOpenHouse dataset]{In the (a) IfcOpenHouse dataset\protect\footnotemark, the openings where the windows and door fit are not explicitly carved out from the wall volumes.
+Instead, the dataset consists of (b) walls with simple shapes and (c) the openings themselves as large boxes.
+A Boolean point set difference thus needs to be computed in order to obtain the final explicit geometries.}
+\label{fig:ioh-diff}
+\end{figure*}
+\footnotetext{\url{http://blog.ifcopenshell.org/2012/11/say-hi-to-ifcopenhouse.html}}
+
+\begin{description}
+
+\item[Implicit geometries] Objects are often represented using sweeps and Boolean point set operations, such as in the case of openings as shown in \reffig{fig:ioh-diff}.
+These need to be converted to explicit (boundary representation) objects that can be made to fit with other objects.
+As these need to be discretised, they will often not perfectly match the shape of the original objects, sometimes creating problems in their interaction with other objects.
+
+\item[Local coordinate systems] Objects are defined using a local coordinate system, which might differ per object.
+As the parameters of these coordinate systems are stored (and computed) in a finite computer representation, this will cause the objects not to fit together perfectly.
+In addition, applying a transformation to embed all objects into a unique coordinate system using computed arithmetic will cause additional problems.
+The result is that objects that visually appear to fit together do not actually do so, having small gaps and overlaps between them as shown in \reffig{fig:ioh-small}.
+
+\item[Hidden intentional overlaps] Not caring about object intersections is common practice in most 3D modelling approaches.
+By not caring about these intersections, it is possible to ease and speed up the modelling process by using simpler volumes (\eg\ boxes or rectangles) than would otherwise be required and hiding their undesirable parts behind or inside other objects, as is shown in \reffig{fig:ioh-large}.
+
+\end{description}
+
+\begin{figure*}[tbp]
+\subfloat[]{\includegraphics[width=0.325\linewidth]{figs/ioh-1}\label{subfig:ioh-1}}
+\enspace%
+\subfloat[]{\includegraphics[width=0.325\linewidth]{figs/ioh-2}\label{subfig:ioh-2}}
+\enspace%
+\subfloat[]{\includegraphics[width=0.325\linewidth]{figs/ioh-3}\label{subfig:ioh-3}}
+\caption[The volumes in the IfcOpenHouse dataset do not fit together]{The volumes in the (a) IfcOpenHouse dataset do not perfectly match each other at their common boundaries.
+(b) The two volumes forming the roof actually do not touch, causing the house not to be closed.
+(c) The left wall and the foundation volumes have a small overlapping portion (\ie\ the wall sinks inside the foundation).}
+\label{fig:ioh-small}
+\end{figure*}
+
+\begin{figure*}[tbp]
+\subfloat[]{\includegraphics[width=0.325\linewidth]{figs/ioh-4}\label{subfig:ioh-4}}
+\enspace%
+\subfloat[]{\includegraphics[width=0.325\linewidth]{figs/ioh-5}\label{subfig:ioh-5}}
+\enspace%
+\subfloat[]{\includegraphics[width=0.325\linewidth]{figs/ioh-6}\label{subfig:ioh-6}}
+\caption[A large overlap in the IfcOpenHouse dataset]{(a) The right wall and the right roof volumes in the IfcOpenHouse dataset visually appear to match each other, but the (b) right wall and (c) right roof are modelled as parallelepipeds, so they have a non-empty intersection (a triangular pyramid).}
+\label{fig:ioh-large}
+\end{figure*}
+
+\subsection{Commonly used validation and repair methods}
+
+In order for software to be able to process invalid polyhedra, various automatic validation and repair methods have been developed, detecting and/or fixing some of the possible invalid configurations that can exist.
+The possible invalid configurations are many and partly overlap or cascade (from lower to higher dimensions), but a possible list can be generated by systematically exploring those that occur at the ring, polygon, shell and solid levels\footnote{In theory, errors can occur at the point and edge level, such as a lack or excess of coordinates, but on a typical GIS input file these would be generally considered as syntactic rather than geometric errors.}.
+For instance, \citet{Wagner13} tests for 13 types of invalid configurations while \citet{Ledoux13} tests for 26, notably including: consecutive points in a ring with the same coordinates, rings that are not closed or self-intersect, polygons with intersecting rings or with an inner ring outside the outer ring, shells that are not closed or are not 2-manifold, and solids with intersecting shells.
+
+\textbf{Repairing individual rings and polygons} can be basically done using the processes outlined in \refse{se:pprepair}, even if these are embedded in 3D rather than 2D.
+For this, rings and polygons can be first projected onto a certain plane (\eg\ the best-fitting one, or one obtained by disregarding a coordinate of its vertices in a manner that does not create new degenerate shapes) or a restricted triangulation \citep[Ch.~13]{Cheng12} could be used as a basis for a repair procedure.
+
+\textbf{Repairing shells and solids} are problems that are also partly related to those discussed previously, as
+a shell can be seen as a planar partition that wraps around an object, while the constraints that define how the inner and outer shells of a valid solid should interact are similar to those defining the interaction of inner and outer rings within a valid polygon.
+However, the methods that have been presented previously are much less applicable to shells and solids.
+
+Instead, a shell can often be seen as a mesh that \emph{should} be closed, and it is thus possible to repair individual shells with the procedures used for surface reconstruction and mesh repair.
+There are various good surveys of the methods that can be used to repair various problems in polygonal meshes, such as \citet{Ju09} and \citet{Attene13}.
+Some of these problems and their respective methods are summarised below.
+However, it is important to notice that many methods are intended for meshes representing the boundary of a single `smooth' 2-manifold, making them not applicable to the great majority of BIM and GIS models where perpendicular angles are common (\eg\ those between walls and floors/ceilings).
+
+\citet{Rossignac99a} proposes a method to make polygonal meshes combinatorial manifolds, determining an appropriate order for a set of edges around a face or for a set of faces bounding a volume such that non-manifolds can be stored using a manifold data structure (\reffigp{fig:nonmanifold-012}).
+\citet{Gueziec01} treats the problem from a geometric point of view, converting non-manifold edges into thin volumes by cutting and joining the mesh around them.
+\citet{Attene09} proposes a method to make tetrahedral meshes\footnote{assuming a tetrahedron-based data structure with adjacency relationships to other tetrahedra} manifold---something that can be used also for solids by computing their constrained tetrahedralisation.
+
+In a similar manner as in GIS, small gaps in a mesh (causing a shell not to enclose any space) can be naively repaired by snapping vertices \citep{Rock92}, but this requires an error-prone threshold and can lead to topological errors.
+Iteratively snapping boundary edges together works better \citep{Sheng95}, as it is possible to start from a single corresponding pair of edges, and then iteratively `zip' together corresponding edges that are adjacent to these.
+\citet{Barequet95} follows a related approach, matching certain edges and triangulating the remaining gaps.
+\citet{Turk94} shows how overlapping triangular meshes\footnote{As overlaps are embedded in 3D, they need to be defined from a given point of view.} can be fixed by clipping all but one of a set of overlapping triangles, retriangulating them afterwards.
+
+Holes in a mesh, which tend to be bigger than gaps and reflect missing parts of a surface (\eg\ the bottom of a house, or a surface that is hidden from a typical point of view), require different methods.
+In many cases, a hole is close to planar and can thus be simply projected to 2D and triangulated \citep{Bohn92}.
+However, in other cases the holes are far from planar, and it is thus necessary to use more complex methods.
+For instance, \citet{Levy03} fills holes while attempting to minimise a certain objective function representing the energy needed to fill it, \citet{Wang07} uses moving least squares fitting of the points around it\footnote{Proposed by \citet{Lancaster81}, it is a widely used surface reconstruction method based on interpolating a set of points.} and \citet{Podolak05} does so by subdividing space into regions deemed to be completely in or out of the shell.
+\citet{Nooruddin03}, \citet{Bischoff05} and \citet{Hetroy11} use voxel-based methods to attempt to determine the interior and exterior of a shell and thus close a mesh.
+
+Specifically in the context of buildings, which have different characteristics from many other meshes such as sharp corners and orthogonal surfaces, \citet{Bogdahn10} and \citet{Alam13} propose two methods that create a smooth 2-manifold, but do not guarantee their results.
+\citet{Zhao14} attempts to solve gaps, holes and overlaps in a building mesh simultaneously by using a constrained tetrahedralisation \citep{Si05} of a set of faces, progressively carving away tetrahedra that are deemed as not belonging to its interior based on a set of rules.
+The possible intersections between the faces are explicitly computed by the constrained tetrahedralisation, so that the starting tetrahedra form a 3D space subdivision.
+
+Finally, the problem of creating a valid 3D space partition is closely related to the \emph{topological reconstruction} of a 3D model, which sometimes deals with computation of topological relationships from imperfect datasets.
+Generally, these methods work by snapping the geometries that lie within a threshold.
+For instance, \citet{Horna06} snaps together generalised map darts that lie within a threshold $\varepsilon$, connecting them by the appropriate involution $\alpha$, which is based on the steps of the reconstruction process.
+
+\subsection{Repair using snapping and Boolean set operations}
+
+Despite the fact that the methods presented above fix many of the problems in individual 3D objects, these methods are not always sufficient to create a valid 3D space subdivision.
+For instance, the methods that are based on snapping are unable to create a space partition when adjacent geometries are farther than the snapping threshold or their overlapping regions have a width larger than the threshold.
+Similarly, most methods to repair meshes do not guarantee that they form properly enclosed spaces and cannot deal well with solids with inner shells.
+
+A different technique that solves many of these issues was thus developed for this thesis.
+It starts from a set of separate 3D objects that \emph{approximately} form a 3D space partition, such as those that are commonly found in IFC building models.
+The method starts by handling every object separately, obtaining a valid interpretation of each that is stored in an exact representation.
+It then snaps objects together in order to remove small gaps and overlaps at their common boundaries.
+Finally, it uses Boolean set operations to remove larger overlaps and in order to always obtain a 3D space partition.
+These steps required are described in detail as follows:
+
+\begin{enumerate}
+\item
+\textbf{Rough individual polyhedra}
+One or more `rough' polyhedral representations of every object are first extracted from the input model.
+These rough representations should be combinatorially valid quasi-manifolds, being composed of patches that join in pairs at their common boundaries.
+However, at this stage the polygonal patches can have geometric issues, such as not being planar and might intersect geometrically.
+
+In order to obtain the rough polyhedral representations, every object is first individually parsed, converting implicit geometries into explicit geometries using Boolean set operations (\reffig{fig:ioh-diff}) and triangulating curved surfaces.
+A transformation is then applied to convert every object's coordinates to a global coordinate system.
+Finally, the faces of every object are extracted, object by object, and used to incrementally construct a set of polyhedra.
+This is done by starting from a given face and attempting to add adjacent faces until a closed shell is formed, which is repeated until all faces of an object are processed or the remaining faces cannot form any closed shells.
+
+\item
+\textbf{Clean individual polyhedra}
+Clean individual polyhedra are then created from the rough polyhedra.
+In order to do this, the best fitting plane to the vertices of each face is first computed using linear least squares (\reffig{fig:faceplanes}) and is stored as a plane equation.
+Considering these planes as \emph{constraints}, all the vertices of every polyhedron are moved to an exact intersection of as many as possible of its incident face planes using a greedy algorithm unless this would result in a too large shift (as defined by a threshold).
+If some plane constraints could not be met, the corresponding faces are triangulated, thus becoming perfectly planar.
+The planes of these new triangular faces are computed.
+
+\begin{figure}[tbp]
+\subfloat[]{\includegraphics[width=0.45\linewidth]{figs/faceplanes-1}}
+\quad
+\subfloat[]{\includegraphics[width=0.45\linewidth]{figs/faceplanes-2}}
+\caption[Computing the best fitting plane of every face]{The best fitting plane to the vertices of every face is computed, here showing those belonging to (a) the floor, back right wall, back left wall and back eave, and (b) the front left wall, front right wall and front eave.}
+\label{fig:faceplanes}
+\end{figure}
+
+\item
+\textbf{Snapping vertices together}
+The vertices of the polyhedra that lie within a threshold are snapped together, which removes most of the small gaps and overlaps in the model (\reffig{fig:snapping}).
+This applies to vertices belonging to the same or to different polyhedra.
+The snapped vertices are now considered \emph{immovable}.
+Iterating through all the faces of the polyhedra, if a face has at least three immovable non-collinear vertices, the plane passing through these vertices is computed and it is considered as \emph{fixed}.
+When there are more than three non-coplanar vertices, the face is triangulated and the faces with three immovable vertices are also considered as \emph{fixed}.
+
+\marginpar{
+\captionsetup{type=figure}
+\centering
+\subfloat[]{\includegraphics[width=\marginparwidth]{figs/snapping-1}}\\
+\subfloat[]{\includegraphics[width=\marginparwidth]{figs/snapping-2}}
+\caption[Vertex snapping]{(a) The vertices of different polyhedra that lie within a threshold are snapped together, thus (b) removing a small gap.
+A small overlap works in the same manner.}
+\label{fig:snapping}
+}
+
+\item
+\textbf{Snapping vertices to fixed planes}
+The vertices that are still considered movable are then snapped to nearby fixed planes, if any, eliminating certain other small gaps and overlaps that do not have vertices in common (\eg\ the steps in front of the IfcOpenHouse shown in \reffig{fig:ioh-steps}, which are actually not touching the house's foundation).
+For this, iterating through every movable vertex, if it is incident to three or more faces with non-coplanar fixed planes and their intersection lies within a threshold of the vertex's current position, the vertex is moved to the intersection of three of these planes and considered as immovable.
+If it has more than three incident faces with non-coplanar fixed planes, the faces of the planes that were not used, and are thus now not perfectly planar, are triangulated.
+This step can be repeated a given number of times, increasing the number of immovable vertices.
+
+\marginpar{
+\captionsetup{type=figure}
+\centering
+\includegraphics[width=\marginparwidth]{figs/ioh-steps}
+\caption[The steps of the IfcOpenHouse]{The steps of the IfcOpenHouse do not actually touch the house's foundation.
+Note that it also does not have common vertices with the foundation, so this gap cannot be closed by vertex-to-vertex snapping, but it can be closed by snapping its vertices on the left to the foundation's right plane.}
+\label{fig:ioh-steps}
+}
+
+\item
+\textbf{Fixing the remaining vertices}
+The remaining movable vertices are fixed to their incident faces' fixed planes or to their current location.
+For this, iterating through every movable vertex, the same procedure as the step above is followed.
+However, if a vertex has less than three incident faces with non-coplanar fixed planes, the vertex is fixed to the position on the intersection of its incident faces' fixed planes that is closest to the vertex's current position.
+These moved vertices are also considered as fixed and their incident faces' planes are recomputed if necessary.
+
+\item
+\textbf{Creating individual Nef polyhedra}
+A Nef polyhedron is created from every polyhedral representation using the precomputed planes for each face.
+Note that the exact representations of each plane (in the form of plane equations) are thus kept in this process.
+
+\item
+\textbf{Add the structural types}
+The Nef polyhedra representing structural types (\eg\ walls, slabs and beams) are incrementally added to a model, making sure that a new Nef polyhedron does not intersect the previously added ones.
+This is done using a Boolean set difference with a Nef polyhedron containing all previously added polyhedra, which is then regularised.
+
+\item
+\textbf{Remove the opening types}
+The Nef polyhedra representing openings are carved out from the structural types by a Boolean set difference whose result is then regularised.
+They are also carved out from the Nef polyhedron representing the entire model.
+
+\item
+\textbf{Add the fixture types}
+The Nef polyhedra representing fixtures (\eg\ windows, doors, railings and frames) are incrementally added to the model in the same manner as the structural types.
+The fixtures will often fit into the openings carved out in the previous step.
+
+\end{enumerate}
+
+The output of these steps is thus a list of Nef polyhedra representing each object using exact arithmetic.
+As these are regularised, they are known to contain their boundary.
+Because of this, the common faces of a pair of adjacent polyhedra are easy to obtain through the computation of their Boolean set intersection, which can be implemented quickly.
+These faces can therefore be used to easily compute a topological representation of the 3D space subdivision.
+
+This 3D repair method was implemented with the help of several libraries: IfcOpenShell is used to parse the IFC file, Open CASCADE is used to triangulate implicit representations and to transform the objects' coordinates to a global coordinate system, CGAL \texttt{Polyhedron\_3} is used to construct a half-edge representation of every polyhedron, and CGAL \texttt{Nef\_polyhedron\_3} is used to store every Nef polyhedron and to perform the Boolean set operations between them.
+
+\section{Dimension-independent validity criteria}
+\label{se:ndrepair}
+
+The previous sections have expanded on the criteria that define what is a valid object or space partition of objects in 2D and 3D.
+They also described some methods that can be used to make real-world data comply with these criteria, enabling the data to be used for more applications.
+As this thesis aims at utilising real-world higher-dimensional data, it is important to also consider what criteria can be used to define validity in higher-dimensional data.
+
+The standards for geographic information in 2D and 3D described previously (Simple Features \citep{SimpleFeatures1}, GML \citep{GML3.3} and ISO 19107 \citep{ISO19107:2005}) are in theory limited to 2D and 3D.
+Concretely, the ISO 19107 standard explicitly states that `\emph{this International Standard is restricted to at most three dimensions}'.
+However, all of these standards are easily extensible to higher dimensions.
+This would mostly involve the addition of new classes and corresponding definitions.
+However, the standards do contain minor hard-coded assumptions that are only valid for the 2D and 3D cases, such as how ISO 19107 and GML consider orientable curves and surfaces, but not orientable solids (\reffigp{fig:gml}).
+
+This section therefore defines higher-dimensional objects in a manner that is (mostly) harmonious with the standards used in the GIS world.
+An $n$-cell can be thus represented by the set of $(n-1)$-cells in its (outer) boundary, using a similar mechanism as how other boundaries are represented in the ISO 19107 standard, which was shown previously in \reffig{fig:iso-brep}.
+
+\begin{figure}
+\centering
+  \includegraphics[width=0.7\linewidth]{figs/iso-cell-brep}
+  \caption[A dimension-independent cell harmonised with ISO 19107]{A dimension-independent definition of a cell in a harmonised manner with other classes in the ISO 19107 standard \citep{ISO19107:2005}.}
+\label{fig:iso-cell-brep}
+\end{figure}
+
+Following the terminology used in the standard and as shown in \reffig{fig:iso-cell-brep}, such an extension of the would mainly entail a \texttt{GM\_OrientableGeometricPrimitive} with a \texttt{dimension} attribute, which would set to $n$.
+This class would be analogous to \texttt{GM\_OrientableCurve} for \texttt{dimension} 1, \texttt{GM\_OrientableSurface} for \texttt{dimension} 2 and a newly created \texttt{GM\_OrientableSolid} for \texttt{dimension} 3, which would be a subclass of \texttt{GM\_OrientablePrimitive}.
+The \texttt{GM\_OrientableGeometricPrimitive} would be bounded by a \texttt{GM\_GeometricPrimitiveBoundary}, which would be linked to aggregations of $(n-1)$-dimensional instances of a newly created \texttt{GM\_Cell} (with their \texttt{dimension} attribute set to $n-1$).
+This \texttt{GM\_Cell} class would be analogous to \texttt{GM\_Point} for \texttt{dimension} 0, \texttt{GM\_Curve} for \texttt{dimension} 1, \texttt{GM\_Ring} for \texttt{dimension} 2, and \texttt{GM\_Shell} for \texttt{dimension} 3.
+Each of the instances of \texttt{GM\_Cell} bounding a \texttt{GM\_OrientablePrimitive} would represent either the outer boundary of the geometric primitive (if any), or one of any number of inner boundaries representing $n$-dimensional holes.
+This extension of the standard would seem to follow most in the spirit of ISO 19107.
+
+However, other alternative extensions could be considered.
+As \texttt{GM\_Curve}, \texttt{GM\_Surface}, and \texttt{GM\_Solid} would essentially be special cases of \texttt{GM\_Cell}, all of the former could be seen as redundant and eliminated.
+However, the standard contains many specialisations that are somewhat redundant but that cover common use cases in geographic information, such as \texttt{GM\_Triangle} and \texttt{GM\_Tin}.
+Another possibility would be considering \texttt{GM\_Curve}, \texttt{GM\_Surface}, and \texttt{GM\_Solid} as subclasses of \texttt{GM\_Cell} or substituting the abstract \texttt{GM\_Primitive} for a non-abstract \texttt{GM\_Cell}, but this would involve a major change in the standard and seems to run counter to the preferred use of abstract top classes in the standard.
+
+The definition of an \texttt{GM\_OrientableGeometricPrimitive} as explained above also lends itself to the definition of sets of disjoint cells (akin to the \texttt{Multi\ldots}\ classes in the standard) and cell complexes (akin to the \texttt{Composite\ldots}\ classes in the standard), which could also be handled in the same manner as in the ISO 19107 standard.
+As shown in \reffig{fig:iso-composites}, the standard already defines composite curves, surfaces and solids, which are equivalent to 1-, 2- and 3-dimensional cell complexes.
+A \texttt{GM\_CompositeCurve} is `\emph{a list of orientable curves (\texttt{GM\_OrientableCurve}) agreeing in orientation in a manner such that each curve (except the first) begins where the previous one ends.}', a \texttt{GM\_CompositeSurface} is `\emph{a collection of oriented surfaces that join in pairs on common boundary curves}', and a \texttt{GM\_CompositeSolid} is `\emph{a set of solids that join in pairs on common boundary surfaces}'.
+
+\begin{figure}
+\centering
+  \includegraphics[width=\linewidth]{figs/iso-composites}
+  \caption[Cell complexes in the ISO 19107 standard]{The cell complexes of dimension 1, 2 and 3 are respectively defined in the ISO 19107 standard \citep[\S{}6.6.3]{ISO19107:2005} as the classes \texttt{GM\_CompositeCurve}, \texttt{GM\_CompositeSurface} and \texttt{GM\_CompositeSolid}.}
+\label{fig:iso-composites}
+\end{figure}
+
+A similarly defined \texttt{GM\_CompositeGeometricPrimitive}, shown in \reffig{fig:iso-compositecell} which should contain the \texttt{dimension} as a parameter, would thus be equivalent to a representation of a space partition of any dimension that allows objects with holes.
+It could be defined as `a set of $n$-dimensional orientable geometric primitives (\texttt{GM\_OrientableGeometricPrimitive}) that join in pairs on common $(n-1)$-dimensional boundary geometric primitives'.
+Note that this implies that the primitives combinatorially form an $n$-quasi-manifold, although geometrically they might not do so due to the presence of holes.
+
+\marginpar{
+\captionsetup{type=figure}
+\centering
+\includegraphics[width=\marginparwidth]{figs/iso-compositecell}
+\caption[An $n$D space subdivision harmonised with ISO 19107]{A definition of an $n$-dimensional space subdivision in a harmonised manner with other classes in the ISO 19107 standard \citep{ISO19107:2005}.}
+\label{fig:iso-compositecell}
+}
+
+Following the validity criteria previously described in \refse{se:pprepair} and \refse{se:3drepair}, it is possible to define additional validity criteria for an $n$-dimensional geometric primitive, which would serve to specify the conditions upon which its bounding cells may interact.
+These would be as follows:
+
+\begin{itemize}
+\item The bounding $n$-cells of an $n$-dimensional geometric primitive do not cross, but they might intersect only at a cell of dimension $n-1$ or lower.
+\item The interior of every geometric primitive is a connected point set.
+\item Each interior $n$-cell creates a new point set in $\mathbb{R}^n$ that is disconnected from the exterior.
+\end{itemize}
+
+Meanwhile, an $n$-dimensional space subdivision should consist of a set of $n$-dimensional geometric primitives that are mutually exclusive and exhaustively partition an extent, itself a well-defined subset of $\mathbb{R}^n$.
+As with the definitions of a planar partition and 3D space subdivision, this implies that there should be no overlapping primitives, and no gaps between them unless these gaps are considered to be outside the extent.

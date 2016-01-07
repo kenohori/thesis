@@ -1,0 +1,254 @@
+% !TEX root = thesis.tex
+
+\chapter{Conclusions and future work}
+\label{ch:conclusions}
+
+% Introduction / about topic?
+
+There are a great number of possible representations for spatial information, each of which with its own benefits and drawbacks and only some of which have been discussed in this thesis.
+From an engineering point of view, choosing an appropriate representation for a given system or task is a fundamental issue, as this choice cascades down to almost every engineering decision and indirectly affects a GIS program's every functionality.
+Among other aspects, it affects the type of objects that can be efficiently stored and the operations that can be easily performed on them, and it also has important computational consequences in terms of both memory and processing time.
+
+The 2D representations that dominate the GIS world work well for 2D datasets and problems that are essentially two-dimensional, but many problems arise when they are adapted to model 3D, spatiotemporal and multi-scale geographic information.
+Most research in GIS is devoted to improving these adaptations, as well as to developing new methods that build on them to solve problems both old and new.
+
+This thesis pushes GIS research in a different direction, starting from the assumption that many issues in GIS can be better solved by using a new, fundamentally different modelling approach---modelling both spatial and non-spatial characteristics as dimensions in the geometric sense, thus using higher-dimensional representations to create, manipulate and visualise geographic information.
+Accordingly, this thesis' main research objective was to \textbf{realise the fundamental aspects of a higher-dimensional Geographic Information System}, and therefore focusing on the development of higher-dimensional representations and methods for GIS.\@
+
+This concluding chapter starts with a short outlook on higher-dimensional GIS in \refse{se:isitworthit}, describing concisely 
+% some of the more enticing possibilities that can be opened up by higher-dimensional models in a GIS, and 
+when and where it makes sense to use higher-dimensional models.
+Afterwards, \refse{se:conclusions} describes in detail the lessons learned by pursuing this thesis' research objective.
+Finally, \refse{se:contributions} lists the main contributions of this thesis, and \refse{se:futurework} discusses the topics that I think would be most useful for future research on this topic.
+
+\section{An outlook on higher-dimensional GIS}
+\label{se:isitworthit}
+
+As this thesis has shown, there are many potential advantages to the use of higher-dimensional modelling in GIS.\@
+This approach provides \emph{a simple and consistent way to store geometry, attributes and topological relationships between objects of any dimension}.
+This generic technique can be easily extended to handle other non-spatial characteristics, enabling better data management and more powerful operations.
+At the same time, higher-dimensional representations are undoubtedly memory-intensive and often hard to work with, both due to their level of abstraction and the unintuitiveness of working with dimensions higher than three.
+Admittedly, \emph{current GIS use cases do not easily justify the higher-dimensional approach}.
+
+% Envisioning things
+
+However, a far stronger case for higher-dimensional representations emerges when considering what sort of \emph{new tools could be developed using this type of representations}, both in GIS and in related fields.
+For instance, 3D modelling software could consider time-varying topology, much as \citet{Dalstein15} do for 2D vector drawings.
+4D topology (as 3D+time) could then be used to automatically generate smooth transitions for animations.
+
+Similarly, CAD tools could use 4D topology to model buildings at different scales and timeframes automatically, keeping track of all relationships between objects and providing immediate user input during interactive editing.
+For example, a program could display how different changes affect construction time, the size of the model at predefined LODs and when certain safety constraints were violated.
+
+At a lower-level, 4D geometric modelling operators could be developed to operate directly on 4D primitives, such as splitting and merging 4-cells.
+These could also be used intuitively in an interactive environment, allowing for instance to change a building's configuration by adding and removing walls while always ensuring that the representation remains a valid 4D space partition.
+
+% Requirements, perfect data
+
+\subsection*{Is the higher-dimensional approach worthwhile?}
+
+In short, yes, but only given certain conditions.
+\emph{Higher-dimensional modelling is advantageous, but only when the added functionality that will be built with them---as compared to the simpler and more compact 2D/3D models---justifies it}, such as when queries across space and time can be implemented as higher-dimensional geometric/topological operations.
+As discussed in \refse{ss:dimensions}, higher-dimensional modelling makes sense only when the characteristics depicted as dimensions are \emph{parametrisable and independent from each other}, as is the case for space/time/scale, and where objects occur along a dimension as intervals, not as discrete points (which can be easily stored as attributes).
+Based on current hardware, software and the typical GIS datasets, there is another important practical requirement: the manageable number of dimensions is limited to 6--8.
+Finally, it is also worth noting that higher-dimensional models are not incompatible with standard 2D/3D data structures and methods---the best tool for the job can be chosen depending on the need at hand and both approaches can be combined.
+
+\section{Lessons learned}
+\label{se:conclusions}
+
+\begin{description}
+
+% Chapter 2 + 3
+
+\item[Current representations are not suitable in higher dimensions]
+
+The mathematical foundations of spatial data modelling (\refch{ch:modelling-mathematics}) are defined in a dimension-independent manner, including all the basic tenets of geometry and topology.
+This dimensional independence is also true for all spatial data models or representation schemes (\refch{ch:modelling-background})---at least when they are analysed at a high level---but is generally not preserved when they are implemented into more concrete data structures.
+Most 2D and 3D data structures in GIS thus only encode a few chosen geometric and topological properties (\eg\ the coordinates of each point and the adjacencies between polygons), which are often defined with a formulation that is different per dimension.
+
+This modelling approach can make for custom structures that are compact and efficient when used exactly as intended (\ie\ for a particular class of objects of a given dimension), but it can limit functionality or introduce inefficiencies when the data structures are adapted to be used under a different set of circumstances.
+Case in point, the typical data structures of 2D GIS are frequently used with minimal changes for 3D, spatiotemporal and multi-scale GIS.\@
+This results various problems, such as inefficient representations (\eg\ due to duplicate elements), an inability to represent common 3D objects (\eg\ those with a non-2-manifold boundary), difficulties in expressing 3D topological relationships (\eg\ adjacencies between solids), and the widespread availability of invalid datasets (\eg\ 3D models that do not formally enclose any space), among others.
+
+% Chapter 4 + 5
+
+\item[Higher-dimensional modelling as a solution]
+
+An alternative to the use of ad hoc adaptations to 2D data structures is to model both spatial and non-spatial characteristics as dimensions in the geometric sense (\refch{ch:nd-modelling}).
+While this approach can be memory-intensive, it provides a generic solution that can be applied to the representation of $n$D space, time, scale and any other parametrisable characteristics.
+
+A tuple of $n$ parametrisable spatial and non-spatial characteristics can thus define a coordinate system in $\mathbb{R}^n$, and lower-dimensional 0D--3D objects existing across these characteristics can thus be modelled as higher-dimensional 0D--$n$D objects embedded in higher-dimensional space.
+As GIS objects are usually non-overlapping\footnote{At least in theory.}, they should form an $n$D space partition and can thus be represented using $n$D topological data structures, reducing the total number of elements and ensuring that it is easy to navigate between the objects.
+However, even when the objects do not form a space partition, the objects themselves can be partitioned by using an intermediate representation where the original objects are transformed into a set of non-overlapping regions, such that each of these regions represents \emph{a set of the original objects} \citep{Rossignac89}.
+
+$n$D space partitions are also ideal in a practical sense, as they simplify many of the operations that can be defined with them, including simple point-in-polytope queries and all of the constructions methods presented in \refchs{ch:extrusion}--\ref{ch:linking-lods}.
+$n$D point clouds, while outside the scope of this thesis, are a good complement to $n$D space partitions, as they are close to data as it is acquired and are relatively easy to store and manipulate.
+
+\item[The most promising higher-dimensional representations]
+
+Spatial data structures often consist of two aspects: 1.\ a combinatorial part, which consists of a set of primitives and some topological relationships between them, and 2.\ an embedding that links these primitives to their geometry and attributes \citep{Lienhardt94}.
+As argued in this thesis, the knowledge of higher-dimensional topological relationships in a data structure is the main aspect that differentiates higher-dimensional data structures from 2D/3D ones.
+
+Some data structures that are frequently used in 2D/3D GIS have straightforward extensions to higher dimensions, such as $n$D \emph{rasters} and \emph{hierarchies of trees}.
+These use similar structures and algorithms as their 2D/3D counterparts and are therefore easy to understand and implement.
+
+Other data structures implement the models of an $n$D simplicial complex or an $n$D cell complex.
+As the simplices in a simplicial complex have a known number of adjacent simplices and bounding facets, they are most efficiently stored using simplex-based data structures.
+Meanwhile, cell complexes can be easily stored using incidence graphs and related structures.
+However, Nef polyhedra \citep{Bieri88} are probably the most promising representation for an $n$D cell complex, as they provide a good base to develop Boolean set operations, enabling a wide range of geometric operations.
+
+Ordered topological models such as the cell-tuple \citep{Brisson93} and generalised/combinatorial maps \citep{Lienhardt94} also deserve a special mention.
+By combining the strong algebra and easy navigation of a simplicial complex with the easy representation of a cell complex, they provide the most important benefits of both.
+They are rather memory-intensive, but it is important to note that they are more compact than a non-topological approach (\refch{ch:operations-background}).
+
+Nevertheless, non-topological representations do have a clear role to play as exchange formats, such as is the case those based around Simple Features in 2D \citep{SimpleFeatures1}, and CityGML \citep{CityGML2} and IFC\footnote{\url{http://www.buildingsmart-tech.org/specifications/ifc-releases}} in 3D.
+
+\item[Three construction methods for higher-dimensional objects]
+
+Creating computer representations of higher-dimensional objects can be complex.
+Common construction methods used in 2D and 3D, such as directly manipulating combinatorial primitives, or using primitive-level construction operations (\eg\ Euler operators \citep{Mantyla88}), rely on our intuition of 2D/3D geometry, and thus do not work well in higher dimensions.
+It is therefore all too easy to create invalid objects, which then cannot be easily interpreted or fixed---a problem that is already exceedingly apparent in three dimensions.
+As an alternative to the use of simple operations on combinatorial primitives, this thesis thus proposed three higher-level methods, all of which are relatively easy to use and attempt to create valid output.
+
+% Chapter 6
+
+\item[I.\ Constructing objects using $n$D extrusion]
+
+Extrusion as used in GIS has a natural extension into a dimension-independent formulation (\refch{ch:extrusion}).
+Starting from an $(n-1)$-dimensional space partition as an $(n-1)$-dimensional cell complex and a set of intervals per cell, it is possible to extrude them to create an $n$-dimensional cell complex.
+It is the easiest method to load existing 2D or 3D data into a higher-dimensional structure, representing a set of cells that exist along a given dimension, such as a length of time or a range of scales.
+It is also easy to guarantee that the output cell complex is valid and can be used as a base for further operations, such as dimension-independent generalisation algorithms.
+
+The extrusion algorithm developed in this thesis works on the basis of a generalised map representation of the cell complex and is relatively fast, with a worst case complexity of $O(ndr)$ in the main algorithm, where $n$ is the extrusion dimension, $d$ is the total number of darts in the input map and $r$ is the total number of intervals in the input, but offers better complexity in practice.
+It is also memory-efficient, as only three layers of darts (of the size of the input cell complex) need to be kept in memory at the same time.
+
+% Chapter 7
+
+\item[II.\ Constructing $n$D objects incrementally]
+
+Based on the Jordan-Brouwer separation theorem \citep{Lebesgue11,Brouwer11}, it is known that an $i$-cell can be described based on a set of its bounding $(i-1)$-cells (\refch{ch:incremental-construction}).
+Since individual $(i-1)$-cells are easier to describe than the $i$-cell, this can be used to subdivide a complex representation problem into a set of simpler, more intuitive ones.
+This method can be incrementally applied to construct cell complexes of any dimension, starting from a set of vertices in $\mathbb{R}^n$ defined by a $n$-tuple of their coordinates, and continuing with cells of increasing dimension---creating edges from vertices, faces from vertices or edges, volumes from faces and so on.
+
+The incremental construction algorithm developed in this thesis solves this problem in a practical setting by computing the topological relationships connecting the bounding $(i-1)$-cells.
+It uses indices on the lexicographically smallest vertex of every cell per dimension, as well as an added index using the lexicographically smallest vertex of the bounding ridges of the cell that is being built.
+It generates an $i$-cell in $O(d^{2})$ in the worst case, with $d$ the total number of darts in the cell.
+However, it fares markedly better in real-world datasets, as cells do not generally share the same lexicographically smallest vertex.
+By checking all matching ridges within a cell's facets, the algorithm can optionally verify that the cell being constructed forms a combinatorially valid quasi-manifold, avoiding the construction of invalid configurations.
+
+% Chapter 8
+
+\item[III.\ Linking 3D models at different LODs into a 4D model]
+
+As an example high-level higher-dimensional object construction method, a 4D model can be constructed from a series of different 3D models at different LODs (\refch{ch:linking-lods}).
+The method presented in this thesis consists of three steps: identifying corresponding elements in different LODs, deciding how these should be connected according to a linking scheme, and finally linking relevant 3-cells into 4-cells.
+Different linking schemes yield 4D models having different properties, such as objects that suddenly appear and disappear, gradually change in size or morph into different objects along the fourth dimension.
+
+By modelling the LOD as a dimension, the correspondences between equivalent objects across LODs become geometric primitives, making it possible to perform geometric operations with them (\eg\ extracting an intermediate LOD for visualisation purposes) or to attach attributes to them (\eg\ the meaning of these correspondences), just as is done to other geometric primitives.
+These topological relationships and correspondences can then be used for multiple applications, such as updating and maintaining series of 3D models at different LODs, or testing the consistency of multi-LOD models (\eg\ by using the validity checks in \citet{Groger11}).
+
+% Chapter 9
+
+\item[Extracting 2D/3D subsets from an $n$D model]
+
+The process to obtain a lower-dimensional subset of a higher-dimensional dataset can be regarded as a function that maps a subset of $\mathbb{R}^n$ to a subset of $\mathbb{R}^m$, $m < n$, which is obtained by cutting through the dataset in a geometrically meaningful way (\refch{ch:cleaning}).
+Broadly, this process consists of two steps: (i) selecting a subset of the objects in the model and (ii) projecting this subset to a lower dimension.
+Both of these steps can vary substantially.
+Selecting a subset of the objects can be as simple as obtaining those within a axis-aligned bounding box, or can be as complex as a Boolean set intersection operation, such as for the computation of cross-sections.
+Meanwhile, there are a wide variety of transformations that apply different projections with different properties, such as the $n$-dimensional to ($n-1$)-dimensional orthographic and perspective projections derived in this thesis.
+
+% Chapter 10 + Appendix A
+
+\item[Methods to create valid objects and space partitions in 2D and 3D]
+
+Most algorithms described in computational geometry and GIS assume that their input datasets are flawless and they are processable using real numbers.
+However, invalid datasets are widespread in GIS (\refch{ch:cleaning}), and they are represented and processed using limited-precision arithmetic (\refap{ch:implementation}).
+
+In order to cope with 2D invalid datasets, this thesis further developed methods to create valid polygons and planar partitions using a constrained triangulation of the input.
+These were based on the work done in \citet{ArroyoOhori10}, improving the reconstruction algorithm, fixing edge cases, implementing an odd-even constraint counting mechanism and improving the quality of the implementation.
+Similarly, a method to repair 3D objects and space subdivisions was developed by snapping together lower-dimensional primitives and removing overlaps using Boolean set operations on Nef polyhedra \citep{Bieri88,Hachenberger06}.
+These methods were used in this thesis in order to use real-world datasets in practice, such as when applying the construction algorithms.
+
+% There is no systemic reason to tolerate invalid data
+
+\end{description}
+
+\section{Contributions}
+\label{se:contributions}
+
+The main contribution of this thesis is the realisation of a higher-dimensional Geographic Information System, including an analysis of its possible internal (in-memory) and external (exchange format) representations, the development of basic algorithms for object construction and visualisation, and the development of GIS data repair tools for 2D and 3D datasets.
+By taking a model that was previously only described at a conceptual level \citep{vanOosterom10} and realising it, it is now possible to more fully evaluate the consequences of this higher-dimensional approach.
+
+In more concrete terms, there were several smaller contributions that were necessary to be able to achieve this realisation.
+The most significant ones are:
+
+\begin{description}
+
+\item[Survey and analysis of higher-dimensional models and structures] I conducted a survey of all of the main data models and data structures used in GIS, geometric modelling and related fields, considering 2D, 3D and $n$D structures.
+These were analysed in terms of their feasibility for the higher-dimensional modelling of geographic information, including how they could handle different geometry classes, topology and attributes, either in their current form or through modifications, as well as their ease of implementation in practice.
+
+\item[Three construction methods] I developed three easy-to-use construction methods for objects of any dimension.
+The two methods lower-level methods---extrusion and incremental construction---were implemented using CGAL Combinatorial Maps and tested using real-world datasets.
+The third method has been tested with a few synthetic datasets, but more work is necessary to fully automate it.
+All of the implementations were made available publicly under an open source licence.
+
+\item[Higher-dimensional real-world models] As part of this thesis, I created higher-dimensional models from real-world 2D and 3D datasets.
+To the best of my knowledge, these are the only datasets consisting of realistic higher-dimensional objects in a GIS setting.
+
+\item[Combinatorial map reversal] As part of the development of the incremental construction operation, I developed additional functions that were added to CGAL Combinatorial Maps after being approved by the CGAL Editorial Board.
+These functions involved reversing the orientation of a combinatorial map of any dimension.
+
+\item[Simple formulation of $n$D to ($n-1$)D projections] I developed intuitive formulations of $n$-dimensional to ($n-1$)-dimensional orthographic and perspective projections.
+While other formulations exist, my formulations based on normal vectors are in my opinion the easiest to understand and manipulate.
+
+\item[Repair methods tools] I developed methods to automatically repair 2D polygons and planar partitions, as well as 3D polyhedra and space partitions.
+The 2D methods were also released publicly under an open source licence as \texttt{prepair} and \texttt{pprepair}.
+The 3D methods will also be released publicly after more thorough testing and documentation.
+
+\end{description}
+
+\section{Future work}
+\label{se:futurework}
+
+As this thesis challenges many of the assumptions underpinning current GIS, there are many potential lines of research that can be formulated for higher-dimensional GIS and higher-dimensional modelling in general.
+Most algorithms for 2D/3D GIS have a dimension-dependent formulation and would result in open problems in an $n$D context.
+
+However, while these are worthy of attention, I would like to focus on what are still significant gaps in knowledge for the implementation of a higher-dimensional GIS and that could not be solved in this thesis' timeframe.
+While some of these research topics are not within the field of GIS, they are what I consider to be the key steps for a more complete implementation of a working system.
+They are:
+
+\begin{description}
+
+\item[Low-level linking algorithms] The linking schemes from \refch{ch:linking-lods} have only been described in terms of high-level algorithms.
+These should be further developed by finding adequate low-level algorithms to identify matching elements using customisable constraints.
+For instance, it is reasonable to attempt to minimise a certain distance function between two models (\eg\ Earth mover's distance), but it is also important to do so in a manner that preserves the topological relationships between the objects.
+
+\item[High-level construction algorithms] The three object construction methods described in this thesis operate mostly on lower-dimensional primitives and consequently cover only a few use cases.
+There is a need to develop intuitive methods that operate directly on higher-dimensional primitives, which should preferably be usable in an interactive environment.
+Note however that this does not mean that the end user would be viewing the higher-dimensional model directly, as it could be shown in simplified form or as a 2D or 3D representative subset.
+
+\item[$n$D constrained triangulator] There are high-quality robust implementations of constrained Delaunay triangulations in 2D \citep{Shewchuk96} and 3D \citep{Si05}, as well as good descriptions of a constrained Delaunay triangulation in $n$D \citep{Shewchuk07}.
+However, in order to realise a higher-dimensional GIS based on a simplicial complex model, it is necessary to have an $n$D constrained triangulator which should be preferably Delaunay.
+
+\item[Hyperspherical projective geometry kernel] I deemed Nef polyhedra one of the most promising models for a higher-dimensional GIS, but they have only been implemented in 2D and 3D.\@
+In order to implement $n$-dimensional Nef polyhedra, it is necessary to develop a hyperspherical projective geometry kernel.
+This kernel would then be used to compute the local $(n-1)$-dimensional pyramids around every vertex.
+
+\item[$n$D Boolean set operations] Using the above mentioned hyperspherical projective kernel or another method, it is necessary to develop robust algorithms to compute $n$D Boolean set operations.
+These would be the base of most geometric operations in a higher-dimensional GIS.\@
+
+\item[Visualisation of higher-dimensional geographic information] \refch{ch:slicing} described how data selection and projection methods can work in arbitrary dimensions.
+However, there are significant issues to tackle in order to create a useful visualiser for higher-dimensional datasets.
+Namely, there are significant hurdles in user interaction, dealing with large datasets, computing higher-dimensional cross-sections and visual cues in higher dimensions.
+
+\item[2D/3D/$n$D repair methods with quality guarantees] The data repair methods described in \refch{ch:cleaning} are able to recover from most invalid 2D and 3D configurations.
+However, they are not easily extensible to higher dimensions due to the lack of a robust $n$D constrained triangulator (see above), and they do not provide quality guarantees in their output.
+In order to develop robust systems, it is highly desirable to be able to specify a robustness criterion (\eg\ a minimum distance between vertices or ensuring that the geometries are not collapsed/flipped in a floating-point representation), which is guaranteed by a data repair algorithm.
+
+\item[Higher-dimensional modification operations] By necessity, this thesis focused on operations for object creation in order to generate initial higher-dimensional datasets.
+Now that it is possible to generate them, it is important to think of intuitive higher-dimensional object modification operations.
+For instance, how can a 4-cell split operation be intuitively defined, or how can collapsed geometries (\eg\ from the extruded and collapsed models in \refse{se:extrusion-generalisation}) be processed to remove combinatorial elements.
+
+\item[Real-world 4D spatiotemporal datasets] Using timestamped 3D datasets, it should be possible to create true 4D datasets using spatiotemporal information.
+However, obtaining reasonably clean datasets is difficult, as is exporting the temporal information in a usable format that is linked to corresponding geometries.
+
+\end{description}

@@ -1,0 +1,32 @@
+// Abstracts a map of cell->ranges for a particular dimension
+template <class LCC, unsigned int dimension>
+struct Extrusion_ranges_map_of_dimension {
+public:
+  typedef std::map<typename LCC::template Attribute_const_handle<dimension>::type, 
+    Extrusion_ranges<LCC> > type;
+  type ranges_map;
+};
+
+// Abstracts a tuple of maps of cell->ranges, each element containing the map of a particular dimension
+template <class LCC, unsigned int dimension = LCC::dimension, class Result = CGAL::cpp11::tuple<> >
+struct Extrusion_ranges_tuple_per_dimension_up_to;
+
+template <class LCC, class ... Result>
+struct Extrusion_ranges_tuple_per_dimension_up_to<LCC, 0, CGAL::cpp11::tuple<Result ...> > {
+  typedef CGAL::cpp11::tuple<Extrusion_ranges_map_of_dimension<LCC, 0>, Result ...> type;
+};
+
+template <class LCC, unsigned int dimension, class ... Result>
+struct Extrusion_ranges_tuple_per_dimension_up_to<LCC, dimension, CGAL::cpp11::tuple<Result ...> > {
+  typedef typename Extrusion_ranges_tuple_per_dimension_up_to<LCC,dimension - 1, 
+    CGAL::cpp11::tuple<Extrusion_ranges_map_of_dimension<LCC, dimension>, Result ...> >::type type;
+};
+
+// Abstracts a tuple of maps of cell->ranges, each element containing the map of a particular dimension
+template <class LCC_>
+struct Extrusion_ranges_tuple_per_dimension {
+public:
+  typedef LCC_ LCC;
+  typedef typename Extrusion_ranges_tuple_per_dimension_up_to<LCC>::type type;
+  type ranges;
+};

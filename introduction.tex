@@ -1,0 +1,193 @@
+% !TEX root = thesis.tex
+
+\chapter{Introduction}
+\label{ch:introduction}
+
+% Spatial information
+
+\emph{Spatial information} describes the location of objects in space and the relationships between them.
+Within this thesis the emphasis is on \emph{geographic} information as represented in a \emph{computer}, which uses similar techniques but narrows this definition to information that is about the real world and at a human-to-Earth scale, using abstracted digital representations of real-world entities such as terrain, cities, roads and buildings.
+These entities and the relationships between them are defined using sets of interlinked computer primitives.
+Because of this, spatial information forms a necessary component of any computer model of the world as we know it at any significant level of detail.
+
+% GIS research
+
+At the core of this subject lies the research on geographic information systems (GIS), which produces tools to create, manipulate, analyse and view the digital objects that are inherent in these abstract representations of the world.
+Compared to other software categories that also work with geometric objects, such as those used in computer-aided design (CAD) and geometric modelling, GIS tools are expected to be remarkably generic, working with a wide variety of data formats from multiple sources, and using very diverse computer representations and operations.
+
+% 2D representations in GIS
+
+For historical and practical reasons, current GIS mostly use simple 2D representations \citep{ESRITopology,SimpleFeatures1}, which are relatively easy to use and efficient, essentially consisting of sets of linked points, lines and polygons.
+Their efficiency is due to the fact that they can rely on many strong properties that are intrinsic to 2D objects.
+For example, one such property is that it is possible to define a natural order for the points around a closed polygonal curve, as shown in \reffig{fig:loop},
+\marginpar{
+\captionsetup{type=figure}
+\includegraphics[width=\marginparwidth]{figs/loop}
+\caption{A polygon as a cycle of points}
+\label{fig:loop}
+}
+and so a polygon can be represented as a sequence of points that form a cycle along its boundary \citep{Jordan87}, which are implicitly connected by line segments between each consecutive pair.
+Another such property is based on planar partitions---sets of polygons that form a subdivision of the plane---such as the one in \reffig{fig:corine}.
+\marginpar{
+\captionsetup{type=figure}
+\includegraphics[width=\marginparwidth]{figs/corine}
+\caption[The polygons in the CORINE dataset around Delft]{The polygons in the CORINE\protect\footnotemark\ dataset in the area around Delft \citep{CEC95}}
+\label{fig:corine}
+}
+\footnotetext{\url{http://www.eea.europa.eu/publications/COR0-landcover}}
+Since in a planar partition there are two polygons incident to any edge (except those bordering the exterior), a complete planar partition can be stored easily as a set of edges where every edge is linked to two other edges and records the polygons that lie on each of its two sides \citep{Peucker75}.
+
+% 2D operations -> slowly start with problem
+
+2D GIS are also able to take advantage of a great number of existing techniques that are based on 2D representations, such as those that are used to model the flow of water over a terrain \citep{vanKreveld97} or to combine multiple maps into one (\ie\ a map overlay) \citep[\S{}2.3]{deBerg08}.
+Moreover, these techniques have been developed and improved over decades, whereas any change in representation would require the development of new accompanying techniques in order to be truly useful.
+
+% 3D? Not really
+% TODO: Weird space between the figures above and below in list of figures
+
+The aforementioned advantages of 2D representations mean that even `3D' GIS usually mimic the third dimension by using a so-called 2.5D structure, essentially treating the third dimension as a simple attribute that is attached to each object \citep{Raper89}, or represent individual 3D objects only implicitly through the 2D surface that separates their interior from their exterior \citep{Edmonds60,Baumgart75}, as the cube in \reffig{fig:brep}, rather than as true solid objects.
+\marginpar{
+\captionsetup{type=figure}
+\includegraphics[width=\marginparwidth]{figs/brep}
+\caption{A cube represented as the 6 square faces that bound it}
+\label{fig:brep}
+}
+These solutions are compromises, as they limit the type of geometries that can be represented and complicate the storage of the relations that exist between 3D objects.
+
+% Time/scale, also 2D
+
+Another important consequence is that when non-spatial characteristics that have a strong link to space, such as time and scale, are integrated in a GIS, they are usually implemented using similar adaptations of 2D representations.
+For example, spatiotemporal GIS keep multiple representations of 2D structures \citep{Armstrong88}, each at a different point in time, or a list of changes per object \citep{Worboys92,Peuquet94}, while multi-scale datasets generally consist of independent datasets for each scale with some common identifiers that link objects between datasets \citep{Friis-Christensen03,Stoter14}.
+
+% Limits 3D operations
+
+The use of 2D representations also limits the capabilities of GIS software, as the techniques that can be implemented on top of these 2D representations cannot make full use of the potential of 3D spatial information \citep[Ch.~3]{Zlatanova00}.
+For instance, current GIS are largely unable to manipulate 3D objects or to compute geometric operations between multiple 3D objects, forcing users to perform such functions in 3D modelling software.
+These examples are notable as similar functionality for is widespread in 2D GIS and expected by users.
+
+% nD approach -> solution
+
+A radical potential solution to these problems is to represent certain parametrisable characteristics as additional dimensions in the geometric sense, as shown in \reffig{fig:axes}, such that real-world entities are modelled as higher-dimensional objects embedded in higher-dimensional space.
+\marginpar{
+\captionsetup{type=figure}
+\includegraphics[width=\marginparwidth]{figs/axes}
+\caption{Five dimensions based on 3D space, time and scale}
+\label{fig:axes}
+}
+A building existing over a time span and stored at a range of scales on a computer could thus be represented as a single 5D object.
+
+% Why?
+
+This \emph{higher-dimensional geographic information modelling} approach is well grounded in long-standing mathematical theories, such as the setting of coordinates to space \citep{Descartes37}, and theories of higher-dimensional geometry \citep{Riemann68} and topology \citep{Poincare95}.
+It also opens the door for new, more powerful techniques and practical applications.
+For example, these $n$-dimensional representations could be used to ensure that an object is consistent along all dimensions (\eg\ a building at different points in time or levels of detail), or to analyse its relations to other objects along all dimensions as well.
+
+% Scientific gap
+
+While there is a large body of related work on the representation of abstract $n$-dimensional objects in mathematics and computer science \citep{Brisson93,Lienhardt94}, it is necessary to extend these representations to make them fit for use with real-world objects, which have aspects that are difficult to handle in certain idealised representations, \eg\ certain complex geometries (\reffig{fig:nonmanifold})
+\marginpar{
+\captionsetup{type=figure}
+\includegraphics[width=\marginparwidth]{figs/nonmanifold}
+\caption[A non-manifold shape]{This non-manifold shape cannot be handled properly in many representations.}
+\label{fig:nonmanifold}
+}
+, holes (\reffig{fig:torus})
+\marginpar{
+\captionsetup{type=figure}
+\includegraphics[width=\marginparwidth]{figs/torus}
+\caption{The top and bottom faces of this torus have holes in them.}
+\label{fig:torus}
+}
+and attributes.
+Additionally, making this approach attractive in practice requires the development of techniques to construct, analyse and visualise higher-dimensional geographic objects.
+Finally, there are significant technical issues involved in the realisation of these representations and techniques into a computer implementation.
+
+\section{Research objective and scope}
+\label{se:objective}
+
+In order to determine whether the higher-dimensional modelling approach is worthwhile, and if so, the conditions under which it makes sense to follow it, it is necessary to gain a greater understanding of the entire modelling process and its technical consequences.
+The main aim of this thesis is therefore to gain this understanding by \textbf{realising the fundamental aspects of a higher-dimensional Geographic Information System}, ranging from the development of the necessary concepts to the creation of prototype-level working software using real-world higher-dimensional datasets.
+In this sense, I purposefully do not intend to prove that the higher-dimensional spatial modelling approach is better or worse than existing approaches, but instead to highlight its advantages and disadvantages.
+
+\section{Structure of this thesis}
+\label{se:about}
+
+This thesis comprises two main parts, each of which contains a few chapters and which respectively cover methods to solve problems inherent in: (i) representing objects in arbitrary dimensions, and (ii) creating and manipulating such objects.
+After these, there are some independent chapters falling outside these parts, covering ancillary aspects and putting together the results of the rest.
+All chapters are described in detail below.
+
+% \clearpage
+
+\begin{description}
+
+% Part I
+% \textbf{\refpa{pa:representation} \nameref{pa:representation}}
+\item[\refpa{pa:representation} \nameref{pa:representation}] \ 
+
+\begin{description}
+
+\item[\refch{ch:modelling-mathematics}]
+introduces the mathematical concepts and background behind spatial data modelling.
+
+\item[\refch{ch:modelling-background}]
+describes and analyses the state of the art in the 2D and 3D modelling of space, time, scale and attributes.
+% , doing so with a view to possible higher-dimensional extensions.
+It concludes by listing some of the shortcomings of current approaches.
+
+\item[\refch{ch:nd-modelling}]
+presents the higher-dimensional modelling paradigm that is the basis of this thesis, which aims to solve many of the problems alluded to in \refch{ch:modelling-background}.
+It also describes and evaluates the higher-dimensional representations that can be used in order to realise this approach, which take the form of $n$-dimensional data models and structures.
+
+\end{description}
+
+% Part II
+% \textbf{\refpa{pa:operations} \nameref{pa:operations}}
+\item[\refpa{pa:operations} \nameref{pa:operations}] \ 
+
+\begin{description}
+
+\item[\refch{ch:operations-background}]
+presents a few fundamental operations for some of the data structures described in \refch{ch:nd-modelling}.
+These are used in order to build the higher level operations described in the other chapters within \refpa{pa:operations}.
+
+\item[\refch{ch:extrusion}]
+describes $n$-dimensional extrusion, an extension of the well-known 2D to 3D extrusion operator in GIS.\@
+It can be used to generate simple prism-shaped $n$-dimensional objects from an $(n-1)$-dimensional space partition by assigning to each $(n-1)$-dimensional object a range along which it exists.
+
+\item[\refch{ch:incremental-construction}]
+describes incremental construction, an operation which is able to generate arbitrary $n$-dimensional objects based on defining their $(n-1)$-dimensional boundary.
+It is equivalent to the generation of the topological relationships that exist between a set of $(n-1)$-dimensional objects.
+
+\item[\refch{ch:linking-lods}]
+shows how a higher level construction operator that links a series of 2D or 3D models can be created.
+This enables the construction of 4D models from real-world 3D city models covering the same region.
+
+\item[\refch{ch:slicing}]
+explains how 2D and 3D information can be extracted from a higher-dimensional representation by selecting appropriate portions of the data (\eg\ cross-sections) and projecting it to 2D/3D space.
+
+\end{description}
+
+% \bigskip
+% \textbf{\refpa{pa:implementation} \nameref{pa:implementation}}
+% \begin{description}
+
+\item[\refch{ch:cleaning}]
+explains the main data validation and repair techniques that are used to create 2D/3D/$n$D objects and space partitions out of real-world GIS datasets, which often have defects that impede their usage.
+By obtaining clean geometric models, these techniques enable the use of the higher-dimensional modelling approach in practice.
+
+% \end{description}
+
+% Conclusions
+% \bigskip
+\item[\refch{ch:conclusions}]
+concludes this thesis by explaining the achievements of this PhD project and highlighting the main challenges to further develop a higher-dimensional GIS.\@
+It contains an outlook on how higher-dimensional modelling can be used in GIS as well as some suggestions for future work.
+
+\item[\refap{ch:implementation}]
+describes the most relevant implementation details concerning the representations and operations from the previous chapters, such as the use of various software libraries,  programming techniques.
+
+\item[\refap{ch:dictionary}] 
+contains a short dictionary of terms for higher-dimensional GIS.\@
+As the terminology used in 2D GIS, 3D GIS, CAD, geometric modelling and other related fields can be different and is often used inconsistently and rather loosely, the appendix is intended for use as reference and for the better understanding of the thesis.
+
+\end{description}

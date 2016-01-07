@@ -1,0 +1,373 @@
+% !TEX root = thesis.tex
+
+\chapter{Linking corresponding 3D models}
+\label{ch:linking-lods}
+
+\refchs{ch:extrusion} and~\ref{ch:incremental-construction} presented in detail two low-level construction algorithms for $n$D objects, both of which operated on level of individual primitives.
+These are valuable in their own right, but in order to ease their use, it is necessary to develop high-level operations based on them which can be used by practitioners.
+This chapter instead describes at a high level how one such high-level operator can be defined, which creates a 4D representation from a series of existing 3D representations at different levels of detail.
+
+The chapter starts by introducing some background in \refse{se:linking-background}, explaining the motivation behind such an operation and covering the principles of linking operations with 2D/3D objects.
+\refse{se:linking-methodology} describes four linking schemes that can be used to construct 4D models from a set of 3D objects, discussing the advantages and disadvantages of each method in terms of their feasibility in practice and of the properties that the 4D model would have.
+\refse{se:linking-examples} presents several use cases to demonstrate how the different schemes result in objects with different characteristics, where the best scheme is therefore application-dependent.
+\refse{se:concrete-example} shows a concrete example in detail, implementing a use case that combines most of the linking schemes from \refse{se:linking-methodology}.
+\refse{se:linking-conclusions} concludes the chapter with a discussion of the further possibilities of this method.
+
+Most of this chapter is based on the paper:
+\begin{itemize}
+\paperijgind%
+\end{itemize}
+
+\section{Motivation and background}
+\label{se:linking-background}
+
+3D city models of the same region are often created at multiple levels of detail (LODs).
+For instance, in the CityGML standard \citep{CityGML2} five discrete LODs are defined (\reffigp{fig:citygml-filip}), which range from the 2D footprint of the building up to a representation where the windows, doors and walls and even indoor objects are all modelled in detail.
+This allows a user to choose the most appropriate LOD for a given application, balancing the better results that are obtainable using more detailed models with the higher computational requirements that are necessary to obtain them \citep{Biljecki14}.
+
+However, the creation of these models is a complex task that needs to be performed continuously, as 3D city models need to be kept up to date \citep{Zlatanova04,Kolbe05}.
+Given the large size and complexity of current 3D city models, it can be very beneficial to have incremental updates to the model which affect only a building and its immediate surrounding area \citep{Dollner06}.
+These can take place as buildings and other city objects are built, modified and destroyed.
+
+In order to apply such incremental update processes to 3D city models at multiple LODs, links between related objects are crucial.
+Given an object at a certain LOD, links usually point to its incident and adjacent objects at the same LOD (\ie\ the topological relationships that are most common in GIS), as well as to its \emph{corresponding} objects at other LODs, even when these objects are of different dimension (\eg\ when a thin polyhedron in a higher LOD is collapsed to a polygon in a lower LOD).
+These links can then be used to propagate changes to other LODs \citep{vanOosterom10} or to apply consistency checks to new or newly altered objects \citep{Groger11a}, among other operations that are part of a robust update process.
+
+In theory, a series of LODs might be derived from an automatic generalisation process \citep{Weibel97} and thus the exact correspondences between objects can be already known, but as discussed in \refse{se:modelling-scale}, 3D generalisation is complex in practice.
+The different LODs of a model are therefore usually acquired independently, collected with different techniques, often for different purposes, and thus the resulting representations do not necessarily have easy-to-identify correspondences.
+The same object can be slightly displaced at different LODs, an object can be an aggregate of other objects (think of a terraced house: either each house is represented or one volume for the whole row), or can be modelled in an entirely different way.
+In fact, as shown in \reffig{fig:bksep}, it is possible that there are no common geometries across LODs.
+\marginpar{
+\captionsetup{type=figure}
+\centering
+\includegraphics[width=\marginparwidth]{figs/bksep}
+\caption[Two LODs of a building footprint]{Two LODs of a building footprint. Note that there are no vertices, edges or faces with the same geometry in both LODs, and that many primitives in the higher LOD are equivalent to a single one in the lower LOD.}
+\label{fig:bksep}
+}
+
+In order to join multiple separate representations, stored as independent datasets, it is therefore first necessary to find the correspondences between (equivalent) objects at different LODs.
+As described in 2D by \citet{Hampe03}, when an automatic generalisation process is used, the objects can be directly linked as they are being generalised.
+Otherwise, the correspondences must be inferred.
+In 2D, they are usually inferred using \emph{map matching} methods, which can take into account the geometry \citep{Veltkamp01}, topology and semantics of and between the objects \citep{Devogele96}.
+\citet{Devogele96} does this in three steps: (1) manually finding correspondences between semantic classes; (2) resolving conflicts; and (3) matching objects using geometry, topology and semantics.
+\citet{Zhang14} matches features by computing a compatibility coefficient, derived from the similarity in their geometry and that of their neighbours.
+
+After the correspondences have been found, the corresponding representations of an object are linked together.
+These links across LODs usually take the form of common IDs at the 2D or 3D object level.
+However, more advanced linking structures developed for this exact purpose do exist and are often used in 2D---some of these were mentioned in \refse{se:modelling-scale}: hierarchical planar subdivisions \citep{Filho95}, multi-scale partitions \citep{Rigaux95}, nested maps \citep{Plumer97} and topological generalised area partitioning trees \citep{vanOosterom05}.
+
+\section{Methodology}
+\label{se:linking-methodology}
+
+The methods used to identify correspondences between 2D objects and the data structures used to store these correspondences, mentioned in \refse{se:linking-background}, do not readily extend to higher dimensions.
+While map matching methods can identify (to a limited extent) the correspondences between 2D or 3D objects, they do not take into account the lower-dimensional correspondences between the 0D--2D cells bounding them.
+Linking corresponding objects using only common IDs at the 2D or 3D object level is similarly problematic, as it is difficult to store complex correspondence relationships, such as an aggregation of multiple objects into one, or those connecting the points, line segments and polygons on the boundary of corresponding 2D or 3D objects.
+
+Based on the higher-dimensional data structures presented in \refch{ch:nd-modelling}, this section presents a sketch of a dimension-independent approach.
+By considering the LOD of a model as a fully independent dimension in the geometric sense \citep{vanOosterom10,Paul11,Stoter12}, it is possible to store all topological relationships between any related objects across all LODs.
+A set of connected 2D polygons at multiple LODs are modelled as a single 3D polyhedron\footnote{Separate polygons might become connected in different situations, such as by being joined into a single one at one or more LODs.}, as is shown in \reffig{fig:bk}, and a set of connected 3D polyhedra at multiple LODs are modelled as a single 4D \emph{polychoron}.
+Notably, the correspondences between equivalent objects across LODs thus become geometric primitives, making it possible to perform geometric operations with them (\eg\ extracting an intermediate LOD for visualisation purposes) or to attach attributes to them (\eg\ the meaning of these correspondences), just as is done to other geometric primitives.
+\marginpar{
+\captionsetup{type=figure}
+\centering
+\includegraphics[width=\marginparwidth]{figs/bk}
+\caption[Two LODs of a building footprint as a single polyhedron]{Two LODs of a building footprint are stored as a single polyhedron. Note that the correspondences between vertices, edges and faces between the LODs are clearly indicated by the vertical edges and faces.}
+\label{fig:bk}
+}
+
+In the specific case of a 4D (3D space+LOD) model, a set of 4D objects is modelled as a 4D cell complex embedded in 4D space, where there is an additional LOD axis $l$ and a point in 4D space is defined by a tuple of coordinates $(x,y,z,l)$.
+It is worth noting that this implies that the LOD axis should be properly parametrised, defining quantifiable values for every fixed LOD in a model, or alternatively a function that does so.
+
+The 4D space is filled with a set of non-overlapping polychora, in which a 3D object (\eg\ a building) at \emph{all} of its different LODs is represented as a single 4D object.
+This 4D object is bounded by a set of volumes, two of them being the object at its lowest and highest LOD, and several lateral ones formed by filling the space between corresponding faces across LODs.
+When a 3D cross-section is extracted from it (\refch{ch:slicing}), these respectively correspond to the volumes and bounding faces of an extracted 3D model.
+
+A 4D model is constructed from a series of existing LODs of a 3D city model in three steps: 
+\begin{enumerate}
+  \item identifying corresponding 0D--3D cells;
+  \item linking them by creating 1D--4D cells connecting them;
+  \item using the incremental construction algorithm of \refch{ch:incremental-construction} to build a 4D cell complex using all 0D--4D cells.
+\end{enumerate}
+
+This section describes various methods to identify corresponding cells in different LODs of a 3D object (\refse{ss:identification}), and then presents four linking schemes to construct a 4D model (\refse{ss:linkingrules}).
+As \refse{se:linking-examples} demonstrates, the 4D cells created by the linking schemes are used to construct 4D cell complexes with different properties and shapes.
+
+\subsection{Step 1: Identifying corresponding cells in 3D models}
+\label{ss:identification}
+
+Constructing a 4D model from a sequence of 3D models largely depends on the identification of the corresponding 0-, 1-, 2-, and 3-cells between these 3D models.
+The aim of this identification is to create a mapping between the 3D models that preserves the topological relationships between the elements in the models so as to create a valid 4D model.
+
+Considering 3D models at different LODs, this identification will often result in matching cells of different dimensions, commonly with some cells in the 3D model at the highest LOD being matched to cells of lower dimension in the 3D model at the lowest LOD\@.
+Also, these correspondences will often not result in a one-to-one mapping: groups of adjoining cells in one model, most often in the one at the highest LOD, will commonly be matched to a single cell in the other model.
+
+The identification of matching cells should be done using a combination of the following, arguably in order of preference:
+
+\begin{description}
+\item[Attributes]
+Using the semantic information stored in the cells, when it is available.
+For instance, matching two cells that are known to be equivalent through the use of IDs, or if knowledge is kept during the generalisation process, matching a cell with one that is known to be a simplified version of it.
+
+\item[Topology]
+When there is an isomorphism between two cells (\refse{ss:operations-maps}) that additionally preserves all the topological relationships between them (such as the facet/ridge comparisons used in \refch{ch:incremental-construction}), the isomorphism between two cells already gives a matching between them, although it might be important to check that the isomorphism is compatible with the matching of the other cells in the model and with geometric constraints (\eg\ minimising the distance between matched cells).
+Relevantly, \citet{Gosselin11} describe how to compute isomorphism in a generalised map of any dimension.
+Another more complex possibility is using subgraph isomorphism on unmatched portions of a generalised map \citep{Eppstein99}, even if this problem is known to be NP-complete.
+
+Another way to use topology is to use the topological relationships between cells in order to infer matchings for the remaining cells \citep{Hampe03}.
+This is explained more concretely in the example of \reffig{fig:shape}.
+
+\item[Geometry]
+Using geometric computations, such as those based on computing similarity metrics, simply matching unmatched cells in one model to their nearest neighbour in another model, or attempting to minimise the Earth Mover's Distance (EMD) \citep{Rubner98} between them.
+It is however important to compute these matches using constraints that generally preserve the relative positions and topological relationships between the cells.
+For instance, a greedy algorithm could match cells iteratively, cascading these matches to adjacent cells (in all models) or rejecting matches that would violate a geometric or topological constraint.
+\end{description}
+
+A final possibility to assist when matching cells is to allow splitting an $i$-cell into multiple $i$-cells by adding cells of lower dimensions in a manner that does not alter the geometry of the cell.
+For instance, a face can be split into multiple faces by adding a vertex in its interior and creating edges that link it to some of the vertices of the face.
+This can make two cell complexes isomorphic and directly allow for a one-to-one mapping between two cell complexes.
+
+
+\subsection{Step 2: Linking corresponding cells}
+\label{ss:linkingrules}
+
+Based on the matches that were found between cells, which mathematically define a map between the 3D cell complexes of the 3D models, they are then linked to construct a 4D cell complex.
+For this, it might be necessary to create or modify 0D--3D cells in the input cell complexes, as well as to create new 1D--4D cells that lie \emph{between} the cell complexes.
+The resulting 4D cell complex is then embedded in 4D space by assigning new 4D coordinates for every point.
+Four different basic linking schemes are proposed here, which are shown in \reffig{fig:linkingschemes}.
+\begin{figure}[tb]
+  \begin{center}
+  \subfloat[Simple linking\label{fig:ls1}]{%
+    \includegraphics[width=0.45\linewidth]{figs/linkingscheme1}
+  }
+  \quad
+  \subfloat[Unmatched are collapsed\label{fig:ls2}]{%
+    \includegraphics[width=0.45\linewidth]{figs/linkingscheme3}
+  }
+
+  \subfloat[Modification of topology\label{fig:ls3}]{%
+    \includegraphics[width=0.45\linewidth]{figs/linkingscheme2}
+  }
+ \quad
+  \subfloat[Matching all to existing\label{fig:ls4}]{%
+    \includegraphics[width=0.45\linewidth]{figs/linkingscheme4}
+  }
+  \end{center}
+  \caption[Four linking schemes]{The four linking schemes for three LODs of a house, here depicted in 2D. The objects that would obtained by slicing between the LODs can be seen in dashed green contours; the red dashed lines reflect the cells that need to be added and split in order to ensure a valid 3D (2D+LOD) cell complex.}
+\label{fig:linkingschemes}
+\end{figure}
+
+
+%%%
+\subsubsection{Method 1: Simple linking of corresponding cells}
+\label{sss:method1}
+
+Links are constructed between the corresponding cells of an object at two different LODs, and if a cell has no corresponding cell then it is ignored.
+While this makes it possible to easily construct a 4D cell complex in the cases where all cells in the lower LOD model have a corresponding cell in the higher LOD model, when this is not the case, the result will consist of an incomplete 4D cell complex.
+
+To ensure a complete one, cells often need to be split (\eg\ those separated by the red dotted line in \reffig{fig:ls1}), which can be performed using geometric intersections.
+While this is possible in 3D and tools are readily available (see for instance \citet{Granados03,Hachenberger06}), the generalisation of this scheme to higher dimensions (\ie\ 5D+) is not easy in practice since no robust intersection tools in more than 3D are available.
+Observe that if a 4D cell complex generated using this method is sliced at an intermediate LOD, the result is exactly that of the lower LOD\@.
+
+
+%%%
+\subsubsection{Method 2: Unmatched cells are collapsed to existing ones}
+\label{sss:method2}
+
+No modifications are made to the 3D models, which is in practice a significant advantage since no complex geometric operations need to be performed and the size of the cell complex will be smaller than that of the one where cells are modified.
+Instead of geometric operations, unmatched cells in the higher LOD model are linked to nearby matched cells \emph{of a possibly lower dimension} in the lower LOD model while preserving certain geometric and topological constraints (\eg\ preserving adjacency and incidence between cells).
+This implies that some cells will be collapsed (\eg\ an edge can be mapped to a vertex), and the cells must be linked with care to ensure that a valid 4D cell complex is created (\eg\ no two cells should intersect).
+
+For instance, assume that the left eave of the roof of the house in the middle LOD model in \reffig{fig:ls2} has been (arbitrarily) matched to the roof of the low LOD model, with the right eave remaining unmatched as no unmatched cells remain in the low LOD model.
+In this case, using the knowledge that the roof and right wall are adjacent in the low LOD model but their corresponding cells (respectively the left eave and right wall) are separated by the right eave in the middle LOD model, the right eave can be collapsed to the common vertex lying between the two (upper right).
+Using such a mapping, the topological relationships between the cells will be preserved, with the exception of those involving the collapsed cells and those incident or adjacent to them.
+
+When the mapping has faults and the resulting 4D cell complex thus has geometric problems (\eg\ intersecting cells), the slicing operation might not have any geometric meaning, but the main advantage of the integration---consistency---will nevertheless still be guaranteed for all other cells.
+Note that ensuring that cells preserve their topological relationships and form a partitioning of space in 4D is challenging and not fully considered in this thesis.
+Finally, even if a combinatorially and geometrically valid 4D cell complex is constructed, the 3D object obtained by slicing might not be consistent with the reality; notice how the chimney in \reffig{fig:ls2} becomes increasingly smaller and closer to the right eave of the roof because of the way the cells have been linked.
+
+
+%%%
+\subsubsection{Method 3: Modifying the topology}
+\label{sss:method3}
+
+To ensure that there is a mapping between all the cells, it is possible to split or merge cells so that the topology (combinatorial structure) of the objects is identical.
+For instance, operations like removal and contraction \citep{Damiand03} can be used to simplify the more complex object(s) to make them match the simpler one(s) using an iterative process.
+On the other direction, it is possible to first identify for every cell in the lower LOD model one or more corresponding cells in the higher LOD model, then split cells in the lower LOD model so that their topology is the same as in the higher LOD model as the one to which it must be linked.
+
+In \reffig{fig:ls3}, for the lowest LOD, this implies first finding multiple matches for the roof cells of the lower LOD models, which then need to be split into multiple cells by the insertion of new vertices.
+For instance, these can be located at the closest location that lies on the matched lower LOD cell for every higher LOD cell.
+As this example shows, \emph{all} the representations of an object where this approach is used will result in the same topology.
+This results in increased storage space and the possibility of degenerate cells \eg\ multiple vertices at one location.
+The geometric operations necessary to split cells can be rather intricate as well.
+Observe that slicing however results in a different representation of the object, one where it smoothly morphs into the one at lower LOD (\eg\ the tip of the roof is slowly lowered as the LOD decreases).
+
+
+%%%
+\subsubsection{Method 4: Matching all cells to existing ones}
+\label{sss:method4}
+
+As is the case with \hyperref[sss:method2]{Method 2}, this method does not require modifying the topology of the objects.
+The main difference with it is that cells in the higher LOD model are not necessarily collapsed to a lower dimensional cell in the lower LOD model but are instead matched to one or more cells \emph{of any dimension} while also preserving certain geometric and topological constraints.
+In \reffig{fig:ls4}, observe that the tip of the roof of the middle LOD model (a point) is matched to the roof of the lowest LOD (an edge since this is a 2D representation) and that the 2 edges representing the middle-LOD roof are matched to the two corners of the lower-LOD roof (points).
+Slicing thus creates a truncated roof having 3 edges.
+This can be achieved by matching all cells that have a clear correspondence first, then attempting to match groups of unmatched cells while preserving the topological relationships between cells.
+
+For instance, in \reffig{fig:ls4} it is possible to first match the base and walls of the houses in the lower and middle LOD models, then match the remaining vertex and left/right edges in the middle LOD model respectively to the roof edge and left/right vertices.
+Observe that in this process, the tip of the roof of the middle LOD model (a point) is matched to the roof of the lowest LOD (an edge) and that the two eaves of the roof (edges) are matched to the two corners of the roof (points) in the lowest LOD\@.
+Slicing the resulting 4D cell complex creates a truncated roof having 3 edges.
+The matches for the chimney to other elements in \reffig{fig:ls4} is achieved by matching the chimney top to the right eave, and the remaining vertices and edges to its left and right sides respectively to the roof tip and right eave/wall vertices.
+The result is that while the chimney looses resemblance to reality, it slowly converges to the roof in the middle LOD model.
+
+\section{Use cases}
+\label{se:linking-examples}
+
+This section presents practical examples that describe the matching and the linking of cells for a few simple 3D models representing the same object(s) at different LODs.
+
+\subsection{Using Method 1: Simple linking}
+
+\reffig{fig:exsimple} shows an example where two LODs for a building are linked in such a way that only matched cells are involved.
+\begin{figure}[tb]
+   \centering
+   \includegraphics[width=\linewidth]{figs/exsimple}
+   \caption[Simple linking]{Two LODs of a house simply linked and the intermediate LOD obtained.}
+\label{fig:exsimple}
+\end{figure}
+First observe that since the two objects are not isomorphic, some cells are not matched (the ones representing the roof of the higher-LOD model).
+Observe also that the roof of the lower-LOD model has no match in the higher-LOD model.
+Thus, to construct a 4D cell complex, the flat roof geometry has to be added to the higher-LOD model.
+Then, the corresponding cells can be linked.
+Although it is possible to generate this 4D model by generating the $(i+1)$-cells that connect a pair of corresponding $i$-cells and linking all of them together, it is easiest to extrude one cell complex along the range between the two LODs.
+This already generates the proper combinatorial structure of the 4D model, and the final cell complex can be obtained by then moving the vertices of the face representing the model at the other LOD so as to match the geometry of the other model at its LOD.\@
+Moreover, when a linear cell complex is used and thus only the vertices are storing the geometry of the model, it is only necessary to move the vertices at the lowest LOD without a corresponding vertex at the highest LOD.\@
+
+
+%%%
+\subsection{Using Method 2: Collapsing}
+
+\reffig{fig:shape} shows an example with a 3D model at two LODs with differing geometry and topology.
+\begin{figure}[tb]
+   \centering
+   \includegraphics[width=\linewidth]{figs/shape}
+   \caption[Linking by collapsing]{Two LODs of a house with differing geometry and topology are integrated into a 4D model by collapsing cells in the model at the highest LOD.}
+\label{fig:shape}
+\end{figure}
+The 4D model has been obtained by first matching the 2-cells with known correspondences (the left, right, front and back large faces) and inferring that the other faces in the model at the highest LOD (right) should be collapsed based on their adjacency relationships with the matched faces.
+For example, since the front and right faces are adjacent in the lowest LOD but not in the highest LOD, the two faces between them\footnote{Combinatorially, this involves a search for a path between the front and right faces in the graph of the model at the highest LOD, such search being limited to the nodes representing the aforementioned faces and those representing faces that are \emph{not} present in the model at the lowest LOD.} should be collapsed to their common boundary (\ie\ their intersection: the edge between them).
+This example also shows that the topological relationships between the cells are nevertheless preserved with the exception of those that involved collapsed cells.
+The new topological relationships do however connect cells around the former collapsed cells.
+Note that the 3D model resulting from slicing the 4D model created in this way at an intermediate LOD (middle) will be isomorphic to the model at the highest LOD.\@
+
+
+%%%
+\subsection{Using Method 3: Modifying the topology}
+
+\reffig{fig:agg} shows an example of two 3D models being aggregated.
+\begin{figure}[tb]
+   \centering
+   \includegraphics[width=\linewidth]{figs/agg2}
+   \caption[Linking using topology modifications]{Two LODs of two houses being aggregated are integrated into a 4D model by modifying the topology of the model at the lowest LOD so as to match the topology of the model at the highest LOD.}
+\label{fig:agg}
+\end{figure}
+In order to create a 4D model from this situation, the topology of the simpler of the two models is modified, splitting the single volume into equal two adjacent ones, effectively resulting in a cell complex that also has four more vertices, four more edges, and four of its faces split into two.
+Note that the two models are however not isomorphic since the common face of the two houses in the lowest LOD becomes two disconnected faces in the model at the highest LOD, but that if this topological relationship is disregarded, the two models can be correctly matched independently.
+
+%%%
+\subsection{Combination of Methods 2 and 3}
+
+\reffig{fig:link1} shows a more complex example with three LODs which are linked using a combination of schemes: collapsing and modifying the topology of one of the models.
+Most of the cells in the highest LOD can be directly matched to cells in the middle LOD, with the exception of those that are part of the chimney.
+As these comprise a small object, these are simply collapsed to a single point in the middle LOD.\@
+Matching the roof cells in the lowest and middle LODs is however more complex since collapsing it to a point would ignore its adjacency with the body of the house and therefore not preserve its topology.
+The best solution is therefore to modify the topology of the lowest LOD in order to split the top face of the cubic house (which can be inferred to be a roof based on its attributes) into 4 faces, making the model isomorphic to the middle LOD.\@
+\begin{figure}[tb]
+   \centering
+   \includegraphics[width=\linewidth]{figs/link1}
+   \caption[Linking using multiple methods]{Three LODs of a 3D model of a house are integrated into a 4D model by modifying the topology of the model at the lowest LOD and collapsing a part of the model in the highest LOD.}
+\label{fig:link1}
+\end{figure}
+
+%%%
+\subsection{Using Method 4: matching to existing cells}
+
+\reffig{fig:link2} shows two of the LODs of the previous example, but matches the cells of the roof of the house to existing cells rather than modifying their topology.
+After attempting to match corresponding cells, the top face in the lowest LOD and the top four faces in the highest LOD remain unmatched.
+If each top face in the highest LOD is collapsed to the closest top \emph{edge} in the lowest LOD (\ie\ the edge that forms the bottom of the triangular face in the highest LOD) and the top vertex in the highest LOD (which lies between the faces) is linked to the top face in the lowest LOD, a four-sided pyramid is generated.
+Slices from it are shown as four trapezoidal faces in the sliced intermediate LOD.\@
+Then, if the top face in the lowest LOD is collapsed to the top vertex of the highest LOD, another four-sided pyramid is generated.
+A slice from this one is shown as a square face at the top of the sliced intermediate LOD.\@
+\begin{figure}[tb]
+   \centering
+   \includegraphics[width=\linewidth]{figs/link2}
+   \caption[Linking by matching cells]{Two LODs of a 3D model of a house (left and right) are linked despite not being isomorphic, with an intermediate LOD that shows the result of slicing the construction at an intermediate LOD (centre).}
+\label{fig:link2}
+\end{figure}
+
+This particular mapping, which correctly preserves all topological relationships between the cells, is interesting since it shows that cells are not necessarily only collapsed from higher LODs to lower LODs.
+It is worth noting that the result of this mapping is a set of cells that bound the model along the LOD dimension, so that an $i$-cell and a $j$-cell that are matched result in a $k$-cell lying between them, where $k = \max(i, j)+1$.
+Concretely, if for instance a 0-cell (the tip of the roof) is matched to the flat roof (2-cell), then the resulting links will create a tetrahedra (a 3-cell).
+Note also that although the rules needed to generate such a mapping might be more complex, the cell complex generated is identical in size than the equivalent model according to the scheme in \reffig{fig:ls2}.
+
+\section{A concrete example}
+\label{se:concrete-example}
+
+In order to show how the linking methods presented in this chapter work in practice, this section shows an implementation of the model from \reffig{fig:link2}.
+It uses CGAL Linear Cell Complexes and the incremental constructor operator described in \refch{ch:incremental-construction}.
+This model was chosen as it uses most of the linking methods discussed in the \refse{ss:linkingrules}: 
+the body of the house in both LODs is directly linked (\hyperref[sss:method1]{Method 1}), 
+the top face of the house in the lower LOD is collapsed to the tip of the roof in the higher LOD (\hyperref[sss:method2]{Method 2}), 
+and the roof vertices/edges in the lower LOD are connected to existing roof edges/vertices in the higher LOD (\hyperref[sss:method4]{Method 4}).
+
+First of all, the 17 vertices of the two 3D models are created as 4D points of the form $(x, y, z, l)$.
+Afterwards, these are first used to define the 35 faces of the model, the faces are used to define the 12 volumes, and the volumes to define the single 4-cell.
+Notice that these include faces and volumes within each of the two volumes of the input 3D models, but also include some faces and volumes that lie \emph{between} the two, \ie\ having vertices and faces in both input 3D models.
+Excerpts of the code to generate the 4D cell complex are shown in \reffig{fig:code}.
+\newsavebox{\pointsbox}
+\begin{lrbox}{\pointsbox}
+\begin{minipage}{0.42\overflowingheadlen}
+\lstinputlisting[frame=single,basicstyle=\footnotesize\ttfamily]{figs/points.cpp}
+\end{minipage}
+\end{lrbox}
+
+\newsavebox{\constructionbox}
+\begin{lrbox}{\constructionbox}
+\begin{minipage}{0.5\overflowingheadlen}
+\lstinputlisting[frame=single,basicstyle=\footnotesize\ttfamily]{figs/construction.cpp}
+\end{minipage}
+\end{lrbox}
+
+\begin{figure*}[p]
+\centering
+\begin{tabular}{cc}
+\subfloat[]{
+\includegraphics[width=0.4\linewidth]{figs/link1_filled}} &
+\multirow{-1}[38.7]{*}{
+\subfloat[Constructing other cells]{\usebox{\constructionbox}
+\label{subfig:construction}}} \\
+\subfloat[Coordinates of the 17 vertices]{\usebox{\pointsbox}
+\label{subfig:points}} &
+\end{tabular}
+\caption[Programming a complex linking example]{Code excerpts that show how vertices are created based on 4D points, faces as cycles of vertices, volumes as sets of faces, and 4-cells as sets of 3-cells. The colours referred to in (b) correspond to the highlighted faces and volumes in (a).}
+\label{fig:code}
+\end{figure*}
+
+The resulting 4D model was then validated by checking the properties of a valid combinatorial map (\refse{ss:operations-maps}).
+In short, these tests involved checking whether the darts (combinatorial simplices) in the map formed correct involutions or permutations and whether any darts remained free after the operations.
+Individual parts of the model (the triangular or square faces and the parallelepiped- or pyramid-shaped volumes) were also validated by verifying that they were isomorphic to similar objects that were known to be valid \citep{Gosselin11}.
+
+\section{Conclusions}
+\label{se:linking-conclusions}
+
+While integrating different LODs of the same 3D object into a single 4D model is generally considered as complex, the linking schemes proposed in this chapter show that it is possible to define high-level methods to connect different 3D models in a relatively simple manner.
+The linking schemes operate within a framework of three steps: identifying corresponding elements in different LODs, deciding how these should be linked, and finally linking relevant 3-cells into 4-cells using the incremental construction algorithm described in \refch{ch:incremental-construction}.
+
+Using a 4D representation means that it is possible to store not only the standard topological relationships (\eg\ incidence and adjacency) between objects in one LOD, but also all the correspondences between equivalent objects of any dimension across LODs, even when corresponding objects are of different dimension or the correspondences between them are not one-to-one.
+As these correspondences are modelled as geometric primitives, it is easy to perform geometric operations with them (\eg\ extracting an intermediate LOD for visualisation purposes) or to attach attributes to them (\eg\ the meaning of these correspondences), just as is done to usual geometric primitives.
+
+These topological relationships and correspondences can then be used for multiple applications, such as updating and maintaining series of 3D models at different LODs, or testing the consistency of multi-LOD models (\eg\ by using the validity checks in \citet{Groger11}).
+
+The different linking schemes presented in \refse{ss:linkingrules} yield 4D models having different properties, such as objects that suddenly appear and disappear, gradually change in size or morph into different objects along the fourth dimension.
+These different types of 4D models can then be useful for different applications.
+
+The linking schemes described in this chapter are meant for the multi-LOD 3D to 4D case.
+However, they do have a generic formulation, so they can also be applied to other non-spatial characteristics such as time, enabling them to be used in new applications, such as identifying the motion or change of objects through time.
+In addition, these schemes are fully dimension-independent, so it is conceivable that they can be applied to linking multiple higher-dimensional models, such as multi-temporal 4D models.

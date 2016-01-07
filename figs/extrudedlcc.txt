@@ -1,0 +1,16 @@
+template <unsigned int unextruded_dimension>
+class Linear_cell_complex_extruder_with_range {
+public:
+ typedef typename Linear_cell_complex_with_ids<unextruded_dimension>::type Lower_dimensional_cell_complex;
+ typedef typename Linear_cell_complex_with_ids<unextruded_dimension+1>::type Higher_dimensional_cell_complex;
+ typedef Linear_cell_complex_extruder_with_range<unextruded_dimension> Self;
+ typedef typename Lower_dimensional_cell_complex::FT FT;
+  
+ typedef typename Extruded_embeddings_with_range_of_dimension_and_lower<Self>::type Extruded_embeddings_with_range;
+ typedef Extrusion_ranges_tuple_per_dimension<Lower_dimensional_cell_complex> Extrusion_ranges;
+  
+private:
+ Extrusion_ranges extrusion_ranges;
+ std::set<typename Lower_dimensional_cell_complex::FT> all_ranges;
+ Higher_dimensional_cell_complex hdcc;
+};

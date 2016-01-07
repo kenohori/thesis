@@ -1,0 +1,38 @@
+template <unsigned int dimension, class InputIterator>
+Dart_handle get_cell(InputIterator begin, InputIterator end) {
+
+  // Validate that this will create a closed (topologically open) quasi-manifold cell
+  for (typename std::list<Dart_handle>::iterator dart_in_current_facet_1 = free_facets.begin(); 
+       dart_in_current_facet_1 != free_facets.end(); ++dart_in_current_facet_1) {
+
+  	// Go ridge by ridge
+    for (auto dart_in_current_ridge_1 = lcc.one_dart_per_incident_cell<dimension-2, dimension-1, dimension-1>(
+           *dart_in_current_facet_1).begin(); 
+         dart_in_current_ridge_1 != lcc.one_dart_per_incident_cell<dimension-2, dimension-1, dimension-1>(
+           *dart_in_current_facet_1).end();
+         ++dart_in_current_ridge_1) {
+      int matches = 0;
+      
+      // Find possible matches
+      for (typename std::list<Dart_handle>::iterator dart_in_current_facet_2 = free_facets.begin(); 
+           dart_in_current_facet_2 != free_facets.end(); 
+           ++dart_in_current_facet_2) {
+        if (&*dart_in_current_facet_1 == &*dart_in_current_facet_2) continue; // Compare by memory address
+        
+        // Go ridge by ridge in a potential match
+        for (auto current_dart_in_facet_2 = lcc.darts_of_cell<dimension-1, dimension-1>(
+               *dart_in_current_facet_2).begin();
+             current_dart_in_facet_2 != lcc.darts_of_cell<dimension-1, dimension-1>(
+               *dart_in_current_facet_2).end();
+             ++current_dart_in_facet_2) {
+
+          // Check if it's a complete match (isomorphism test using signatures)
+          if (isomorphic<dimension-2>(lcc,dart_in_current_ridge_1, current_dart_in_facet_2)) ++matches;
+          if (isomorphic_reversed<dimension-2>(lcc, dart_in_current_ridge_1, current_dart_in_facet_2)) ++matches;
+        }
+      }
+      
+      CGAL_precondition(matches == 1);
+    }
+  }  
+}

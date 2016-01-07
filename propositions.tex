@@ -1,0 +1,92 @@
+%!TEX program = xelatex
+%!TEX encoding = UTF-8 Unicode
+
+\documentclass[parskip=half,
+               fontsize=9pt]{scrartcl}
+
+\usepackage{amsmath,amssymb}        % AMS symbols and environments
+\usepackage{fontspec}               % Selecting fonts
+\usepackage{unicode-math}           % Use unicode math font, not TeX
+\usepackage[english]{babel}         % Correct hyphenation
+
+\usepackage[paperwidth=18.90cm,
+            paperheight=24.58cm,
+            top=2.170cm,
+            bottom=3.510cm,
+            inner=1.668cm,
+            outer=2.699cm]{geometry}
+
+% Font setup
+\setmainfont[Ligatures=TeX,ItalicFont=Feijoa-MediumItalic,StylisticSet=6]{Feijoa}
+\setmonofont[BoldFont=GTPressuraMono-Bold,ItalicFont=GTPressuraMono-LightItalic]{GTPressuraMono-Light}
+\setmathfont{Asana-Math.otf}
+\newfontfamily\fanciestfont[Ligatures={TeX,Discretionary}]{Feijoa-Display}
+\newfontfamily\fancyfont[Ligatures=TeX]{Feijoa-Display}
+\newfontfamily\chapternumberfont[Ligatures=TeX,Numbers=Lining]{Feijoa-Display}
+
+\begin{document}
+
+\pagestyle{empty}
+
+\begin{center}
+
+Propositions accompanying the thesis
+
+{\Large\fanciestfont{}Higher-dimensional modelling of geographic information}
+
+by
+
+{\Large Ken Arroyo Ohori}
+
+\end{center}
+
+\bigskip
+
+\begin{enumerate}
+
+% About thesis
+
+\item
+Using higher-dimensional topological data structures, many difficult problems can be flattened to equivalent---but conceptually simpler---problems on graphs. [\emph{This thesis}]
+
+\item
+Two representations will come to dominate geographic information of any dimension: point clouds and space subdivisions. [\emph{This thesis}]
+% Representing roads as lines and buildings as unconstrained soups of faces will soon seem as anachronistic as wireframe models. 
+
+% Side topics / GIS in general
+
+\item
+Computational methods will replace geoscientific methods in almost every GIS application:
+\emph{fast reasonable approximations} on large noisy datasets will increasingly trump \emph{slow optimal solutions} on a few carefully acquired data points.
+
+\item
+A lack of concern for geometric and topological correctness is the main reason behind the lack of successful applications for general-purpose 3D models.
+
+\item
+In computer science, it is almost always better to speak of research objectives than research questions.
+
+% Science & thesis
+
+\item
+There is no such thing as a predatory publisher, only predatory metrics used to gauge the value of a scientist.
+
+\item
+In the future, peer review will be conducted post publication.
+
+\item
+Good academic writing advice encourages clarity and expressiveness as much as it discourages formulaic constructions.
+
+% Politics
+
+\item
+Innovation in internet services will occur in countries that enshrine net neutrality in law.
+
+\item
+The results of research performed at public universities or using public funds ought to be released into the public domain.
+
+\end{enumerate}
+
+\vfill
+These propositions are regarded as opposable and defendable, and have been approved as such by the promotor Prof.\ dr.\ J.\ Stoter and the copromotor Dr.\ H.\ Ledoux.
+
+\end{document}
