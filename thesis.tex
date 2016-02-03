@@ -58,6 +58,7 @@
 \usepackage{xcolor}                 % Colours in text
 \usepackage{etoolbox}               % Easy programming to modify TeX stuff
 \usepackage{ccicons}                % Creative Commons icons
+\usepackage{pdfpages}               % Insert PDF pages
 \definecolor{greenforlinks}{rgb}{0.09, 0.45, 0.27}
 \usepackage[xetex,
             breaklinks=true,
@@ -153,7 +154,7 @@
 \makeatletter
 \pretocmd{\maketitle}{%
   \if@openright\cleardoublepage\else\clearpage\fi
-  \pdfbookmark[0]{Preliminaries}{title}% TODO: Change link to cover
+  \pdfbookmark[0]{Preliminaries}{title}% TODO: Change link to cover in online PDF version
   \pdfbookmark[1]{Half title}{title}% 
 }{}{}%
 \makeatother
@@ -313,7 +314,8 @@
 \newcommand{\paperijgind}{\item[\href{http://dx.doi.org/10.3390/ijgi4031055}{►}] \href{http://dx.doi.org/10.3390/ijgi4031055}{\textbf{Modelling a 3D city model and its levels of detail as a true 4D model}}. Ken Arroyo Ohori, Hugo Ledoux, Filip Biljecki and Jantien Stoter. \emph{ISPRS International Journal of Geo-Information}, 4(3), September 2015, pp. 1055--1075.} 
 \newcommand{\paperisprsnd}{\item[\href{http://dx.doi.org/10.5194/isprsannals-II-2-W2-1-2015}{►}] \href{http://dx.doi.org/10.5194/isprsannals-II-2-W2-1-2015}{\textbf{Storing a 3D city model, its levels of detail and the correspondences between objects as a 4D combinatorial map}}. Ken Arroyo Ohori, Hugo Ledoux and Jantien Stoter. In Alias Abdul Rahman, Umit Isikdag and Francesc Ant\'on Castro (eds.), Joint International Geoinformation Conference 2015, 28--30 October 2015, Kuala Lumpur, Malaysia, ISPRS Annals of the Photogrammetry, Remote Sensing and Spatial Information Sciences II--2/W2, ISPRS, Kuala Lumpur, Malaysia, October 2015, pp. 1--8.}
 \newcommand{\paperudmvobj}{\item[\href{http://dx.doi.org/10.2312/udmv.20151345}{►}] \href{http://dx.doi.org/10.2312/udmv.20151345}{\textbf{Automatic semantic-preserving conversion between OBJ and CityGML}}. Filip Biljecki and Ken Arroyo Ohori. In F. Biljecki and V. Tourre (eds.), \emph{Eurographics Workshop on Urban Data Modelling and Visualisation}, Eurographics Association, Delft, The Netherlands, November 2015, pp. 25--30.}
-\newcommand{\paperijgisroeland}{\item[\href{http://dx.doi.org/10.1080/13658816.2015.1072201}{►}] \href{http://dx.doi.org/10.1080/13658816.2015.1072201}{\textbf{Automatically enhancing CityGML LOD2 models with a corresponding indoor geometry}}. Roeland Boeters, Ken Arroyo Ohori, Filip Biljecki and Sisi Zlatanova. \emph{International Journal of Geographical Information Science} 29(12), December 2015, pp. 2248–2268.}
+\newcommand{\paperijgisroeland}{\item[\href{http://dx.doi.org/10.1080/13658816.2015.1072201}{►}] \href{http://dx.doi.org/10.1080/13658816.2015.1072201}{\textbf{Automatically enhancing CityGML LOD2 models with a corresponding indoor geometry}}. Roeland Boeters, Ken Arroyo Ohori, Filip Biljecki and Sisi Zlatanova. \emph{International Journal of Geographical Information Science} 29(12), December 2015, pp. 2248--2268.}
+\newcommand{\papermethodsxvoxelisation}{\item[\href{http://dx.doi.org/10.1016/j.mex.2016.01.001}{►}] \href{http://dx.doi.org/10.1016/j.mex.2016.01.001}{\textbf{Voxelization algorithms for geospatial applications: Computational methods for voxelating spatial datasets of 3D city models containing 3D surface, curve and point data models}}. Pirouz Nourian, Romulo Gon\c{c}alves, Sisi Zlatanova, Ken Arroyo Ohori and Anh Vu Vo. \emph{MethodsX} 3, January 2016, pp. 69--86.}
 
 \begin{document}
 
@@ -331,7 +333,7 @@
 % \cleardoublepage%
 \listoffigures
 % \cleardoublepage%
-\listoftables
+% \listoftables
 \restoregeometry%
 
 \mainmatter%
@@ -501,6 +503,9 @@
 \input{summary}
 
 \input{cv}
+
+% Back cover
+% \includepdf{cover-back.pdf}
 
 \end{document}
 
