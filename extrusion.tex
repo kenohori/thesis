@@ -641,6 +641,7 @@ Moreover, the algorithm has been implemented using CGAL Combinatorial Maps and t
 It has also been tested with publicly available datasets commonly used in GIS.\@
 Apart from being applied cell by cell, it can also be combined with other operations, such as building $n$D cell complexes incrementally, where more complex models are required for a subset of the objects in a model.
 
-While the implementation presented here performs well enough for typical GIS datasets, it could be improved upon by integrating the extrusion intervals into the embeddings of the cells.
+While the implementation presented here performs well enough for typical GIS datasets, it could be improved upon by integrating the extrusion intervals into the embeddings of the cells, allowing for constant time access to the extrusion intervals.
 This would make it possible to support much larger datasets and match the theoretical complexity of the algorithm.
-Another possibility would be implementing the algorithm in a more compact representation of a simplicial complex, \eg\ \citet{Boissonnat12}.
+In order to improve memory usage, another possibility would be implementing the algorithm in a more compact representation of a simplicial complex, \eg\ \citet{Boissonnat12}.
+Finally, it would be interesting to consider other types of models that can be generated using extrusion-like algorithms, such as sweeps and $n$-dimensional cells of revolution.
