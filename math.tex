@@ -9,57 +9,57 @@ In order to describe space unambiguously, people have thus turned to models that
 These formal models make it possible to create and store digital representations of the world in a computer, and thus to use the power of a computer to easily solve spatial problems \citep{Burrough86,Bailey95}.
 
 The current chapter describes some of these formal notions and their relevant context, which are used to study the spatial modelling approaches presented in the upcoming chapters.
-\refse{se:settheory} introduces the main concepts of set theory and mathematical logic, the branches of mathematics that are thereafter used as a basis for more complex notions.
+% \refse{se:settheory} introduces the main concepts of set theory and mathematical logic, the branches of mathematics that are thereafter used as a basis for more complex notions.
 \refse{se:geometry} introduces geometry, which provides the basic concepts used to describe the position, shape and orientation of objects.
 \refse{se:topology} builds on these to present topology, which formalises notions such as the boundary and interior of an object or the relationships between multiple objects.
 
-\section{Set theory and mathematical logic}
-\label{se:settheory}
+% \section{Set theory and mathematical logic}
+% \label{se:settheory}
 
-Set theory is the branch of mathematics that studies \emph{sets}, which are collections of abstract objects.
-While the study of set theory only formally started with \citet{Cantor74}, its intuitive and minimal concepts were later used in order to give a foundation to almost all areas of mathematics\footnote{Even as some mathematicians and philosophers have argued against set theory as a foundation for all of mathematics.}.
+% Set theory is the branch of mathematics that studies \emph{sets}, which are collections of abstract objects.
+% While the study of set theory only formally started with \citet{Cantor74}, its intuitive and minimal concepts were later used in order to give a foundation to almost all areas of mathematics\footnote{Even as some mathematicians and philosophers have argued against set theory as a foundation for all of mathematics.}.
 
-Set theory starts by considering the existence of a given domain of objects from which one may build sets, which is known as the \emph{universe set} and denoted as $\mathbb{U}$.
-These objects can be anything, including other sets.
-Set theory allows sets to be regarded as single entities and operated upon \citep{Devlin93}.
-If an object $a$ is part of a set $\mathbb{X}$, it is denoted as $a \in \mathbb{X}$, read as $a$ is an \emph{element} of $\mathbb{X}$.
-If $a$ is not part of a set $\mathbb{X}$, it is denoted as $a \notin \mathbb{X}$, read as $a$ is not an element of $\mathbb{X}$.
+% Set theory starts by considering the existence of a given domain of objects from which one may build sets, which is known as the \emph{universe set} and denoted as $\mathbb{U}$.
+% These objects can be anything, including other sets.
+% Set theory allows sets to be regarded as single entities and operated upon \citep{Devlin93}.
+% If an object $a$ is part of a set $\mathbb{X}$, it is denoted as $a \in \mathbb{X}$, read as $a$ is an \emph{element} of $\mathbb{X}$.
+% If $a$ is not part of a set $\mathbb{X}$, it is denoted as $a \notin \mathbb{X}$, read as $a$ is not an element of $\mathbb{X}$.
 
-There are two broad ways to describe the elements in a set, both using curly braces, \ie\ \{ and \}.
-One way to do so is to enumerate all the elements of the set one by one.
-For instance, the set $\left\{ 1,2,3 \right\}$ is the set containing $1$, $2$ and $3$ as elements (and no others).
-The other way to do so is to specify one or more rules that the elements of the set need to fulfil.
-For instance, the set $\{ x \mid x$~\emph{is~a~prime~number}$\}$ consists of all prime numbers.
-It is read as $x$, such that $x$ is a prime number.
+% There are two broad ways to describe the elements in a set, both using curly braces, \ie\ \{ and \}.
+% One way to do so is to enumerate all the elements of the set one by one.
+% For instance, the set $\left\{ 1,2,3 \right\}$ is the set containing $1$, $2$ and $3$ as elements (and no others).
+% The other way to do so is to specify one or more rules that the elements of the set need to fulfil.
+% For instance, the set $\{ x \mid x$~\emph{is~a~prime~number}$\}$ consists of all prime numbers.
+% It is read as $x$, such that $x$ is a prime number.
 
-Sets are by definition unordered and contain unique elements---duplicate items are ignored by convention.
-A set may contain an infinite number of elements (\eg\ as the prime number example above), or no elements at all, in which case it is a special set known as the \emph{null set} and denoted as $\{ \}$ or $\emptyset$.
-Other commonly used sets with a special notation and name are: the natural numbers ($\mathbb{N}$), the real numbers ($\mathbb{R}$), the rational numbers ($\mathbb{Q}$) and the integers ($\mathbb{Z}$).
+% Sets are by definition unordered and contain unique elements---duplicate items are ignored by convention.
+% A set may contain an infinite number of elements (\eg\ as the prime number example above), or no elements at all, in which case it is a special set known as the \emph{null set} and denoted as $\{ \}$ or $\emptyset$.
+% Other commonly used sets with a special notation and name are: the natural numbers ($\mathbb{N}$), the real numbers ($\mathbb{R}$), the rational numbers ($\mathbb{Q}$) and the integers ($\mathbb{Z}$).
 
-In order to build more complex sets, the concepts and notation from mathematical logic are used, in particular \emph{propositional logic}.
-Propositional logic works with \emph{propositions}, which are sentences that are either true or false, but not both.
-These propositions might be altered and combined using various symbols expressing various notions, such as: \emph{and} ($\wedge$), \emph{or} ($\vee$), \emph{not} ($\neg$), \emph{implies} ($\Rightarrow$), \emph{is implied by} ($\Leftarrow$), \emph{if and only if} ($\Leftrightarrow$), \emph{for all} ($\forall$) and \emph{exists} ($\exists$).
+% In order to build more complex sets, the concepts and notation from mathematical logic are used, in particular \emph{propositional logic}.
+% Propositional logic works with \emph{propositions}, which are sentences that are either true or false, but not both.
+% These propositions might be altered and combined using various symbols expressing various notions, such as: \emph{and} ($\wedge$), \emph{or} ($\vee$), \emph{not} ($\neg$), \emph{implies} ($\Rightarrow$), \emph{is implied by} ($\Leftarrow$), \emph{if and only if} ($\Leftrightarrow$), \emph{for all} ($\forall$) and \emph{exists} ($\exists$).
 
-Using these concepts it becomes possible to state relationships between sets.
-For instance, $\mathbb{A}$ and $\mathbb{B}$ are then equal ($\mathbb{A} = \mathbb{B}$) when an element is in $\mathbb{A}$ if and only if it is also in $\mathbb{B}$, which can be denoted as $\forall x : x \in \mathbb{A} \Leftrightarrow x \in \mathbb{B}$.
-A set $\mathbb{A}$ is called a subset of a set $\mathbb{B}$ ($\mathbb{A} \subseteq \mathbb{B}$), or $\mathbb{B}$ is a superset of $\mathbb{A}$ ($\mathbb{B} \supseteq \mathbb{A}$), when if an element is in $\mathbb{A}$ then it is also in $\mathbb{B}$, denoted as $\forall x : x \in \mathbb{A} \Rightarrow x \in \mathbb{B}$.
-If $\mathbb{A} \subseteq \mathbb{B}$ but $\mathbb{A} \neq \mathbb{B}$, \ie\ there is at least one extra element in $\mathbb{B}$, then $\mathbb{A}$ is a proper subset of $\mathbb{B}$ ($\mathbb{A} \subset \mathbb{B}$), or alternatively $\mathbb{B}$ is a proper superset of $\mathbb{A}$ ($\mathbb{B} \supset \mathbb{A}$).
+% Using these concepts it becomes possible to state relationships between sets.
+% For instance, $\mathbb{A}$ and $\mathbb{B}$ are then equal ($\mathbb{A} = \mathbb{B}$) when an element is in $\mathbb{A}$ if and only if it is also in $\mathbb{B}$, which can be denoted as $\forall x : x \in \mathbb{A} \Leftrightarrow x \in \mathbb{B}$.
+% A set $\mathbb{A}$ is called a subset of a set $\mathbb{B}$ ($\mathbb{A} \subseteq \mathbb{B}$), or $\mathbb{B}$ is a superset of $\mathbb{A}$ ($\mathbb{B} \supseteq \mathbb{A}$), when if an element is in $\mathbb{A}$ then it is also in $\mathbb{B}$, denoted as $\forall x : x \in \mathbb{A} \Rightarrow x \in \mathbb{B}$.
+% If $\mathbb{A} \subseteq \mathbb{B}$ but $\mathbb{A} \neq \mathbb{B}$, \ie\ there is at least one extra element in $\mathbb{B}$, then $\mathbb{A}$ is a proper subset of $\mathbb{B}$ ($\mathbb{A} \subset \mathbb{B}$), or alternatively $\mathbb{B}$ is a proper superset of $\mathbb{A}$ ($\mathbb{B} \supset \mathbb{A}$).
 
-It is also possible to use propositional logic to create new sets by defining certain operations between sets, in particular \emph{Boolean set operations}, consisting of intersection, union, difference and complement\footnote{These are the most commonly described basic operations. However, it is possible to define other operations that are equally useful as a base. Either can be used to form other operations by composition.}.
-The intersection of the sets $\mathbb{A}$ and $\mathbb{B}$, denoted as $\mathbb{A} \cap \mathbb{B}$, consists of all the elements that are both in $\mathbb{A}$ and in $\mathbb{B}$, \ie\ $\mathbb{A} \cap \mathbb{B} = \left\{ x \mid x \in \mathbb{A} \wedge x \in \mathbb{B} \right\}$.
-The union of the sets $\mathbb{A}$ and $\mathbb{B}$, denoted as $\mathbb{A} \cup \mathbb{B}$, consists of all the elements that are either in $\mathbb{A}$ or in $\mathbb{B}$, \ie\ $\mathbb{A} \cup \mathbb{B} = \left\{ x \mid x \in \mathbb{A} \vee x \in \mathbb{B} \right\}$.
-The difference between sets $\mathbb{A}$ and $\mathbb{B}$, denoted as $\mathbb{A} - \mathbb{B}$, consists of all the elements that are in $\mathbb{A}$ but not in $\mathbb{B}$, \ie\ $\mathbb{A} - \mathbb{B} = \left\{ x \mid x \in \mathbb{A} \wedge x \notin \mathbb{B} \right\}$.
-The complement of a set $\mathbb{A}$, denoted as $\neg \mathbb{A}$, consists of all the elements that are in the universe set but are not in $\mathbb{A}$, \ie\ $\neg \mathbb{A} = \left\{ x \mid x \in \mathbb{U} \wedge x \notin \mathbb{A} \right\}$.
+% It is also possible to use propositional logic to create new sets by defining certain operations between sets, in particular \emph{Boolean set operations}, consisting of intersection, union, difference and complement\footnote{These are the most commonly described basic operations. However, it is possible to define other operations that are equally useful as a base. Either can be used to form other operations by composition.}.
+% The intersection of the sets $\mathbb{A}$ and $\mathbb{B}$, denoted as $\mathbb{A} \cap \mathbb{B}$, consists of all the elements that are both in $\mathbb{A}$ and in $\mathbb{B}$, \ie\ $\mathbb{A} \cap \mathbb{B} = \left\{ x \mid x \in \mathbb{A} \wedge x \in \mathbb{B} \right\}$.
+% The union of the sets $\mathbb{A}$ and $\mathbb{B}$, denoted as $\mathbb{A} \cup \mathbb{B}$, consists of all the elements that are either in $\mathbb{A}$ or in $\mathbb{B}$, \ie\ $\mathbb{A} \cup \mathbb{B} = \left\{ x \mid x \in \mathbb{A} \vee x \in \mathbb{B} \right\}$.
+% The difference between sets $\mathbb{A}$ and $\mathbb{B}$, denoted as $\mathbb{A} - \mathbb{B}$, consists of all the elements that are in $\mathbb{A}$ but not in $\mathbb{B}$, \ie\ $\mathbb{A} - \mathbb{B} = \left\{ x \mid x \in \mathbb{A} \wedge x \notin \mathbb{B} \right\}$.
+% The complement of a set $\mathbb{A}$, denoted as $\neg \mathbb{A}$, consists of all the elements that are in the universe set but are not in $\mathbb{A}$, \ie\ $\neg \mathbb{A} = \left\{ x \mid x \in \mathbb{U} \wedge x \notin \mathbb{A} \right\}$.
 
-Apart from sets, it is also possible to consider \emph{tuples} of elements, which unlike sets are sequences of ordered elements.
-A tuple containing exactly two elements is known as a \emph{pair}, one containing three elements is a \emph{treble} and one containing $n$ elements is an $n$-tuple.
-Tuples are denoted using parenthesis, \ie\ (\ and~).
+% Apart from sets, it is also possible to consider \emph{tuples} of elements, which unlike sets are sequences of ordered elements.
+% A tuple containing exactly two elements is known as a \emph{pair}, one containing three elements is a \emph{treble} and one containing $n$ elements is an $n$-tuple.
+% Tuples are denoted using parenthesis, \ie\ (\ and~).
 
-A common operation that generates tuples is the Cartesian product.
-The Cartesian product of sets $\mathbb{A}$ and $\mathbb{B}$, denoted as $\mathbb{A} \times \mathbb{B}$, is defined as $\left\{ (a,b) \mid a \in \mathbb{A} \wedge b \in \mathbb{B} \right\}$.
-In other words, it is a set of pairs, where the first element of a pair is an element of $\mathbb{A}$ and the second element of the pair is an element of $\mathbb{B}$.
-This can be generalised to more than two sets, such that the $n$-fold Cartesian product of $n$ sets is an $n$-tuple.
-The $n$-fold Cartesian product of a set $\mathbb{A}$ with itself, \ie\ $\mathbb{A} \times \mathbb{A} \times \ldots \mathbb{A}$, is denoted as $\mathbb{A}^n$.
+% A common operation that generates tuples is the Cartesian product.
+% The Cartesian product of sets $\mathbb{A}$ and $\mathbb{B}$, denoted as $\mathbb{A} \times \mathbb{B}$, is defined as $\left\{ (a,b) \mid a \in \mathbb{A} \wedge b \in \mathbb{B} \right\}$.
+% In other words, it is a set of pairs, where the first element of a pair is an element of $\mathbb{A}$ and the second element of the pair is an element of $\mathbb{B}$.
+% This can be generalised to more than two sets, such that the $n$-fold Cartesian product of $n$ sets is an $n$-tuple.
+% The $n$-fold Cartesian product of a set $\mathbb{A}$ with itself, \ie\ $\mathbb{A} \times \mathbb{A} \times \ldots \mathbb{A}$, is denoted as $\mathbb{A}^n$.
 
 \section{Geometry}
 \label{se:geometry}
@@ -225,13 +225,20 @@ A function from one point set to another is said to be \emph{continuous} if the 
 If a function is continuous and its inverse function is also continuous, it is known as a \emph{homeomorphism}.
 When such a function exists between two point sets, they are said to be \emph{homeomorphic} or, more informally, \emph{topologically equivalent}, such as the two objects shown in \reffig{fig:homeomorphism}\footnote{Related to a well-known joke among mathematicians: `A topologist is a mathematician who can't tell the difference between a coffee mug and a donut'.}.
 
-\begin{figure}[b]
+\begin{figure}[tbp]
 \centering
 \subfloat[A coffee mug]{\includegraphics[width=\marginparwidth]{figs/mug}} \quad
 \subfloat[A donut]{\includegraphics[width=\marginparwidth]{figs/donut}}
 \caption[A coffee mug and a donut are homeomorphic]{A coffee mug and a donut are homeomorphic. Intuitively, this can be known as it is possible to deform one into the other. The mug was rendered from the model at \url{http://www.thingiverse.com/thing:7953}.}
 \label{fig:homeomorphism}
 \end{figure}
+
+\begin{figure*}[tbp]
+\centering
+\includegraphics[width=\linewidth]{figs/konigsberg}
+\caption[The Seven Bridges of K\"onigsberg]{The problem of the Seven Bridges of K\"onigsberg asks whether it is possible to find a route through the city that would cross each bridge (highlighted in red) exactly once. \citet{Euler41} proved that there is no such route in terms of a graph. Whenever one enters a piece of land by a bridge, one has to leave it by another bridge except at the beginning or end of the route. Thus, there must be an \emph{even} number of bridges connected to all but (at most) two pieces of land. Since all pieces of land have an \emph{odd} number of bridges, the problem has no solution. Based on an image from a 1613 engraving by Joachim Bering.}
+\label{fig:konigsberg}
+\end{figure*}
 
 Another important topological concept is that of a manifold.
 A manifold is a topological space that is homeomorphic to the Euclidean space of a certain dimension.
@@ -246,21 +253,20 @@ Conceptually based on point-set topology, \emph{algebraic topology}, also known 
 A famous early application involved the answer to the problem of the Seven Bridges of K\"onigsberg by \citet{Euler41}, explained in \reffig{fig:konigsberg}.
 However, the real foundations of the field were set when many of its concepts were formalised in algebraic form by \citet{Poincare95}.
 
-\begin{figure*}[tbp]
-\centering
-\includegraphics[width=\linewidth]{figs/konigsberg}
-\caption[The Seven Bridges of K\"onigsberg]{The problem of the Seven Bridges of K\"onigsberg asks whether it is possible to find a route through the city that would cross each bridge (highlighted in red) exactly once. \citet{Euler41} proved that there is no such route in terms of a graph. Whenever one enters a piece of land by a bridge, one has to leave it by another bridge except at the beginning or end of the route. Thus, there must be an \emph{even} number of bridges connected to all but (at most) two pieces of land. Since all pieces of land have an \emph{odd} number of bridges, the problem has no solution. Based on an image from a 1613 engraving by Joachim Bering.}
-\label{fig:konigsberg}
-\end{figure*}
-
-
 Algebraic topology works by relating topological spaces to groups with specific properties, often by creating combinatorial analogues of such spaces, from which their properties can be extracted using algebraic methods \citep{Henle94}, which can be applied algorithmically.
 As it uses discrete structures rather than continuous point sets, it is often more suited to computer implementations of topological concepts than point-set topology \citep[\S{}3.3.5]{Worboys04}.
 
 Two constructions of algebraic topology are widely used as the basis of GIS:\ \emph{simplicial complexes} and \emph{cell complexes}.
-An $n$-dimensional simplicial complex is a structure made of connected simplices.
+An $n$-dimensional simplicial complex is a structure made of connected \emph{simplices}, the simplest objects that can be built in any dimension.
+As shown in \reffig{fig:simplex}, an $n$-dimensional simplex ($n$-simplex) is a combinatorial primitive made from a set of $n+1$ vertices.
+\marginpar{
+\captionsetup{type=figure}
+\includegraphics[width=\marginparwidth]{figs/simplex}
+\caption[0-, 1-, 2- and 3-simplices]{An $n$-dimensional simplex is a combinatorial primitive made from a set of $n+1$ vertices. A 0-simplex is thus a point, a 1-simplex is a line segment, a 2-simplex is a triangle, and a 3-simplex is a tetrahedron. Here they are shown as if embedded in $\mathbb{R}^3$.}
+\label{fig:simplex}
+}
 \reffig{fig:simplicescampus} shows a group of buildings represented as a 3D simplicial complex.
-\begin{figure}[tbp]
+\begin{figure}[b]
 \centering
 \includegraphics[width=\linewidth]{figs/simplicescampus}
 \caption[The TU Delft campus as a 3D simplicial complex]{The buildings in the TU Delft campus are represented as a 3D simplicial complex, such that each separate building is a set of adjacent tetrahedra. Note that only the tetrahedra's edges are shown here.}

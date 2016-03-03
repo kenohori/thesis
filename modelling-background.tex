@@ -78,17 +78,21 @@ However, partitioning complex objects into these simple primitives can be diffic
 In this sense, different data models make different choices and necessarily involve a trade-off.
 
 The main data models are briefly described in the following sections, roughly in order of increasing explicitness.
+A short statement on how well they extend to higher dimensions is included in each section.
+The most promising of these models are further analysed in a higher-dimensional context in \refse{se:data-structures}.
 
 \subsubsection{Primitive instancing}
 
 In \emph{primitive instancing}, the system defines a library of primitives suitable for a particular application.
-In most cases, these primitives are 3D volumetric objects, but they can actually be objects of any dimension.
 Each of the primitives in the library represents a template for an object that can be parametrised in terms of high-level parameters, such as the number of teeth and the size of a gear or the diameter and thickness of a pipe \citep{Foley95}.
 In 3D city modelling, a common application involves the modelling of roofs using a library of basic roof shapes (\eg\ flat, hipped and gabled) \citep{Kada07}.
 
 The fact that only a few parameters need to be defined makes it easy to create objects, that is, as long as the desired object resembles one of the templates in the library.
 Moreover, given these parameters and a primitive's position and orientation, a program can create the geometry of an object that matches those parameters as output using a more explicit representation.
 Such an object can then be used either directly or as a base for further operations.
+
+Usually, the primitives used in primitive instancing are 3D volumetric objects, but they can actually be objects of any dimension.
+However, this approach is not practical for higher-dimensional models of geographic information as the objects modelled do not conform to a set of easily parametrisable primitives.
 
 \subsubsection{Sweep representations}
 
@@ -97,9 +101,11 @@ Usually a 2D cross-section is used for this purpose, which is either translated 
 Generalisations where the cross-section is deformed as well are sometimes considered \citep{Blackmore94}.
 When the path is linear and the cross-section is not rotated, it is called a \emph{translational sweep}, or an \emph{extrusion} as it resembles a physical extrusion process as used in manufacturing.
 When the cross-section does not move and it is merely rotated, it is called a \emph{rotational sweep} or a \emph{solid of revolution}.
+Among other applications, this representation is particularly convenient for applications that require volume computations as it matches well with calculus techniques to compute integrals, which can be easily solved numerically in a computer \citep{Lee82}.
 
 Since the description of a 2D cross-section is easier than that of a full 3D volume, this significantly eases the process of modelling certain types of objects \citep{Weld90}.
-Among other applications, this representation is particularly convenient for applications that require volume computations as it matches well with calculus techniques to compute integrals, which can be easily solved numerically in a computer \citep{Lee82}.
+In a higher-dimensional context, this property is later used to generate $n$-dimensional extruded models in \refch{ch:extrusion}.
+Generating more general higher-dimensional sweeps and revolutions is also possible using similar methods.
 
 \subsubsection{Constructive solid geometry}
 
@@ -118,12 +124,15 @@ The regularisation step ensures that the resulting objects of any Boolean set op
 It also makes it relatively easy to transform a CSG tree to a more explicit representation.
 CSG is therefore used in most CAD software and in many game engines.
 
+While CSG extends naturally to higher dimensions, evaluating general CSG trees into more explicit representations is non-trivial in dimensions higher than three.
+A possible approach to do so would involve higher-dimensional Nef polyhedra, which are described below.
+
 \subsubsection{Boolean set operations on half-spaces}
 
 There are various representations that store objects using an expression made of Boolean set operations on a set of (open or closed) half-spaces.
 Any convex object of any dimension can be represented as the intersection of a finite set of half-spaces, a common problem in both linear programming and computational geometry \citep{Shamos76,Preparata79}.
 As \reffig{fig:halfspace} shows, if a polyhedron is first decomposed into convex parts \citep{Chazelle79,Bajaj90}, it is then possible to represent an object as a union of these convex parts, which are then represented as intersections of half-spaces.
-\begin{figure}[tbp]
+\begin{figure}[b]
 \centering
 \subfloat[]{
 \includegraphics[scale=0.16]{figs/halfspace}
@@ -138,13 +147,13 @@ As \reffig{fig:halfspace} shows, if a polyhedron is first decomposed into convex
 \label{fig:halfspace}
 \end{figure}
 
-Each of these half-spaces can then be stored easily, \eg\ as a tuple containing the coefficients of a plane equation plus an up/down direction \citep{Naylor90,Thompson07}.
+Each of these half-spaces can then be stored easily, \eg\ as a tuple containing the coefficients of a hyperplane\footnote{\ie\ a line in 2D and a plane in 3D.} equation plus an up/down direction \citep{Naylor90,Thompson07}.
 The half-spaces for an object can be stored either all together or separate per convex part.
 Together, for instance, as a collection of plane equations that represent all the faces of all the convex parts, and each convex part is represented as a set of tuples of Boolean values, where each value states whether the part is on the up or down side of a specific plane \citep{Tammik07}.
 
 \subsubsection{Nef polyhedra}
 
-Nef polyhedra \citep{Nef78,Bieri88} follow a similar approach to half-space models, but extends it with the concept of a local pyramid, which stores the neighbourhood information around every vertex.
+Nef polyhedra \citep{Nef78,Bieri88} follow a similar approach to half-space models, but extends it with the concept of a local $n$-dimensional pyramid\footnote{This is equivalent to a triangle in 2D and a polyhedral pyramid in 3D.}, which stores the neighbourhood information around every vertex.
 As \reffig{fig:nef} shows, the local pyramid of a vertex thus contains the symbolic intersection of an infinitesimally small sphere (in 3D) or circle (in 2D) with the volumes, faces and edges incident to this vertex.
 \marginpar{
 \captionsetup{type=figure}
@@ -157,14 +166,19 @@ As \reffig{fig:nef} shows, the local pyramid of a vertex thus contains the symbo
 An incident volume thus becomes a face, an incident face becomes an edge, and an incident edge becomes a vertex on the surface of the local pyramid sphere/circle, essentially lowering the dimension of every object by one.
 An 2D/3D object can be represented as a set of local pyramids, which can individually be stored using simpler 1D/2D data structures.
 
+Nef polyhedra have two properties that make them very interesting representations for higher-dimensional models of geographic information: (i) the possibility to reduce the dimensionality of a representation by one, which can be applied recursively in order to model objects of any dimension, and (ii) the possibility to perform operations on the local pyramid level.
+The former is discussed in more detail in \refse{ss:implicit-models} and the latter in \refse{ss:operations-nef}.
+
 \subsubsection{Function representation}
 
 Function representation, commonly abbreviated as F-rep, involves representing objects as point sets using an arbitrary continuous function \citep{Pasko95}, which is represented as an algebraic expression.
-When the function $f(x,y,z)$ is positive the point is in the interior of the object, when it is zero it is on the boundary of the object, known as an isosurface, and when it is negative it is outside the object.
+When a given function $f(x_0, x_1, \ldots, x_n)$ is evaluated at a point with coordinates $(x_0, x_1, \ldots, x_n)$, it is possible to know if the point lies in the interior, boundary or exterior of an object.
+If it is positive the point is in the interior of the object, when it is zero it is on the boundary of the object, known as an isosurface, and when it is negative it is outside the object.
 
 By varying the number of input parameters, which in most cases represent a point along an axis, function representations are applicable to any dimension.
 Moreover, unlike a half-space inequality, such functions do not need to be linear.
 As with half-space based representations, the spaces described by these functions can be combined using Boolean set operations, which is done on the basis of Rvachev functions (R-functions) \citep{Rvachev63}.
+However, evaluating these functions in higher dimensions can be complex, and obtaining a continuous function that adequately models a higher-dimensional object is also non-trivial.
 
 \subsubsection{Exhaustive enumeration}
 
@@ -182,6 +196,8 @@ In 3D, parallelepipeds or cubes are almost always used, but the face-centred cub
 These cells are then used to record whether the cell belongs to the interior of the object or not, or in the case of multiple objects, which objects are present inside the cell.
 After such a tessellation is defined, a programatic order or path that traverses all cells (\ie\ a space filling curve) is defined \citep{Sagan94}, and the order of the cells along this curve is used to store them by \emph{enumerating} for each cell whether a cell belongs to the interior of an object.
 
+Exhaustive enumeration schemes are straightforward to extend to higher dimensions, as is further discussed in \refse{ss:regular-partitions}, with the caveat that their space complexity can increase exponentially on the dimension.
+
 \subsubsection{Hierarchical subdivisions using trees}
 
 A more general possibility to partition a domain involves using a hierarchical scheme where a space is recursively subdivided according to a particular criterion, resulting in a tree structure where a given node is a partition primitive that divides the space defined by its parent.
@@ -189,11 +205,13 @@ Such structures are generally known as space partitioning trees.
 In this manner, it is possible to efficiently partition spaces of any dimension, including areas and volumes where the objects' sizes are significantly different.
 However, the shape of a cell in the subdivision is only known after traversing a complete branch of the tree from its root to the leaf corresponding to the cell.
 
-In the simplest case, the space can be split evenly into halves along all axes at every partition node, resulting in a \emph{quadtree} in 2D \citep{Finkel74} or an octree in 3D \citep{Meagher80}.
+In the simplest case, the space can be split evenly into halves along all axes at every partition node, resulting in a \emph{quadtree} in 2D \citep{Finkel74} or an \emph{octree} in 3D \citep{Meagher80}.
 Bintrees \citep{Samet85} partition space alternating among dimensions rather than all at once, while $k$-d trees \citep{Bentley75} do so at an arbitrary point rather than at the midpoint of a space.
-Many other types of trees however exist \citep{Manolopoulos06}.
+Many other types of trees however exist.
+See \citep{Manolopoulos06}.
 
-As in exhaustive enumeration, the leaves of the tree can be used to record whether a cell belongs to the interior of an object or not.
+As in exhaustive enumeration, this type of representation extends naturally to higher dimensions (\refse{ss:hierarchical-subdivisions}).
+The leaves of the tree can be easily used to record whether a cell belongs to the interior of an object or not.
 
 \subsubsection{More general cell decompositions}
 
@@ -201,16 +219,20 @@ Another possibility to represent the geometry of an object involves its decompos
 Nevertheless, they should still be describable as single computer primitives.
 This requires geometric information to be stored within each cell (\eg\ the coordinates of one or more points).
 
-For instance, 2D constrained triangulations \citep{Chew89,Shewchuk96} and 3D constrained tetrahedralisations \citep{Si05} can be used to subdivide objects respectively into triangles and tetrahedra, resulting in models that can be represented as simplicial complexes where every simplex can be respectively described by three and four linearly independent points at their vertices.
+While an arbitrary number of cell decomposition schemes are possible, the most interesting ones in a dimension-independent context are $n$-dimensional constrained triangulations and Voronoi diagrams, as these have a simple dimension-independent formulation.
+2D constrained triangulations \citep{Chew89,Shewchuk96} and 3D constrained tetrahedralisations \citep{Si05} are very commonly used in GIS in order to subdivide objects respectively into triangles and tetrahedra, resulting in models that can be represented as simplicial complexes where every simplex can be respectively described by three and four linearly independent points at their vertices.
 Another common possibility uses Voronoi subdivision described by a single point per cell \citep{Voronoi08}, something that is particularly suitable to field-like GIS data \citep{Ledoux06}.
+
+More information on how simplicial complexes are stored in 2D and 3D GIS is given in \refse{ss:data-structures}.
+\refse{ss:simplicial-complexes} later describes how this extends readily to higher dimensions.
 
 \subsubsection{Incomplete (implicit) models}
 
-Incomplete models attempt to describe a space partition based on lower-dimensional primitives only, usually for simplicity purposes.
-As such, the cells forming the partition are only described implicitly and might not be able to be unambiguously described.
+Incomplete models attempt to describe a space partition based on implicit rules applied to lower-dimensional primitives only, usually for simplicity purposes.
+As such, the actual cells forming the partition are created on the fly.
+Under some circumstances, such as when modelling non-manifolds or when the dimension of the primitives is significantly lower than that of the highest-dimensional cells, they cannot be unambiguously described.
 
-The most typical examples are wireframe models in 3D.
-Wireframe models were early attempts to represent volumes using only vertices and edges.
+The most typical problematic examples are wireframe models in 3D, which represent volumes using only vertices and edges.
 While in many cases it is possible to correctly interpret a volume from a wireframe model \citep{Brewer86,Hanrahan82}, as shown in \reffig{fig:wireframe} there are cases wireframe representations are ambiguous.
 \begin{figure}[tbp]
 \centering
@@ -232,7 +254,10 @@ While in many cases it is possible to correctly interpret a volume from a wirefr
 \caption[A wireframe model can have different interpretations]{(a) A wireframe model that can be interpreted as the three different volumes (b), (c) and (d).}
 \label{fig:wireframe}
 \end{figure}
-They are therefore considered an incomplete representation and generally not used in current systems.
+They are therefore considered an incomplete representation and are generally not used in current systems.
+
+Despite their drawbacks, incomplete implicit models are however frequently used in 3D GIS and when modelling time, resulting in ill-defined volumes or unclear equivalences of objects across time.
+Many of these disadvantages are alluded later on in order to justify using explicit representations in higher dimensions.
 
 \subsubsection{Boundary representation}
 
@@ -244,29 +269,34 @@ Moreover, by decomposing the 2D surface into simple cells, \eg\ triangles or pol
 While certain problems become more difficult by the use of boundary representation, such as the fact that it is easy to create invalid objects, some others can be performed directly on the 2D cells.
 For instance, visibility queries or determining if a point is in the interior of an object can be performed by shooting rays.
 
+As will be discussed in \refse{ss:data-structures} for 2D/3D and \refse{ss:cell-complexes} for $n$D, cell complexes are often represented using boundary representation schemes.
+\refse{ss:ordered-topological-models} instead shows how an $n$-dimensional cell complex can be represented using a data structure based on a simplicial complex.
+The latter approach arguably combines the benefits of both and used for most of the methods developed in the latter chapters of this thesis.
+
 \subsection{Data structures}
 \label{ss:data-structures}
 
-The terms `data model' and `data structure' are often used interchangeably, but within this thesis it is useful to make a distinction between a data model, \ie\ a particular dimension-independent discretisation of space into abstract primitives of a certain form, from the data structure(s) used to implement it, \ie\ their representation in a computer-compatible form \citep{Frank92}, which is usually dimension-specific.
-% \footnote{It is possible to create dimension-independent implementations of many data models. However, doing so can be much more complex than implementing them in 2D/3D form, and so it is generally avoided.}.
+The terms `data model' and `data structure' are often used interchangeably, but within this thesis it is useful to make a distinction between a data model, \ie\ a particular \emph{dimension-independent} discretisation of space into abstract primitives of a certain form, from the data structure(s) used to implement it, \ie\ their representation in a computer-compatible form \citep{Frank92}, which is often \emph{dimension-specific}.
 A data model broadly defines the shape of the primitives and relationships that exist between them.
 In contrast, a data structure defines a \emph{concrete representation} of these primitives, deciding to \emph{explicitly} store some of these relations and omit others (which can often be computed with an added computational cost).
 
 This distinction is blurred because many data models have very straightforward, natural representations.
-For instance, as shown in \refse{se:geometry}, many geometric primitives can be stored on the basis of a set of points or the coefficients of an equation---all of which can be stored as tuples of numbers.
+Ad hoc data structures used in GIS often define a set of fields that is different per dimension, resulting in awkward definitions at the data model level.
+As shown in \refse{se:geometry}, many geometric primitives can be stored on the basis of a set of points or the coefficients of an equation---all of which can be stored as tuples of numbers.
 This is also true for the subdivision primitives in cell decomposition schemes and in most cases for the definition of the domain in exhaustive enumeration as well.
 Meanwhile, primitive instancing schemes and constructive solid geometry models can be stored as tuples of parameters, one of which being the shape that is used.
 
 However, some other data models work with primitives that are more abstract or complex to represent in a computer.
 For instance, the sweep representation, Nef polyhedra and boundary representation schemes reduce the dimensionality of the objects to be modelled, but ultimately need either to be applied recursively or to be combined with a different specific method.
 
-This section therefore lists the most relevant data structures for the more general subdivisions of 2D and 3D space, which are grouped based on the class of objects that they are capable of representing efficiently.
-It is worth noting that some of them were originally developed for a particular application only (\eg\ the quad-edge data structure for the computation of Voronoi diagrams \citep{Guibas85}) or for a more comprehensive class of objects than the one where they are hereafter listed (\eg\ the DCEL for intersecting polyhedra \citep{Muller78}).
-However, this classification is based on the class of objects that they can represent in practice without requiring brute-force searches or external data structures to navigate between the elements.
+This section lists the data structures for subdivisions of 2D and 3D space that have a natural extension to higher dimensions, grouped based on the class of objects that they are capable of representing efficiently,
+% It is worth noting that some of them were originally developed for a particular application only (\eg\ the quad-edge data structure for the computation of Voronoi diagrams \citep{Guibas85}) or for a more comprehensive class of objects than the one where they are hereafter listed (\eg\ the DCEL for intersecting polyhedra \citep{Muller78}).
+% However, this classification is based on the class of objects that they can represent in practice
+\ie\ without requiring brute-force searches or external data structures to navigate between the elements.
 
 \subsubsection{2D and 3D simplicial complexes}
 
-2D and 3D simplicial complexes can be respectively stored using the data structures for 2D and 3D cell complexes, which are presented in the following sections.
+Simplicial complexes can always be respectively stored using the data structures for cell complexes, which are presented in the following sections.
 In some cases this is necessary, such as when a simplicial complex is first being created by triangulating a cell complex.
 However, the simplices in a simplicial complex have a fixed shape, which allows for the usage of more efficient data structures.
 
@@ -306,7 +336,8 @@ It is also possible to use progressive representations that approximate the simp
 
 \subsubsection{2D cell complexes}
 
-Considering the Jordan curve theorem \citep{Jordan87} and the principles of boundary representation, as presented in \refse{ss:data-models}, 2D cells can be represented based on their 1D boundary.
+Considering the Jordan curve theorem \citep{Jordan87} and the principles of boundary representation, as presented in \refse{ss:data-models}, $n$D cells can be represented based on their ($n-1$)D boundary.
+2D cells can be thus be represented based on their 1D boundary.
 Since linear 1D objects, such as the polygonal curve (polyline) in \reffig{fig:polyline}, are notably easy to represent, this is the approach that is favoured by most data structures for 2D cell complexes.
 \marginpar{
 \captionsetup{type=figure}
@@ -386,29 +417,31 @@ As shown in \reffig{fig:halfedge}, the doubly-connected edge list (DCEL) \citep{
 \end{figure}
 
 The quad-edge data structure \citep{Guibas85} attempts to unify most of these by rigorously naming the possible relationships between an oriented edge and other nearby oriented edges or vertices in its \emph{quad-edge algebra}, which moreover includes the dual vertices and edges of the 2D cell complex.
-These relationships are shown in \reffig{fig:quad-edge-algebra}.
+% These relationships are shown in \reffig{fig:quad-edge-algebra}.
 % TODO: If not used later when talking about operations, remove quad-edge algebra
-\begin{figure}[tbp]
-\centering
-\subfloat[]{
-\includegraphics[width=\marginparwidth]{figs/quad-edge-algebra-1}
-\label{subfig:quad-edge-algebra-1}}
-\quad
-\subfloat[]{
-\includegraphics[width=\marginparwidth]{figs/quad-edge-algebra-2}
-\label{subfig:quad-edge-algebra-2}}
-\caption[The quad-edge algebra]{The quad-edge algebra of \citet{Guibas85} defines a large number of possible relations between an oriented edge $e$ and other oriented edges.
-These can be used to define alternative quad-edge data structures that also contain the necessary information about a map.
-Note that the grey oriented edges $eFlip$ and $eFlipSym$ lie on the back of the map.}
-\label{fig:quad-edge-algebra}
-\end{figure}
+% \begin{figure}[tbp]
+% \centering
+% \subfloat[]{
+% \includegraphics[width=\marginparwidth]{figs/quad-edge-algebra-1}
+% \label{subfig:quad-edge-algebra-1}}
+% \quad
+% \subfloat[]{
+% \includegraphics[width=\marginparwidth]{figs/quad-edge-algebra-2}
+% \label{subfig:quad-edge-algebra-2}}
+% \caption[The quad-edge algebra]{The quad-edge algebra of \citet{Guibas85} defines a large number of possible relations between an oriented edge $e$ and other oriented edges.
+% These can be used to define alternative quad-edge data structures that also contain the necessary information about a map.
+% Note that the grey oriented edges $eFlip$ and $eFlipSym$ lie on the back of the map.}
+% \label{fig:quad-edge-algebra}
+% \end{figure}
 Not all of these need to be however stored.
 In fact, \citet{Guibas85} proposes a structure of \emph{quads}, which store for a given edge only the previous and next oriented edges for the polygons on both of its sides.
-\begin{figure}[tbp]
-\includegraphics[width=0.5\linewidth]{figs/quad}
-\caption[The quad-edge data structure]{In the quad-edge data structure, an edge stores a \emph{quad}, four records pointing to other quads corresponding to the previous and next oriented edges for the polygons on both of its sides (\ie\ $eLprev$, $eLnext$, $eRprev$ and $eRnext$ in the quad-edge algebra).}
+\marginpar{
+\captionsetup{type=figure}
+\includegraphics[width=\marginparwidth]{figs/quad}
+\caption[The quad-edge data structure]{In the quad-edge data structure, an edge stores a \emph{quad}, four records pointing to other quads corresponding to the previous and next oriented edges for the polygons on both of its sides.}
+% (\ie\ $eLprev$, $eLnext$, $eRprev$ and $eRnext$ in the quad-edge algebra).}
 \label{fig:quad}
-\end{figure}
+}
 As shown in \reffig{fig:quad}, these quads store all the necessary relationships to traverse the edges of a polygon in clockwise or anticlockwise order, as well as to navigate between adjacent polygons that are incident to a given edge or vertex.
 
 \subsubsection{3D cell complexes}
