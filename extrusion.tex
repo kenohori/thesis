@@ -100,7 +100,7 @@ Note how it is possible to have multiple intervals per cell both in the input, \
 \label{fig:extrusion-intervals}
 \end{figure}
 Its result is an $n$-dimensional generalised map $G^{\prime}$ representing a $n$-dimensional cell complex containing a set of prismatic $n$-polytopes, the $n$-dimensional analogue of a set of prisms, which also form a space partition.
-Its important to note that the output map $G^\prime$ creates entirely new structures, \ie\ it does not reuse the darts or embeddings of $G$, since the $(n-1)$-simplices in $G$ are similar but not identical to the $n$-simplices in the base of $G^\prime$.
+It is important to note that the output map $G^\prime$ creates entirely new structures, \ie\ it does not reuse the darts or embeddings of $G$, since the $(n-1)$-simplices in $G$ are similar but not identical to the $n$-simplices in the base of $G^\prime$.
 Concretely, these differ in terms of the highest-dimensional involution $\alpha_{n-1}$ and the total number of involutions per dart.
 
 As \reffigs{fig:trianglecomplex} and~\ref{fig:blockscomplex} show, the cells in the new $n$-dimensional cell complex in $G^\prime$ have a direct relation to and can be expressed in terms of the $(n-1)$-cells in $G$ and their extrusion intervals in $\rho$.
@@ -211,7 +211,7 @@ Considering what happens when a single new interval is passed to a cell in the i
 However, when taking into account $r$ intervals passed to the same cell, the total number of intervals for the cell can only increase to $2r-1$.
 As each extrusion interval is bounded by two values, $r$ intervals lead to at most $2r$ boundary values and thus the number of intervals cannot be higher than $2r-1$.
 
-Assuming that a new interval can be added to a cell in $O(\log r)$ time, \eg\ by maintaining an augmented red-black tree which stores the endpoints of the intervals, then the total time to construct the ordered set of all intervals for a cell $c$ is $O(r \log r)$, where $r$ is the number of intervals that are passed onto $c$.
+Assuming that a new interval can be added to a cell in $O(\log r)$ time, \eg\ by maintaining an augmented red-black tree which stores the endpoints of the intervals, the total time to construct the ordered set of all intervals for a cell $c$ is $O(r \log r)$, where $r$ is the number of intervals that are passed onto $c$.
 The overall computational complexity of this step depends on the incidence relationships between the cells in the complex.
 
 \subsection{Generating the new embeddings}

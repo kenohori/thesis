@@ -153,7 +153,7 @@ Together, for instance, as a collection of plane equations that represent all th
 
 \subsubsection{Nef polyhedra}
 
-Nef polyhedra \citep{Nef78,Bieri88} follow a similar approach to half-space models, but extends it with the concept of a local $n$-dimensional pyramid\footnote{This is equivalent to a triangle in 2D and a polyhedral pyramid in 3D.}, which stores the neighbourhood information around every vertex.
+Nef polyhedra \citep{Nef78,Bieri88} follow a similar approach to half-space models, but extend it with the concept of a local $n$-dimensional pyramid\footnote{This is equivalent to a triangle in 2D and a polyhedral pyramid in 3D.}, which stores the neighbourhood information around every vertex.
 As \reffig{fig:nef} shows, the local pyramid of a vertex thus contains the symbolic intersection of an infinitesimally small sphere (in 3D) or circle (in 2D) with the volumes, faces and edges incident to this vertex.
 \marginpar{
 \captionsetup{type=figure}
@@ -262,7 +262,7 @@ Many of these disadvantages are alluded later on in order to justify using expli
 \subsubsection{Boundary representation}
 
 Considering the Jordan curve theorem \citep{Jordan87}, which states that a closed curve separates the plane (\ie\ $\mathbb{R}^2$) into two parts: an \emph{interior} shape and an \emph{exterior} shape, it is possible to use this curve in order to \emph{implicitly but unambiguously} represent the interior (or exterior) shape.
-This theorem was generalised to higher dimensions as the Jordan-Brouwer by \citet{Lebesgue11,Brouwer11}\footnote{This is somewhat contentious. See \citet[Ch.~5]{van-Dalen13}.}, implying that a volume in $\mathbb{R}^3$ can be represented by the 2D boundary surface that separates its interior from its exterior.
+This theorem was generalised to higher dimensions as the Jordan-Brouwer theorem by \citet{Lebesgue11,Brouwer11}\footnote{This is somewhat contentious. See \citet[Ch.~5]{van-Dalen13}.}, implying that a volume in $\mathbb{R}^3$ can be represented by the 2D boundary surface that separates its interior from its exterior.
 This method, known as \emph{boundary representation}, \emph{B-rep} or \emph{surface modelling}, reduces the complexity of the problem by making it possible to use 2D data models/structures to store 3D objects, which are significantly simpler.
 Moreover, by decomposing the 2D surface into simple cells, \eg\ triangles or polygons, it becomes possible to represent the surface using one of the many data structures capable of representing 2D cell complexes, and if these cells support curved domains (\eg\ NURBS), these can be used to represent complex surfaces as well.
 
@@ -640,7 +640,7 @@ Like space, it is considered to have geometry and topology \citep{Earman77}, whi
 Spatiotemporal modelling attempts to create joint models that combine spatial and temporal information.
 It draws inspiration from the independent modelling of both space and time.
 The main models used in spatiotemporal modelling are presented below.
-For a more thorough review of spatiotemporal models see \citet{Al-Taha94,Pelekis04}.
+For a more thorough review of spatiotemporal models see \citet{Al-Taha94} and \citet{Pelekis04}.
 
 The simplest and most widespread spatiotemporal model involves the use of timestamps.
 Known as the \emph{snapshot} model, it was probably first used in the US Historical Boundary File \citep{Basoglu78}.
