@@ -300,6 +300,21 @@ x_i^\prime = \frac{x_i}{x_n-1}, \mathrm{\quad{}for\ } 0 \leq i < n
 \label{fig:jenn}
 \end{figure}
 
+\reffig{fig:4dhouse} shows the application of this method to a 4D model of a house.
+For this, all the cells of the model were manually defined similar to how it was done in \refse{se:concrete-example} using their boundary cells and 0-embeddings set in $\mathbb{R}^4$.
+The 1- and 2-cells were first refined, the 0-, 1- and 2-cells were then projected inwards/outwards to the volume of a 3-sphere ($S^3$), and then stereographically projected to $\mathbb{R}^3$.
+The refined 2-cells were exported as to an\ {}.obj file with materials that reflect which 3- and 4-cell they belong to.
+Icospheres with a set radius were generated around every 0-cell and approximations of cylinders around every refined 1-cell.
+This was then imported in Blender and rendered using a perspective projection down to 2D.
+
+\begin{figure}[tb]
+\centering
+\includegraphics[width=\linewidth]{figs/4dhouse}
+\caption[4D to 2D projection of a 4D house]{A 4D model of a house is projected from $\mathbb{R}^4$ inwards/outwards to the 3-sphere $S^3$, then stereographically to $\mathbb{R}^3$, finally using a perspective projection down to $\mathbb{R}^2$.
+A $\pi / 5$ rotation along the plane passing through the $x_0$ and $x_3$ axes makes the bottom and back 2-cells larger than the rest.}
+\label{fig:4dhouse}
+\end{figure}
+
 \section{Conclusions and possibilities}
 \label{se:slicing-conclusions}
 
