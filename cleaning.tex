@@ -443,7 +443,8 @@ A different technique that solves many of these issues was thus developed for th
 It starts from a set of separate 3D objects that \emph{approximately} form a 3D space partition, such as those that are commonly found in IFC building models.
 The method starts by handling every object separately, obtaining a valid interpretation of each that is stored in an exact representation.
 It then snaps objects together in order to remove small gaps and overlaps at their common boundaries.
-Finally, it uses Boolean set operations to remove larger overlaps and in order to always obtain a 3D space partition.
+Finally, it uses Boolean set operations to remove larger overlaps and in order guarantee that a 3D space partition is obtained.
+Unlike most repair methods used in GIS, it tries to avoid triangulating every face of an object but still manages to obtain planar faces.
 These steps required are described in detail as follows:
 
 \begin{enumerate}
