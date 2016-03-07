@@ -4,10 +4,10 @@
 \label{ch:nd-modelling}
 
 As presented in \refch{ch:modelling-background}, the most common approaches to model 2D and 3D space are based on ad hoc adaptations of data structures that were originally meant for 2D data.
-These have many advantages, but are also necessarily limiting when 3D objects are concerned, constraining the class of objects that they are capable of representing and the operations that can be efficiently performed on such objects.
-Even data structures for sets of 3D objects have significant limitations.
-When the data has to be integrated with non-spatial characteristics (\eg\ time and scale), similar ad hoc adaptations are generally used.
-Therefore, the representation problem is not fully solved even by advanced 3D structures.
+These have many advantages, but are also necessarily limiting when 3D objects are concerned, constraining the class of objects that they are capable of representing efficiently and the operations that can be efficiently performed on them.
+Even data structures specifically defined for sets of 3D objects have significant limitations, such as not being able to store the incidence and adjacency relationships between objects.
+Moreover, when the data has to be integrated with non-spatial characteristics (\eg\ time and scale), similar ad hoc adaptations to 2D structures are also used.
+Therefore, the problem of representing 3D, spatio-temporal and multi-scale data is not fully solved even by the most advanced 3D structures as they are currently used in GIS.\@
 
 This chapter presents the higher-dimensional spatial information modelling approach---the main theme of this thesis---as a solution to all these problems, as well as the higher-dimensional data models and data structures that can be used to realise it.
 \refse{se:nd-modelling-foundations} introduces the topic by showing the strong theoretical foundations behind higher-dimensional modelling.
@@ -25,7 +25,7 @@ Significant parts of \refse{se:data-structures} and \refse{se:nd-modelling-concl
 
 % What, in brief
 
-A radical departure from the traditional approaches to model 2D/3D space, time and scale presented in \refch{ch:modelling-background} consists in the representation of any number of \emph{parametrisable} characteristics (\eg\ the third spatial dimension, time and scale) as additional dimensions in a geometric sense.
+A radical departure from the traditional approaches to model 2D/3D space, time and scale in GIS, as presented in \refch{ch:modelling-background}, consists in the representation of any number of \emph{parametrisable} characteristics (\eg\ the third spatial dimension, time and scale) as additional dimensions in a geometric sense.
 These dimensions are modelled so as to be orthogonal to each other, such that real-world 0D--3D entities are modelled as higher-dimensional objects\footnote{That is, as long as such objects exist along intervals along these other dimensions. If they only exist at a point (\eg\ a moment in time) along these dimensions, they are of the same dimension as the original object.} embedded in higher-dimensional space, which are consequently stored using \emph{higher-dimensional data structures}.
 
 % Foundations (math)
@@ -41,14 +41,16 @@ Also, \citet{McKenzie01} contends that weather and groundwater phenomena cannot 
 
 % Disclaimer
 
-It is important to note that the higher-dimensional modelling approach---as presented in this thesis---differs from the one that is used in most systems being described as 4D, 5D, 6D, \ldots, $n$D GIS/BIM in product descriptions and the scientific literature.
-In both instances, such terms are generally used as catchwords that refer to \emph{any} kind of support for the storage of time information, costs, project life cycles, etc.
-In most cases, this information is usually stored as attributes that are appended to 2D/3D objects (\eg\ timestamps), or as external structures that are unlinked to any objects with a geometric description (\eg\ IFC scheduling information).
+It is important to note that the higher-dimensional modelling approach---as presented in this thesis---bears no relation to the most common usage of 4D, 5D, 6D, \ldots, $n$D GIS/BIM in both GIS product descriptions and scientific literature.
+There, such terms are generally used as buzzwords that refer to \emph{any} kind of support for the storage of time information, costs, project life cycles, or any other kind of non-spatial characteristics.
+In most cases, this information is simply stored as a tuple of attributes that are appended to 2D/3D objects (\eg\ timestamps), or as external structures that are unlinked to any objects with a geometric description (\eg\ IFC scheduling information).
+If one were to interpret these objects geometrically, they would result in 2D/3D objects embedded in higher-dimensional space\footnote{Orthogonal and point-like with respect to the higher dimensions.}, and \emph{not in higher-dimensional objects embedded in higher-dimensional space}.
 
 % Past attempts
 
-However, real strides towards higher-dimensional GIS have been made in various forms.
+However, it is worth noting that real strides towards higher-dimensional GIS have been made in various forms.
 Research in multidimensional GIS aims at the integrated storage and analysis of objects of different dimensions~\citep{Raper00,Gold05}, usually limited to 0D--3D objects but sometimes conceptually extended to higher dimensions.
+Storing and manipulating heterogeneous objects and their semantics is a difficult challenge and is a notable weak point of current GIS tools.
 
 % Using time as a dimension
 
