@@ -3,14 +3,14 @@
 \chapter*{Preface}
 % \addcontentsline{toc}{chapter}{Preface}
 
-We usually associate the three usual dimensions with length, width and height, as well as a fourth dimension with time. 
-However, mathematically, dimensions are essentially a construct and do not have a fixed meaning.
-By associating each dimension with a variable, they can be used to represent any kind of characteristic that is \emph{parametrisable}.
-Within this thesis, higher-dimensional geometric representations are thus used to model various aspects of geographic information, such as the typical geographic coordinates, but also time and scale.
+We usually associate the three usual dimensions with length, width and height (in any order), and the fourth dimension with time. 
+However, mathematically, dimensions are essentially a artificial construct and do not have a fixed meaning linked to any specific aspect of reality.
+By associating each dimension with a variable, they can be used to represent pretty much anything that we can put a parameter to.
+Within this thesis, representations of any dimension are thus used to model various aspects of geographic information, such as the typical geographic coordinates, but also time and scale.
 
 At the end of the 19th century, a couple of non-scientific books were notable for popularising thinking about dimensions, the satyrical \emph{Flatland: A Romance of Many Dimensions} \citep{Abbott84} (\reffig{fig:flatland}), and the more serious \emph{A New Era of Thought} \citep{Hinton88}.
-These books used analogies between familiar 0D--3D situations and those in higher dimensions, attempting to give readers an intuitive feeling of what these abstract higher dimensions are like.
-Plenty of others have continued to follow in their footsteps, including some in popular media (\reffig{fig:futurama}).
+These books used playful analogies between familiar 0D--3D situations and those in higher dimensions, attempting to give readers an intuitive feeling of what these abstract higher dimensions are like.
+Plenty of others continue to follow in their footsteps (\reffig{fig:futurama}).
 
 \marginpar{
 \captionsetup{type=figure}
@@ -26,8 +26,9 @@ Plenty of others have continued to follow in their footsteps, including some in 
 \label{fig:futurama}
 }
 
-This thesis uses formal descriptions for data structures and algorithms, but also similar intuitive explanations and analogies across different dimensions, offering explanations of higher-dimensional problems based on our intuitive knowledge of similar 2D and 3D cases.
-I hope that the result is approachable and serves to broach the subject in a practical way, using real-world data, implementing ideas into software prototypes and explaining concepts through practical examples.
+In order to ensure that all descriptions are formally correct, this thesis necessarily uses some formal descriptions for its data structures and algorithms.
+However, it also tries to provide intuitive explanations and analogies across different dimensions, offering explanations of higher-dimensional problems based on our intuitive knowledge of similar 2D and 3D cases.
+I hope that the result is approachable and serves to broach the subject in a practical way, and that potential readers (if any) are not put off by overly technical explanations or by the overly simplistic examples that I am able to draw.
 
 \section*{About this thesis}
 
@@ -42,23 +43,24 @@ Plenty of laws have been enacted on the matter with a complete lack of transpare
 % For all intents and purposes, a system ostensibly created for the protection of authors have been co-opted by the copyright industries.
 
 By releasing this thesis' contents into the public domain and making its source publicly available, I wish to make a small statement about how I believe science should be distributed in the future---openly and without restrictions.
-Open access journals are a step in the right direction\footnote{Even as some of them have abusive fees that bear no relation with the marginal cost of internet distribution.}, but I hope it is not too long before we are able to get rid of journals and publishers altogether.
+Open access journals are a step in the right direction\footnote{Even as many of them have abusive fees that bear no relation with the marginal cost of internet distribution.}, but I hope it is not too long before we are able to get rid of profit-driven journals and publishers altogether.
 
 Following in the same spirit, the source code of the main prototype implementations that were developed during this PhD project have also been made publicly available under permissive licences, which are linked to in the corresponding parts of this thesis.
-As others have pointed out before me, there is a great disparity between the alleged importance of scientific evidence and widespread acceptance of not disclosing software implementations \citep{Morin12,Joppa13}.
-More cogently, \emph{there is no such thing as reproducibility without source code} \citep{Ince12}.
+As others have pointed out before me\footnote{See for instance \citet{Morin12}, \citet{Joppa13} and \citet{Ince12}}, there is a great disparity between the alleged importance of scientific evidence and widespread acceptance of not disclosing software implementations.
+% More cogently, \emph{there is no such thing as reproducibility without source code}.
 
 \section*{Acknowledgements}
 
 My utmost thanks go to my supervisors, \textbf{Hugo} and \textbf{Jantien}.
-They not only provided me with the opportunity to work on this PhD, but were always there with good ideas, and all the guidance and support anyone could wish.
+They not only provided me with \emph{years} of employment and the wonderful opportunity to work on this PhD, but were always there with good ideas, and all the guidance and support anyone could ever wish.
 I am also very grateful to \textbf{Guillaume} for hosting me in Lyon and helping me to understand the details of his CGAL packages, which were used in large parts of this thesis.
 
 Special thanks go to everyone else in the \textbf{3D geoinformation} group during my time there (\textbf{Filip}, \textbf{Liu}, \textbf{Ravi}, \textbf{Sisi} and \textbf{Zhiyong}).
-It is a fantastic place to work and I feel privileged to have been able to contribute to it with my grain of sand.
+It is truly a fantastic place to work and I feel privileged to have been able to contribute to it with my grain of sand.
 
-I am also thankful to everyone at \textbf{GIS Technology} (\textbf{Edward}, \textbf{Elfriede}, \textbf{Marian}, \textbf{Martijn}, \textbf{Radan}, \textbf{Theo}, \textbf{Tjeu}, \textbf{Peter} and \textbf{Wilko}), where I started this PhD.
-Many of them gave me insightful comments and support throughout my PhD.
+I am also thankful to everyone at \textbf{GIS technology} (\textbf{Edward}, \textbf{Elfriede}, \textbf{Marian}, \textbf{Martijn}, \textbf{Radan}, \textbf{Theo}, \textbf{Tjeu}, \textbf{Peter} and \textbf{Wilko}).
+Many of them gave me insightful comments and support.
 
-Last but not least, I especially thank my mother, \textbf{Kimiyo}, who has always been there supporting me, and to my friends in Mexico, the Netherlands and elsewhere, who made sure I always had things to enjoy outside work.
+Last but not least, I especially thank my mother, \textbf{Kimiyo}, who has always been there supporting me, and my \textbf{close friends} in Mexico, the Netherlands and elsewhere, who made sure I always had things to enjoy outside work.
+I could not mention you all by name without making a dubious classification, which I do not want to do, and so I hope you will forgive me for just refusing to do so.
 \emph{Thank you all}.

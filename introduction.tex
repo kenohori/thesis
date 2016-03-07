@@ -13,10 +13,11 @@ Because of this, spatial information forms a necessary component of any computer
 % GIS research
 
 At the core of this subject lies the research on \emph{geographic information systems (GIS)}, which produces tools to create, manipulate, analyse and view the digital objects that are inherent in these abstract representations of the world.
-Compared to other software categories that also work with geometric objects, such as those used in computer-aided design (CAD) and geometric modelling, GIS tools stand out as being remarkably \emph{generic}.
-They are used equally to manually model objects by interactively drawing primitives, to semi-automatically create models from raw acquired data, to manage large collections of heterogeneous datasets and keep them up to date, or as interactive environments to query the attributes of and perform simple calculations on existing datasets.
-Because of this genericity, GIS tools are expected to support a large number of different data formats from multiple sources and a wide variety of operations---all while solving problems in both 2D and 3D and preserving the key characteristics of sometimes incompatible computer representations.
-\emph{Rather than guaranteeing the best solution on input fulfilling certain strict conditions, GIS tools are  expected to make a best effort to obtain a good solution on the (often invalid) data that is available}.
+Compared to other software categories that also work with objects that are represented geometrically, such as those used in computer-aided design (CAD) and geometric modelling, GIS tools stand out as being \emph{remarkably generic}.
+They are used equally to manually build objects by applying interactive drawing operations, to semi-automatically create full models from raw acquired data, to manage large collections of heterogeneous datasets and keep them up to date, or as interactive point-and-click environments to query the attributes of and perform simple calculations on existing datasets.
+Because of this genericity, GIS tools are expected to support a large number of different data formats from multiple sources and a wide variety of operations---all while solving problems in a mix of 2D and 3D and preserving the key characteristics of sometimes mutually incompatible computer representations.
+\emph{Rather than attempting to find the best solution on input fulfilling strict conditions, GIS tools are expected to make a best effort to obtain a good solution on the often invalid data that is available}.
+This thesis follows this philosophy to a large extent.
 
 % 2D representations in GIS
 
@@ -65,29 +66,32 @@ For example, spatiotemporal GIS keep multiple representations of 2D structures \
 % Limits 3D operations
 
 The use of 2D representations also limits the capabilities of GIS software, as the techniques that can be implemented on top of these 2D representations cannot make full use of the potential of 3D spatial information \citep[Ch.~3]{Zlatanova00}.
-For instance, current GIS are largely unable to manipulate 3D objects or to compute geometric operations between multiple 3D objects, forcing users to perform such functions in 3D modelling software.
-These examples are notable as similar functionality for is widespread in 2D GIS and expected by users.
+For instance, current GIS are largely unable to perform complex manipulations of 3D objects or to compute geometric operations between multiple 3D objects, forcing users to perform such functions in 3D modelling software.
+These examples are notable as similar functionality for is widespread in 2D GIS and expected by its users.
 
 % nD approach -> solution
 
-A potential solution to these problems is to represent certain parametrisable characteristics as additional dimensions in the geometric sense, as shown in \reffig{fig:axes}, such that real-world entities are modelled as higher-dimensional objects embedded in higher-dimensional space \citep{vanOosterom10}.
+A potential solution to solve the representation problems of 3D, spatio-temporal and multiscale data is opting out of further ad hoc adaptations of 2D structures.
+Instead, this thesis shows that it is possible to represent certain parametrisable characteristics as additional dimensions in the geometric sense, as shown in \reffig{fig:axes}, such that real-world (0D--3D) entities are modelled as \emph{higher-dimensional objects embedded in higher-dimensional space} \citep{vanOosterom10}.
 \marginpar{
 \captionsetup{type=figure}
 \includegraphics[width=\marginparwidth]{figs/axes}
 \caption{Five dimensions based on 3D space, time and scale}
 \label{fig:axes}
 }
-A building existing over a time span and stored at a range of scales on a computer could thus be represented as a single 5D object.
+A building existing over a time span and stored at a variety of scales on a computer could thus be represented as a single 5D object.
 
 % Why?
 
-This \emph{higher-dimensional geographic information modelling} approach is well grounded in long-standing mathematical theories, such as the setting of coordinates to space \citep{Descartes37}, and theories of higher-dimensional geometry \citep{Riemann68} and topology \citep{Poincare95}.
+The \emph{higher-dimensional geographic information modelling} approach is well grounded in long-standing mathematical theories, such as the setting of coordinates to space \citep{Descartes37}, and theories of higher-dimensional geometry \citep{Riemann68} and topology \citep{Poincare95}.
 It also opens the door for new, more powerful techniques and practical applications.
-For example, these $n$-dimensional representations could be used to ensure that an object is consistent along all dimensions (\eg\ a building at different points in time or levels of detail), or to analyse its relations to other objects along all dimensions as well.
+For example, these $n$-dimensional representations could be used to ensure that an object is consistent along all dimensions (\eg\ a building at different points in time or levels of detail), or to analyse its relations to other objects along all dimensions (\eg\ whether two moving objects were ever adjacent).
 
 % Scientific gap
 
-While there is a large body of related work on the representation of abstract $n$-dimensional objects in mathematics and computer science \citep{Brisson93,Lienhardt94}, it is necessary to extend these representations to make them fit for use with real-world objects, which have aspects that are difficult to handle in certain idealised representations, \eg\ certain complex geometries (\reffig{fig:nonmanifold})
+There is a large body of related work on the representation of abstract $n$-dimensional objects in mathematics and computer science \citep{Brisson93,Lienhardt94}, as well as a few instances of work on its application to GIS \citep{Karimipour10}.
+However, by and large \emph{higher-dimensional representations remain unanalysed in the context of geographic information}.
+For instance, it is necessary to see how abstract representations can be made fit for use with real-world objects, which have aspects that are difficult to handle, \eg\ certain kinds of geometries (\reffig{fig:nonmanifold})
 \marginpar{
 \captionsetup{type=figure}
 \includegraphics[width=\marginparwidth]{figs/nonmanifold}
@@ -101,16 +105,18 @@ While there is a large body of related work on the representation of abstract $n
 \caption{The top and bottom faces of this torus have holes in them.}
 \label{fig:torus}
 }
-and semantics.
-Additionally, making this approach attractive in practice requires the development of techniques to construct, analyse and visualise higher-dimensional geographic objects.
+and complex semantics.
+Additionally, making this approach attractive in practice requires the development of high-level techniques to construct, analyse and visualise higher-dimensional geographic objects.
 Finally, there are significant technical issues involved in the realisation of these representations and techniques into a computer implementation.
+All of these aspects, which in short concern concepts, representations, operations and use, are tackled in separate chapters of this thesis.
 
 \section{Research objective and scope}
 \label{se:objective}
 
-In order to determine whether the higher-dimensional modelling approach is worthwhile, and if so, the conditions under which it makes sense to follow it, it is necessary to gain a greater understanding of the entire modelling process and its technical consequences.
-The main aim of this thesis is therefore to gain this understanding by \textbf{realising the fundamental aspects of a higher-dimensional Geographic Information System}, ranging from the development of the necessary concepts to the creation of prototype-level working software using real-world higher-dimensional datasets.
-In this sense, I purposefully do not intend to prove that the higher-dimensional spatial modelling approach is better or worse than existing approaches, but instead to highlight its advantages and disadvantages.
+In order to determine whether the \emph{higher-dimensional modelling of geographic information} is worthwhile, and if so, the conditions under which it makes sense to follow it, it is necessary to first gain a greater understanding of the entire modelling process in higher dimensions as well as its technical consequences.
+The main aim of this thesis is therefore to gain this understanding by \textbf{realising the fundamental aspects of a higher-dimensional Geographic Information System}, including the development of the necessary modelling concepts analogous to current modelling concepts in 2D/3D GIS, the use of appropriate higher-dimensional representations, and the development of simple higher-dimensional operations.
+While not every aspect of a higher-dimensional GIS can be fully developed within the timeframe allotted for this thesis, prototype-level working software is created whenever possible and tested using real-world higher-dimensional datasets.
+In this sense, this thesis does not intend to prove that the higher-dimensional spatial modelling approach is better or worse than existing approaches, but instead to highlight its advantages and disadvantages so as to better evaluate it.
 
 \section{Structure of this thesis}
 \label{se:about}
