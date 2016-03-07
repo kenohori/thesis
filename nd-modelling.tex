@@ -729,6 +729,9 @@ Attributes can be handled using an attributes tuple that links each cell of the 
 While ordered topological models are relatively difficult to implement, they have nevertheless been implemented in several open source libraries and software, including CGAL\footnote{\url{http://www.cgal.org}}, Moka\footnote{\url{http://moka-modeller.sourceforge.net}}, and CGoGN\footnote{\url{http://cgogn.unistra.fr}} \citep{Kraemer14}.
 Although not discussed further here, I showed in \citet{ArroyoOhori13a} in more detail how generalised maps can be implemented to support various characteristics of real-world data, such as such as markers, locks (for parallel algorithms), simple construction operations and indexing of darts and attributes for the objects of all dimensions.
 
+However, even as all of the aforementioned implementations are stable, and the implementation of CGAL Combinatorial Maps is impressively sophisticated in many respects (such as the customisable constant time iterators through darts implemented using C++11 variadic templates), it is important to note that they are limited to providing basic navigation and construction functions at the dart/simplex level.
+The contribution of this thesis thus lies in showing how to use this type of libraries in practice, how to build higher-dimensional representations of real-world objects, and how one can build more complex algorithms on top of these basic operations in order to implement higher-level (user-facing) functions.
+
 In terms of applications, 
 \citet{Fradin02} used generalised maps in architecture building models such that the level of detail is modelled using the same kind of relations that are used to model geometric dimensions.
 \citet{Thomsen08} used generalised maps in order to manage topology in 2D/3D GIS in a unified (not dimension dependent) manner.
