@@ -312,28 +312,29 @@ R_{zw} &= \begin{bmatrix}
 \end{minipage}
 }
 
-This scheme of a set of elementary rotations can be easily extended to any dimension, always considering a rotation matrix as a transformation that rotates two coordinates of every point and maintains the coordinates of all other coordinates.
-An alternative could be to apply more than one rotation at a time, which is possible in higher dimensions \citep{vanElfrinkhof97}.
+This scheme of a set of elementary rotations can be easily extended to any dimension, always considering a rotation matrix as a transformation that rotates two coordinates of every point and maintains all other coordinates.
+An alternative to this could be to apply more than one rotation at a time, which is possible in higher dimensions \citep{vanElfrinkhof97}.
 However, for an application expecting user interaction, it might be more intuitive to rely on a rotation plane that does not correspond to specific axes, \eg\ by defining such a plane through a triplet of points \citep{Hanson94}.
 
 The \textbf{cross-product} is easier to understand by first considering the lower-dimensional cases.
 In 2D, it is possible to obtain a normal vector to a 1D line as defined by two (different) points $p^0$ and $p^1$, or equivalently a normal vector to a vector from $p^0$ to $p^1$.
 In 3D, it is possible to obtain a normal vector to a 2D plane as defined by three (non-collinear) points $p^0$, $p^1$ and $p^2$, or equivalently a normal vector to a pair of vectors from $p^0$ to $p^1$ and from $p^0$ to $p^2$.
-Similarly, in $n$D, it is possible to obtain a normal vector to a $(n-1)$D subspace as defined by $n$ linearly independent points $p^0, p^1, \ldots, p^{n-1}$, or equivalently a normal vector to a set of $n-1$ vectors from $p^0$ to every other point (\ie\ $p^1, p^2, \ldots, p^{n-1}$) \citep{Massey83,Elduque04}.
+Similarly, in $n$D, it is possible to obtain a normal vector to a $(n-1)$D subspace\footnote{Probably easier to picture as an $(n-1)$-simplex} as defined by $n$ linearly independent points $p^0, p^1, \ldots, p^{n-1}$, or equivalently a normal vector to a set of $n-1$ vectors from $p^0$ to every other point (\ie\ $p^1, p^2, \ldots, p^{n-1}$) \citep{Massey83,Elduque04}.
 
-\citet{Hanson94} follows the latter explanation using a set of $n-1$ vectors all starting from the first point to give a simple definition of the $n$-dimensional cross-product.
-Assuming that a point $p^i$ in $\mathbb{R}^n$ is defined by a tuple of coordinates denoted as $(p^i_0, p^i_1, \ldots, p^i_{n-1})$ and a unit vector along the $i$-th dimension is denoted as $\hat{x}_i$, the $n$-dimensional cross-product $\vec{N}$ of a set of points $p^0, p^1, \ldots, p^{n-1}$ is defined as the following determinant:
+\citet{Hanson94} follows the latter explanation using a set of $n-1$ vectors all starting from the first point to give an intuitive definition of the $n$-dimensional cross-product.
+Assuming that a point $p^i$ in $\mathbb{R}^n$ is defined by a tuple of coordinates denoted as $(p^i_0, p^i_1, \ldots, p^i_{n-1})$ and a unit vector along the $i$-th dimension is denoted as $\hat{x}_i$, the $n$-dimensional cross-product $\vec{N}$ of a set of points $p^0, p^1, \ldots, p^{n-1}$ can be expressed compactly as \emph{the cofactors of the last column} in the following determinant:
 
-\begin{equation*}
-\vec{N} = \begin{vmatrix}
+\begin{align*}
+\vec{N} &= \begin{vmatrix}
 (p^1_0 - p^0_0) & (p^2_0 - p^0_0) & \cdots & (p^{n-1}_0) & \hat{x}_0 \\
 (p^1_1 - p^0_1) & (p^2_1 - p^0_1) & \cdots & (p^{n-1}_1) & \hat{x}_1 \\
 \vdots & \vdots & \ddots & \vdots & \vdots \\
 (p^1_{n-1} - p^0_{n-1}) & (p^2_{n-1} - p^0_{n-1}) & \cdots & (p^{n-1}_{n-1}) & \hat{x}_{n-1} \\
 \end{vmatrix}
-\end{equation*}
+\end{align*}
 
-This vector $\vec{N}$---like all other vectors---can be normalised into a unit vector by dividing it by its norm $\begin{Vmatrix} \vec{N} \end{Vmatrix}$.
+The components of the normal vector $\vec{N}$ are thus given by the minors of the unit vectors $\hat{x}_0, \hat{x}_1, \ldots, \hat{x}_{n-1}$.
+Finally, this vector $\vec{N}$---like all other vectors---can be normalised into a unit vector by dividing it by its norm $\begin{Vmatrix} \vec{N} \end{Vmatrix}$.
 
 \section{Spatial indexing}
 \label{se:spatial-indexing}
@@ -431,6 +432,8 @@ The configurations for these tests are shown in \reffig{fig:tesseract-tests} and
 As an example of the topological approach, objects will be represented as a combinatorial map with indices on the lexicographically smallest vertex of every cell.
 Meanwhile, the non-topological approach will be exemplified with the Simple Features-like \citep{SimpleFeatures1} representation shown in \refse{ss:nd-topology} and \reffigp{fig:sfsnd}.
 Indices make little sense in the latter, as there are no combinatorial primitives to navigate and every lower-dimensional cell is represented multiple times.
+Note that the objects are assumed to have identical coordinates and structure at this point.
+If this is not the case, cleaning methods such as those mentioned in \refch{ch:cleaning} have to be applied first.
 
 \begin{figure}[tb]
 \centering
