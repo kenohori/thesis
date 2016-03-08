@@ -47,6 +47,10 @@ As it generates all the incidence and adjacency relationships between $(n-1)$-ce
 
 In order to be efficient, the algorithm uses two basic techniques: (i) indexes on the lexicographically smallest vertex (\refse{se:spatial-indexing}) of certain cells, which are used in order to keep track of individual cells (which might be disconnected) and to access cells efficiently; and (ii) signature-generating traversals for specific cells \citep{Gosselin11}, which are used to efficiently compare whether two cells are equivalent by checking if it is possible to find an isomorphism $f$ that maps darts with equivalent $\beta$ relations and embedded at the same locations in space, as was shown in \refse{se:ndqueries}.
 
+The incremental construction operation as described in this chapter is applicable only to perfect data.
+The $(n-1)$-cells bounding an $n$-dimensional cell should thus form a manifold and perfectly match each other at their common $(n-2)$-dimensional boundaries.
+However, the method can be easily extended to handle some more complex configurations, such as by cleaning the input data using the methods described in \refch{ch:cleaning}.
+
 \section{Incremental construction of primitives per dimension}
 \label{se:primitives}
 
@@ -359,3 +363,7 @@ It is worth noting that it is one of very few general-purpose object constructio
 The implementation has been tested with simple 2D--4D objects, as well as with large 2D+scale datasets from \citet{Meijers11}.
 The constructed objects were tested to verify that they form valid combinatorial maps.
 The small objects were also manually inspected, visualised, and where possible, they were compared with equivalent objects known to be valid using the method discussed in \refse{se:ndqueries}.
+
+While the incremental construction operation as described in this chapter works only with perfect data, small modifications could make it applicable to additional configurations.
+For instance, merging perfectly linear adjacent cells (\eg\ collinear edges and coplanar faces) as a preprocessing step can be used to handle cases where cells are subdivided only on one side of a boundary.
+Snapping points together can solve several common invalid configurations, such as those described in \refch{ch:cleaning} and in \citet{Diakite14}.
