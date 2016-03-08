@@ -71,7 +71,8 @@ Notably, the correspondences between equivalent objects across LODs thus become 
 \captionsetup{type=figure}
 \centering
 \includegraphics[width=\marginparwidth]{figs/bk}
-\caption[Two LODs of a building footprint as a single polyhedron]{Two LODs of a building footprint are stored as a single polyhedron. Note that the correspondences between vertices, edges and faces between the LODs are clearly indicated by the vertical edges and faces.}
+\caption[Two LODs of a building footprint as a single polyhedron]{Two LODs of a building footprint are stored as a single polyhedron.
+Note that the correspondences between vertices, edges and faces between the LODs are clearly indicated by the vertical edges and faces, and that holes can be similarly handled with additional edges and faces.}
 \label{fig:bk}
 }
 
@@ -122,10 +123,14 @@ It is however important to compute these matches using constraints that generall
 For instance, a greedy algorithm could match cells iteratively, cascading these matches to adjacent cells (in all models) or rejecting matches that would violate a geometric or topological constraint.
 \end{description}
 
-A final possibility to assist when matching cells is to allow splitting an $i$-cell into multiple $i$-cells by adding cells of lower dimensions in a manner that does not alter the geometry of the cell.
+Another possibility to assist when matching cells is to allow \textbf{splitting} an $i$-cell into multiple $i$-cells by adding cells of lower dimensions in a manner that does not alter the geometry of the cell.
+This effectively loosens the requirement that two cells be isomorphic by modifying their topology, creating a one-to-one mapping between the two cells.
 For instance, a face can be split into multiple faces by adding a vertex in its interior and creating edges that link it to some of the vertices of the face.
-This can make two cell complexes isomorphic and directly allow for a one-to-one mapping between two cell complexes.
 
+\textbf{Holes} deserve a special mention, as they can also be used to decide how to match cells.
+When holes (of any dimension) are present at a higher LOD but disappear at the immediate lower LOD, they can be handled appropriately by collapsing them to a nearby vertex such that they do not create any geometric intersections between the cells.
+Another option would be to create an additional point in the lower LOD (equivalent to a 0D hole) where it can be collapsed.
+When holes are present in multiple LODs, they should be handled essentially as if they were independent cells, either matching them directly, splitting them, or collapsing parts of them to match each other.
 
 \subsection{Step 2: Linking corresponding cells}
 \label{ss:linkingrules}
@@ -371,3 +376,6 @@ These different types of 4D models can then be useful for different applications
 The linking schemes described in this chapter are meant for the multi-LOD 3D to 4D case.
 However, they do have a generic formulation, so they can also be applied to other non-spatial characteristics such as time, enabling them to be used in new applications, such as identifying the motion or change of objects through time.
 In addition, these schemes are fully dimension-independent, so it is conceivable that they can be applied to linking multiple higher-dimensional models, such as multi-temporal 4D models.
+
+While the transitions between LODs as shown in this chapter are exclusively linear, it is worth noting that this does not necessarily have to be the case.
+Non-linear transformations can be also be defined (such as by ensuring that a series of LODs forms a $C^1$ or $C^2$ continuous shape) and their corresponding geometries can be either stored in more complex non-linear embeddings of a combinatorial map or discretised as a series of small linear cells that approximate such a shape up to a given $\epsilon$ threshold.
