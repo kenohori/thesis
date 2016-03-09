@@ -28,8 +28,8 @@
             layoutvoffset=0.32cm,
             top=2.170cm,
             bottom=3.510cm,
-            inner=1.668cm,
-            outer=2.699cm,
+            inner=2.1835cm,
+            outer=2.1835cm,
             marginparwidth=4cm, % Fixed for now
             marginparsep=0.4cm]{geometry}
 
@@ -229,8 +229,8 @@
 
 % Page styles for tables of contents, figures and tables
 \renewpagestyle{scrheadings}{
-  {\thepage\quad\rule{1pt}{100pt}\quad{}Contents}%
-  {\hfill\rightmark\quad\rule{1pt}{100pt}\quad\thepage}%
+  {\makebox[2em][r]{\thepage}\quad\rule{1pt}{100pt}\quad{}Contents}%
+  {\hfill\rightmark\quad\rule{1pt}{100pt}\quad\makebox[2em][l]{\thepage}}%
   {}
 }{
   {}%
@@ -324,7 +324,15 @@
 
 \frontmatter
 
-\newgeometry{ignoremp}
+\newgeometry{layoutwidth=18.90cm,
+            layoutheight=24.58cm,
+            layouthoffset=0.32cm,
+            layoutvoffset=0.32cm,
+            top=2.170cm,
+            bottom=3.510cm,
+            inner=2.1835cm,
+            outer=2.1835cm,
+            ignoremp}
 \input{pre}
 
 % No colour links in tables of contents and list of figures
@@ -346,8 +354,8 @@
 
 % Page style for preface
 \renewpagestyle{scrheadings}{
-  {\hspace{-\marginparwidth}\hspace{-\marginparsep}\makebox[\overflowingheadlen][l]{\thepage\quad\rule{1pt}{100pt}\quad{}Preface}}%
-  {\makebox[\overflowingheadlen][r]{\rightmark\quad\rule{1pt}{100pt}\quad\thepage}}%
+  {\hspace{-\marginparwidth}\hspace{-\marginparsep}\makebox[\overflowingheadlen][l]{\makebox[2em][r]{\thepage}\quad\rule{1pt}{100pt}\quad{}Preface}}%
+  {\makebox[\overflowingheadlen][r]{\rightmark\quad\rule{1pt}{100pt}\quad\makebox[2em][l]{\thepage}}}%
   {}
 }{
   {}%
@@ -368,8 +376,8 @@
 
 % Page style for chapters
 \renewpagestyle{scrheadings}{
-  {\hspace{-\marginparwidth}\hspace{-\marginparsep}\makebox[\overflowingheadlen][l]{\thepage\quad\rule{1pt}{100pt}\quad{}\leftmark}}%
-  {\makebox[\overflowingheadlen][r]{\rightmark\quad\rule{1pt}{100pt}\quad\thepage}}%
+  {\hspace{-\marginparwidth}\hspace{-\marginparsep}\makebox[\overflowingheadlen][l]{\makebox[2em][r]{\thepage}\quad\rule{1pt}{100pt}\quad{}\leftmark}}%
+  {\makebox[\overflowingheadlen][r]{\rightmark\quad\rule{1pt}{100pt}\quad\makebox[2em][l]{\thepage}}}%
   {}
 }{
   {}%
@@ -394,7 +402,15 @@
   \includegraphics[width=0.8\linewidth]{figs/gmaps-3d-simplices}
   \end{center}
 }
-\newgeometry{ignoremp}
+\newgeometry{layoutwidth=18.90cm,
+            layoutheight=24.58cm,
+            layouthoffset=0.32cm,
+            layoutvoffset=0.32cm,
+            top=2.170cm,
+            bottom=3.510cm,
+            inner=2.1835cm,
+            outer=2.1835cm,
+            ignoremp}
 \part{Representing geographic information}
 \label{pa:representation}
 \restoregeometry%
@@ -410,7 +426,15 @@
   \vspace{5cm}
   \includegraphics[width=\linewidth]{figs/extrusion-steps}
 }
-\newgeometry{ignoremp}
+\newgeometry{layoutwidth=18.90cm,
+            layoutheight=24.58cm,
+            layouthoffset=0.32cm,
+            layoutvoffset=0.32cm,
+            top=2.170cm,
+            bottom=3.510cm,
+            inner=2.1835cm,
+            outer=2.1835cm,
+            ignoremp}
 \part{Constructing and manipulating objects}
 \label{pa:operations}
 \restoregeometry%
@@ -424,11 +448,6 @@
 \input{linking-lods}
 
 \input{slicing}
-
-% \newgeometry{ignoremp}
-% \part{Data processing, conclusions and implementations}
-% \label{pa:implementation}
-% \restoregeometry%
 
 \bookmarksetup{startatroot}
 \addtocontents{toc}{\medskip\bigskip}
@@ -445,8 +464,8 @@
 
 \cleardoublepage%
 \renewpagestyle{scrheadings}{
-  {\thepage\quad\rule{1pt}{100pt}\quad\leftmark}%
-  {\hfill\rightmark\quad\rule{1pt}{100pt}\quad\thepage}%
+  {\makebox[2em][r]{\thepage}\quad\rule{1pt}{100pt}\quad\leftmark}%
+  {\hfill\rightmark\quad\rule{1pt}{100pt}\quad\makebox[2em][l]{\thepage}}%
   {}
 }{
   {}%
@@ -462,7 +481,15 @@
   {\hfill\thepage}%
   {}
 }
-\newgeometry{ignoremp}
+\newgeometry{layoutwidth=18.90cm,
+            layoutheight=24.58cm,
+            layouthoffset=0.32cm,
+            layoutvoffset=0.32cm,
+            top=2.170cm,
+            bottom=3.510cm,
+            inner=2.1835cm,
+            outer=2.1835cm,
+            ignoremp}
 
 \input{dictionary}
 
@@ -478,8 +505,8 @@
 
 % Page style for back matter
 \renewpagestyle{scrheadings}{
-  {\hspace{-\marginparwidth}\hspace{-\marginparsep}\makebox[\overflowingheadlen][l]{\thepage\quad\rule{1pt}{100pt}\quad\leftmark}}%
-  {\makebox[\overflowingheadlen][r]{\rightmark\quad\rule{1pt}{100pt}\quad\thepage}}%
+  {\hspace{-\marginparwidth}\hspace{-\marginparsep}\makebox[\overflowingheadlen][l]{\makebox[2em][r]{\thepage}\quad\rule{1pt}{100pt}\quad\leftmark}}%
+  {\makebox[\overflowingheadlen][r]{\rightmark\quad\rule{1pt}{100pt}\quad\makebox[2em][l]{\thepage}}}%
   {}
 }{
   {}%
