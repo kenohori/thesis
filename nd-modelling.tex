@@ -140,7 +140,7 @@ Such a volume has a prismatic shape and can be generated using the methods that 
 \label{fig:aula}
 }
 As shown in \reffig{fig:aula-transformations}, applying translation, rotation or scale transformations to the 2D object during a time interval yield other volumes that have an intuitive shape.
-\begin{figure*}[b]
+\begin{figure*}[tbp]
 \centering
 \subfloat[Original]{
 \includegraphics[width=0.25\linewidth]{figs/aula}
@@ -497,7 +497,7 @@ The most common data structures for arbitrary cell complexes are incidence graph
 Just as with simplicial complexes, if only linear geometries are required, the only geometric information needed is the coordinates of the points for the 0-cells.
 However, since a set of vertices is not enough to describe a cell, all the embedding structures of every dimension need to exist (albeit they can be as simple as a unique ID or memory address per cell).
 As shown in \reffig{fig:ds_incidence_graph}, these are connected through a combinatorial structure containing the incidence relationships between the cells, such as an $i$-cell having an $(i-1)$-cell on its boundary, vice versa (known as the co-boundary or star), or both.
-\begin{figure}[tbp]
+\begin{figure*}[tbp]
 \centering
 \subfloat[]{
 \includegraphics[scale=0.17]{figs/cellcomplex-polygons}
@@ -514,24 +514,34 @@ As shown in \reffig{fig:ds_incidence_graph}, these are connected through a combi
 \subfloat[]{
 \includegraphics[scale=0.17]{figs/1-cell-star}
 \label{subfig:1-cell-boundary}}
-\quad
+\\
 \subfloat[]{
 \includegraphics[scale=0.17]{figs/1-cell-boundary}
 \label{subfig:1-cell-star}}
 \quad
 \subfloat[]{
+\includegraphics[scale=0.17]{figs/0-cell-double-star}
+\label{subfig:0-cell-double-star}}
+\quad
+\subfloat[]{
 \includegraphics[scale=0.17]{figs/0-cell-star}
-\label{subfig:0-cell-boundary}}
+\label{subfig:0-cell-star}}
+\quad
+\subfloat[]{
+\includegraphics[scale=0.17]{figs/0-cell-embedding}
+\label{subfig:0-cell-embedding}}
 \caption[Relationships in an incidence graph]{The cells in a cell complex, the most common relationships that are be stored in an incidence graph and similar data structures up to 2D, and the embedding of the 0-cells so as to support a geometry.
 (a) Three adjacent polygons.
-(b) The cells in the cell complex.
+(b) The 0-, 1- and 2-cells in the cell complex.
 (c) Boundary relationships of a 2-cell.
 (d) Co-boundary relationships of a 1-cell.
 (e) Boundary relationships of a 1-cell.
-(f) Co-boundary relationships and embedding of a 0-cell.
+(f) Double co-boundary relationships of a 0-cell.
+(g) Co-boundary relationships of a 0-cell.
+(h) Embedding of a 0-cell.
 Note that (c), (d) and (e) correspond to an $i$-cell that is linked to the $(i-1)$-cells on their boundary or vice versa.}
 \label{fig:ds_incidence_graph}
-\end{figure}
+\end{figure*}
 Since the number of these incidences is generally not fixed or bounded, unlike in a simplicial complex, they are more difficult to integrate into the cell primitives.
 One solution involves using variable length data structures (\eg\ a linked list of the facets of a cell).
 Another would be to store instead combinatorial primitives consisting of pairs of an $i$-cell and an $(i-1)$-cell---an approach well-suited to a database implementation.
