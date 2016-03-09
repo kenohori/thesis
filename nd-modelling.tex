@@ -203,7 +203,7 @@ This is described in more detail in \refch{ch:slicing}.
 \subsection{Topological relationships in higher dimensions}
 \label{ss:nd-topology}
 
-As described in \refse{ss:combinatorial-embedding}, spatial data structures often consist of two aspects: 1.\ a combinatorial part, which consists of a set of primitives and some topological relationships between them, and 2.\ an embedding that links these primitives to their geometry and attributes.
+As described in \refse{ss:combinatorial-embedding}, spatial data structures often consist of two aspects: (i) a combinatorial part, which consists of a set of primitives and some topological relationships between them, and (ii) an embedding that links these primitives to their geometry and attributes.
 This distinction is useful to give a more formal understanding of what topological relationships in higher dimensions are, as well as to highlight how the storage of higher-dimensional topological relationships in a combinatorial structure is the main aspect that differentiates higher-dimensional structures from 2D/3D ones.
 
 This is clearer when considering the data structures that contain only 1D topological relationships, which are commonly used in GIS.\@
@@ -500,35 +500,35 @@ As shown in \reffig{fig:ds_incidence_graph}, these are connected through a combi
 \begin{figure*}[tbp]
 \centering
 \subfloat[]{
-\includegraphics[scale=0.17]{figs/cellcomplex-polygons}
+\includegraphics[width=0.22\linewidth]{figs/cellcomplex-polygons}
 \label{subfig:cellcomplex-polygons}}
 \quad
 \subfloat[]{
-\includegraphics[scale=0.17]{figs/cellcomplex-cells}
+\includegraphics[width=0.22\linewidth]{figs/cellcomplex-cells}
 \label{subfig:cellcomplex-cells}}
 \quad
 \subfloat[]{
-\includegraphics[scale=0.17]{figs/2-cell-boundary}
+\includegraphics[width=0.22\linewidth]{figs/2-cell-boundary}
 \label{subfig:2-cell-adjacency}}
 \quad
 \subfloat[]{
-\includegraphics[scale=0.17]{figs/1-cell-star}
+\includegraphics[width=0.22\linewidth]{figs/1-cell-star}
 \label{subfig:1-cell-boundary}}
 \\
 \subfloat[]{
-\includegraphics[scale=0.17]{figs/1-cell-boundary}
+\includegraphics[width=0.22\linewidth]{figs/1-cell-boundary}
 \label{subfig:1-cell-star}}
 \quad
 \subfloat[]{
-\includegraphics[scale=0.17]{figs/0-cell-double-star}
+\includegraphics[width=0.22\linewidth]{figs/0-cell-double-star}
 \label{subfig:0-cell-double-star}}
 \quad
 \subfloat[]{
-\includegraphics[scale=0.17]{figs/0-cell-star}
+\includegraphics[width=0.22\linewidth]{figs/0-cell-star}
 \label{subfig:0-cell-star}}
 \quad
 \subfloat[]{
-\includegraphics[scale=0.17]{figs/0-cell-embedding}
+\includegraphics[width=0.22\linewidth]{figs/0-cell-embedding}
 \label{subfig:0-cell-embedding}}
 \caption[Relationships in an incidence graph]{The cells in a cell complex, the most common relationships that are be stored in an incidence graph and similar data structures up to 2D, and the embedding of the 0-cells so as to support a geometry.
 (a) Three adjacent polygons.
