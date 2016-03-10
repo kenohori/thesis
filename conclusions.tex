@@ -113,7 +113,7 @@ As an alternative to the use of simple operations on combinatorial primitives, t
 
 % Chapter 6
 
-\item[I.\ Constructing objects using $n$D extrusion]
+\item[Method I.\ constructing objects using $n$D extrusion]
 
 Extrusion as used in GIS has a natural extension into a dimension-independent formulation (\refch{ch:extrusion}).
 Starting from an $(n-1)$-dimensional space partition as an $(n-1)$-dimensional cell complex and a set of intervals per cell, it is possible to extrude them to create an $n$-dimensional cell complex.
@@ -125,7 +125,7 @@ It is also memory-efficient, as only three layers of darts (of the size of the i
 
 % Chapter 7
 
-\item[II.\ Constructing $n$D objects incrementally]
+\item[Method II.\ constructing $n$D objects incrementally]
 
 Based on the Jordan-Brouwer separation theorem \citep{Lebesgue11,Brouwer11}, it is known that an $i$-cell can be described based on a set of its bounding $(i-1)$-cells (\refch{ch:incremental-construction}).
 Since individual $(i-1)$-cells are easier to describe than the $i$-cell, this can be used to subdivide a complex representation problem into a set of simpler, more intuitive ones.
@@ -139,7 +139,7 @@ By checking all matching ridges within a cell's facets, the algorithm can option
 
 % Chapter 8
 
-\item[III.\ Linking 3D models at different LODs into a 4D model]
+\item[Method III.\ linking 3D models at different LODs into a 4D model]
 
 As an example high-level higher-dimensional object construction method, a 4D model can be constructed from a series of different 3D models at different LODs (\refch{ch:linking-lods}).
 The method presented in this thesis consists of three steps: identifying corresponding elements in different LODs, deciding how these should be connected according to a linking scheme, and finally linking relevant 3-cells into 4-cells.
@@ -223,34 +223,48 @@ They are:
 \item[Low-level linking algorithms] The linking schemes from \refch{ch:linking-lods} have only been described in terms of high-level algorithms.
 These should be further developed by finding adequate low-level algorithms to identify matching elements using customisable constraints.
 For instance, it is reasonable to attempt to minimise a certain distance function between two models (\eg\ Earth mover's distance), but it is also important to do so in a manner that preserves the topological relationships between the objects.
+The special treatment of holes of different dimensions should also be investigated, together with adequate methods to ensure that holes are linked correctly between themselves and to other primitives.
 
 \item[High-level construction algorithms] The three object construction methods described in this thesis operate mostly on lower-dimensional primitives and consequently cover only a few use cases.
 There is a need to develop intuitive methods that operate directly on higher-dimensional primitives, which should preferably be usable in an interactive environment.
 Note however that this does not mean that the end user would be viewing the higher-dimensional model directly, as it could be shown in simplified form or as a 2D or 3D representative subset.
 
 \item[$n$D constrained triangulator] There are high-quality robust implementations of constrained Delaunay triangulations in 2D \citep{Shewchuk96} and 3D \citep{Si05}, as well as good descriptions of a constrained Delaunay triangulation in $n$D \citep{Shewchuk07}.
-However, in order to realise a higher-dimensional GIS based on a simplicial complex model, it is necessary to have an $n$D constrained triangulator which should be preferably Delaunay.
+However, in order to realise a higher-dimensional GIS based on a simplicial complex model, it is necessary to have a robust $n$D constrained triangulator which should be preferably Delaunay.
 
-\item[Hyperspherical projective geometry kernel] I deemed Nef polyhedra one of the most promising models for a higher-dimensional GIS, but they have only been implemented in 2D and 3D.\@
+\item[Hyperspherical projective geometry kernel] I deemed Nef polyhedra one of the most promising models for a higher-dimensional GIS, but so far they have only been implemented in 2D and 3D.\@
 In order to implement $n$-dimensional Nef polyhedra, it is necessary to develop a hyperspherical projective geometry kernel.
 This kernel would then be used to compute the local $(n-1)$-dimensional pyramids around every vertex.
+While the projective mathematics for this are relatively simple, it is a complex engineering problem to implement it robustly.
 
 \item[$n$D Boolean set operations] Using the above mentioned hyperspherical projective kernel or another method, it is necessary to develop robust algorithms to compute $n$D Boolean set operations.
-These would be the base of most geometric operations in a higher-dimensional GIS.\@
+For instance, an $n$D Nef polyhedra implementation using recursive boundary definitions could compute these operations at the local pyramid level.
+$n$D Boolean set operations would be an excellent base for most geometric operations in a higher-dimensional GIS.\@
 
-\item[Visualisation of higher-dimensional geographic information] \refch{ch:slicing} described how data selection and projection methods can work in arbitrary dimensions.
+\item[$n$D to/from 2D and 3D projective kernel] Many operations that are required for object manipulation in $n$D are actually well-defined operations applied to 2D and 3D objects that are merely embedded in $n$D.
+A robust kernel that could handle on-the-fly conversions of $n$D geometries to 2D and 3D without loss of precision would enable many of these operations to be applied.
+For instance, CGAL currently has simple kernels that apply 3D to 2D orthographic projections using the planes defined by the $XY$, $YZ$ or $ZX$ axes.
+These are useful as they can be wrapped around the basic 2D kernels (\ie\ $\mathbb{R}^2$ with floating-point, interval or exact representations) using the traits paradigm, and so they can be used to apply 2D operations to 2D objects that are embedded in 3D.
+However, these kernels do not handle the conversions from 2D back to 3D automatically nor are easily extensible to higher dimensions.
+
+\item[Visualisation of higher-dimensional geographic information] \refch{ch:slicing} described how data selection and projection methods can work in arbitrary dimensions, while \refse{se:ndmath} described the $n$D mathematics behind the basic manipulation operations for higher-dimensional objects.
 However, there are significant issues to tackle in order to create a useful visualiser for higher-dimensional datasets.
-Namely, there are significant hurdles in user interaction, dealing with large datasets, computing higher-dimensional cross-sections and visual cues in higher dimensions.
+Namely, there are significant hurdles in user interaction, dealing with large datasets, computing higher-dimensional cross-sections and the definition of useful visual cues in higher dimensions.
+The simple implementation used for the cover of this thesis make several hard-coded assumptions for the dataset that was used and is far from optimal, but it will be published together with the rest of the open source tools developed for this thesis once it is improved to handle more general input in the form of $n$D linear cell complexes.
 
-\item[2D/3D/$n$D repair methods with quality guarantees] The data repair methods described in \refch{ch:cleaning} are able to recover from most invalid 2D and 3D configurations.
-However, they are not easily extensible to higher dimensions due to the lack of a robust $n$D constrained triangulator (see above), and they do not provide quality guarantees in their output.
+\item[2D/3D/$n$D repair methods with quality guarantees] The data repair methods described in \refch{ch:cleaning} are able to recover from most simple invalid 2D and 3D configurations.
+However, they are not easily extensible to higher dimensions due to the lack of a robust $n$D constrained triangulator (see above), they do not provide quality guarantees in their output, and can be numerically unstable when there are many nearly coplanar planes.
 In order to develop robust systems, it is highly desirable to be able to specify a robustness criterion (\eg\ a minimum distance between vertices or ensuring that the geometries are not collapsed/flipped in a floating-point representation), which is guaranteed by a data repair algorithm.
+Additional geometric constraints could also be implemented, such as guaranteeing that coplanar planes stay coplanar after repair.
 
 \item[Higher-dimensional modification operations] By necessity, this thesis focused on operations for object creation in order to generate initial higher-dimensional datasets.
 Now that it is possible to generate them, it is important to think of intuitive higher-dimensional object modification operations.
 For instance, how can a 4-cell split operation be intuitively defined, or how can collapsed geometries (\eg\ from the extruded and collapsed models in \refse{se:extrusion-generalisation}) be processed to remove combinatorial elements.
+Ideally, these operations should also be intuitively usable in an interactive environment, such as a geometric modeller.
 
-\item[Real-world 4D spatiotemporal datasets] Using timestamped 3D datasets, it should be possible to create true 4D datasets using spatiotemporal information.
-However, obtaining reasonably clean datasets is difficult, as is exporting the temporal information in a usable format that is linked to corresponding geometries.
+\item[Real-world 4D spatiotemporal datasets] Using timestamped 3D volumetric datasets, it should be possible to create true 4D datasets using spatiotemporal information.
+However, obtaining reasonably clean volumetric datasets is nearly impossible at this point.
+Every dataset that was found during this project had only surfaces embedded in 3D, had severe validity problems up to the point that it would require substantial manual work to fix, or was missing the temporal information.
+Exporting the temporal information that is present in some closed commercial formats is also an issue, as doing do in a naïve way generally means losing the links to the timestamps' corresponding geometries.
 
 \end{description}
