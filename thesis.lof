@@ -1,0 +1,322 @@
+\select@language {english}
+\contentsline {figure}{\numberline {\relax 0.1}{\ignorespaces Sphere tries to explain the nature of 3D space to Square}}{1}{figure.caption.2}
+\contentsline {figure}{\numberline {\relax 0.2}{\ignorespaces Farnsworth explains why a two-ended digestive system cannot exist in 2D}}{1}{figure.caption.3}
+\addvspace {10\p@ }
+\contentsline {figure}{\numberline {\relax 1.1}{\ignorespaces A polygon as a cycle of points\relax }}{4}{figure.caption.6}
+\contentsline {figure}{\numberline {\relax 1.2}{\ignorespaces The polygons in the CORINE dataset around Delft}}{4}{figure.caption.7}
+\contentsline {figure}{\numberline {\relax 1.3}{\ignorespaces A cube represented as the 6 square faces that bound it\relax }}{4}{figure.caption.8}
+\contentsline {figure}{\numberline {\relax 1.4}{\ignorespaces Five dimensions based on 3D space, time and scale\relax }}{5}{figure.caption.9}
+\contentsline {figure}{\numberline {\relax 1.5}{\ignorespaces A non-manifold shape}}{5}{figure.caption.10}
+\contentsline {figure}{\numberline {\relax 1.6}{\ignorespaces The top and bottom faces of this torus have holes in them.\relax }}{5}{figure.caption.11}
+\addvspace {10\p@ }
+\contentsline {figure}{\numberline {\relax 2.1}{\ignorespaces There is a single line that passes through two points\relax }}{13}{figure.caption.12}
+\contentsline {figure}{\numberline {\relax 2.2}{\ignorespaces A point $p$ in 3D described by a treble $(p_x,p_y,p_z)$\relax }}{14}{figure.caption.13}
+\contentsline {figure}{\numberline {\relax 2.3}{\ignorespaces A plane separates $\symbb {R}^3$ into two parts on either side of it.\relax }}{14}{figure.caption.14}
+\contentsline {figure}{\numberline {\relax 2.4}{\ignorespaces Objects can be defined using Boolean set operations}}{15}{figure.caption.15}
+\contentsline {subfigure}{\numberline {(a)}{\ignorespaces {$\symbb {A}$ (purple) and $\symbb {B}$ (blue)}}}{15}{subfigure.4.1}
+\contentsline {subfigure}{\numberline {(b)}{\ignorespaces {Intersection: $\symbb {A} \cap \symbb {B}$}}}{15}{subfigure.4.2}
+\contentsline {subfigure}{\numberline {(c)}{\ignorespaces {Union: $\symbb {A} \cup \symbb {B}$}}}{15}{subfigure.4.3}
+\contentsline {subfigure}{\numberline {(d)}{\ignorespaces {Difference: $\symbb {A} - \symbb {B}$}}}{15}{subfigure.4.4}
+\contentsline {figure}{\numberline {\relax 2.5}{\ignorespaces Two rectangles and two points defined as point sets}}{16}{figure.caption.16}
+\contentsline {figure}{\numberline {\relax 2.6}{\ignorespaces Open and closed intervals}}{16}{figure.caption.17}
+\contentsline {figure}{\numberline {\relax 2.7}{\ignorespaces The unit open disk}}{17}{figure.caption.18}
+\contentsline {figure}{\numberline {\relax 2.8}{\ignorespaces An annulus partitions the Euclidean plane into three parts}}{17}{figure.caption.19}
+\contentsline {figure}{\numberline {\relax 2.9}{\ignorespaces A coffee mug and a donut are homeomorphic}}{17}{figure.caption.20}
+\contentsline {subfigure}{\numberline {(a)}{\ignorespaces {A coffee mug}}}{17}{subfigure.9.1}
+\contentsline {subfigure}{\numberline {(b)}{\ignorespaces {A donut}}}{17}{subfigure.9.2}
+\contentsline {figure}{\numberline {\relax 2.10}{\ignorespaces The Seven Bridges of K\"onigsberg}}{18}{figure.caption.21}
+\contentsline {figure}{\numberline {\relax 2.11}{\ignorespaces 0-, 1-, 2- and 3-simplices}}{19}{figure.caption.22}
+\contentsline {figure}{\numberline {\relax 2.12}{\ignorespaces The TU Delft campus as a 3D simplicial complex}}{21}{figure.caption.23}
+\contentsline {figure}{\numberline {\relax 2.13}{\ignorespaces The TU Delft campus as a 3D cell complex}}{21}{figure.caption.24}
+\contentsline {figure}{\numberline {\relax 2.14}{\ignorespaces The Platonic solids}}{21}{figure.caption.25}
+\contentsline {subfigure}{\numberline {(a)}{\ignorespaces {}}}{21}{subfigure.14.1}
+\contentsline {subfigure}{\numberline {(b)}{\ignorespaces {}}}{21}{subfigure.14.2}
+\contentsline {subfigure}{\numberline {(c)}{\ignorespaces {}}}{21}{subfigure.14.3}
+\contentsline {subfigure}{\numberline {(d)}{\ignorespaces {}}}{21}{subfigure.14.4}
+\contentsline {subfigure}{\numberline {(e)}{\ignorespaces {}}}{21}{subfigure.14.5}
+\addvspace {10\p@ }
+\contentsline {figure}{\numberline {\relax 3.1}{\ignorespaces An object represented as a tree of Boolean set operations}}{28}{figure.caption.29}
+\contentsline {figure}{\numberline {\relax 3.2}{\ignorespaces A polygon represented as the union of two convex polygons}}{28}{figure.caption.31}
+\contentsline {subfigure}{\numberline {(a)}{\ignorespaces {}}}{28}{subfigure.2.1}
+\contentsline {subfigure}{\numberline {(b)}{\ignorespaces {}}}{28}{subfigure.2.2}
+\contentsline {subfigure}{\numberline {(c)}{\ignorespaces {}}}{28}{subfigure.2.3}
+\contentsline {figure}{\numberline {\relax 3.3}{\ignorespaces A Nef polygon represented by a set of local pyramids}}{29}{figure.caption.33}
+\contentsline {figure}{\numberline {\relax 3.4}{\ignorespaces A wireframe model can have different interpretations}}{33}{figure.caption.39}
+\contentsline {subfigure}{\numberline {(a)}{\ignorespaces {}}}{33}{subfigure.4.1}
+\contentsline {subfigure}{\numberline {(b)}{\ignorespaces {}}}{33}{subfigure.4.2}
+\contentsline {subfigure}{\numberline {(c)}{\ignorespaces {}}}{33}{subfigure.4.3}
+\contentsline {subfigure}{\numberline {(d)}{\ignorespaces {}}}{33}{subfigure.4.4}
+\contentsline {figure}{\numberline {\relax 3.5}{\ignorespaces Pascal's triangle}}{34}{figure.caption.42}
+\contentsline {figure}{\numberline {\relax 3.6}{\ignorespaces A triangle-based data structure}}{35}{figure.caption.43}
+\contentsline {subfigure}{\numberline {(a)}{\ignorespaces {Adjacent triangles}}}{35}{subfigure.6.1}
+\contentsline {subfigure}{\numberline {(b)}{\ignorespaces {Vertices of a triangle}}}{35}{subfigure.6.2}
+\contentsline {subfigure}{\numberline {(c)}{\ignorespaces {Coordinates of a vertex}}}{35}{subfigure.6.3}
+\contentsline {figure}{\numberline {\relax 3.7}{\ignorespaces A polygonal curve}}{35}{figure.caption.45}
+\contentsline {figure}{\numberline {\relax 3.8}{\ignorespaces The polygon model}}{35}{figure.caption.46}
+\contentsline {figure}{\numberline {\relax 3.9}{\ignorespaces The spaghetti model}}{36}{figure.caption.47}
+\contentsline {figure}{\numberline {\relax 3.10}{\ignorespaces Storing non-manifold polygons in a half-edge data structure}}{36}{figure.caption.48}
+\contentsline {subfigure}{\numberline {(a)}{\ignorespaces {}}}{36}{subfigure.10.1}
+\contentsline {subfigure}{\numberline {(b)}{\ignorespaces {}}}{36}{subfigure.10.2}
+\contentsline {subfigure}{\numberline {(c)}{\ignorespaces {}}}{36}{subfigure.10.3}
+\contentsline {figure}{\numberline {\relax 3.11}{\ignorespaces A 2D cell complex as a DCEL and a 2D combinatorial map}}{37}{figure.caption.49}
+\contentsline {subfigure}{\numberline {(a)}{\ignorespaces {}}}{37}{subfigure.11.1}
+\contentsline {subfigure}{\numberline {(b)}{\ignorespaces {}}}{37}{subfigure.11.2}
+\contentsline {subfigure}{\numberline {(c)}{\ignorespaces {}}}{37}{subfigure.11.3}
+\contentsline {figure}{\numberline {\relax 3.12}{\ignorespaces The quad-edge data structure}}{37}{figure.caption.50}
+\contentsline {figure}{\numberline {\relax 3.13}{\ignorespaces The facet-edge data structure}}{38}{figure.caption.52}
+\contentsline {subfigure}{\numberline {(a)}{\ignorespaces {}}}{38}{subfigure.13.1}
+\contentsline {subfigure}{\numberline {(b)}{\ignorespaces {}}}{38}{subfigure.13.2}
+\contentsline {figure}{\numberline {\relax 3.14}{\ignorespaces A V-map}}{38}{figure.caption.53}
+\contentsline {subfigure}{\numberline {(a)}{\ignorespaces {Tetrahedral 3-cell}}}{38}{subfigure.14.1}
+\contentsline {subfigure}{\numberline {(b)}{\ignorespaces {V-map}}}{38}{subfigure.14.2}
+\contentsline {figure}{\numberline {\relax 3.15}{\ignorespaces A selective Nef complex}}{39}{figure.caption.54}
+\contentsline {figure}{\numberline {\relax 3.16}{\ignorespaces A triangle strip}}{40}{figure.caption.55}
+\contentsline {figure}{\numberline {\relax 3.17}{\ignorespaces Geometry in the Simple Features Specification}}{41}{figure.caption.56}
+\contentsline {figure}{\numberline {\relax 3.18}{\ignorespaces Geometry in GML}}{42}{figure.caption.57}
+\contentsline {figure}{\numberline {\relax 3.19}{\ignorespaces Sweeps in IFC}}{43}{figure.caption.58}
+\contentsline {figure}{\numberline {\relax 3.20}{\ignorespaces The snapshot model}}{45}{figure.caption.59}
+\contentsline {figure}{\numberline {\relax 3.21}{\ignorespaces An event-based model}}{46}{figure.caption.60}
+\contentsline {figure}{\numberline {\relax 3.22}{\ignorespaces Topographic maps at different scales around Delft}}{48}{figure.caption.61}
+\contentsline {subfigure}{\numberline {(a)}{\ignorespaces {1:50 000}}}{48}{subfigure.22.1}
+\contentsline {subfigure}{\numberline {(b)}{\ignorespaces {1:250 000}}}{48}{subfigure.22.2}
+\contentsline {figure}{\numberline {\relax 3.23}{\ignorespaces The LODs in CityGML}}{48}{figure.caption.62}
+\addvspace {10\p@ }
+\contentsline {figure}{\numberline {\relax 4.1}{\ignorespaces A tesseract}}{56}{figure.caption.63}
+\contentsline {figure}{\numberline {\relax 4.2}{\ignorespaces An object remaining stationary as an extrusion in 2D space+time}}{57}{figure.caption.64}
+\contentsline {figure}{\numberline {\relax 4.3}{\ignorespaces Object transformations in 2D space+time}}{58}{figure.caption.65}
+\contentsline {subfigure}{\numberline {(a)}{\ignorespaces {Original}}}{58}{subfigure.3.1}
+\contentsline {subfigure}{\numberline {(b)}{\ignorespaces {Translation}}}{58}{subfigure.3.2}
+\contentsline {subfigure}{\numberline {(c)}{\ignorespaces {Rotation}}}{58}{subfigure.3.3}
+\contentsline {subfigure}{\numberline {(d)}{\ignorespaces {Scaling}}}{58}{subfigure.3.4}
+\contentsline {figure}{\numberline {\relax 4.4}{\ignorespaces A 3D representation of 2D space+time}}{58}{figure.caption.66}
+\contentsline {figure}{\numberline {\relax 4.5}{\ignorespaces A 3D representation of 2D space+scale}}{59}{figure.caption.67}
+\contentsline {figure}{\numberline {\relax 4.6}{\ignorespaces A 2D+scale representation of four polygons being generalised}}{59}{figure.caption.68}
+\contentsline {figure}{\numberline {\relax 4.7}{\ignorespaces Simple Features representations of a square, cube, and tesseract}}{61}{figure.caption.69}
+\contentsline {subfigure}{\numberline {(a)}{\ignorespaces {square}}}{61}{subfigure.7.1}
+\contentsline {subfigure}{\numberline {(b)}{\ignorespaces {cube}}}{61}{subfigure.7.2}
+\contentsline {subfigure}{\numberline {(c)}{\ignorespaces {tesseract}}}{61}{subfigure.7.3}
+\contentsline {figure}{\numberline {\relax 4.8}{\ignorespaces The Sch\"onhardt polyhedron}}{67}{figure.caption.70}
+\contentsline {figure}{\numberline {\relax 4.9}{\ignorespaces Relationships in a simplex-based data structure}}{69}{figure.caption.71}
+\contentsline {subfigure}{\numberline {(a)}{\ignorespaces {}}}{69}{subfigure.9.1}
+\contentsline {subfigure}{\numberline {(b)}{\ignorespaces {}}}{69}{subfigure.9.2}
+\contentsline {subfigure}{\numberline {(c)}{\ignorespaces {}}}{69}{subfigure.9.3}
+\contentsline {subfigure}{\numberline {(d)}{\ignorespaces {}}}{69}{subfigure.9.4}
+\contentsline {subfigure}{\numberline {(e)}{\ignorespaces {}}}{69}{subfigure.9.5}
+\contentsline {subfigure}{\numberline {(f)}{\ignorespaces {}}}{69}{subfigure.9.6}
+\contentsline {figure}{\numberline {\relax 4.10}{\ignorespaces Relationships in an incidence graph}}{71}{figure.caption.72}
+\contentsline {subfigure}{\numberline {(a)}{\ignorespaces {}}}{71}{subfigure.10.1}
+\contentsline {subfigure}{\numberline {(b)}{\ignorespaces {}}}{71}{subfigure.10.2}
+\contentsline {subfigure}{\numberline {(c)}{\ignorespaces {}}}{71}{subfigure.10.3}
+\contentsline {subfigure}{\numberline {(d)}{\ignorespaces {}}}{71}{subfigure.10.4}
+\contentsline {subfigure}{\numberline {(e)}{\ignorespaces {}}}{71}{subfigure.10.5}
+\contentsline {subfigure}{\numberline {(f)}{\ignorespaces {}}}{71}{subfigure.10.6}
+\contentsline {subfigure}{\numberline {(g)}{\ignorespaces {}}}{71}{subfigure.10.7}
+\contentsline {subfigure}{\numberline {(h)}{\ignorespaces {}}}{71}{subfigure.10.8}
+\contentsline {figure}{\numberline {\relax 4.11}{\ignorespaces Two different techniques to handle holes in a 3D cell complex}}{73}{figure.caption.73}
+\contentsline {figure}{\numberline {\relax 4.12}{\ignorespaces Simplices in a generalised map and a combinatorial map}}{74}{figure.caption.74}
+\contentsline {subfigure}{\numberline {(a)}{\ignorespaces {}}}{74}{subfigure.12.1}
+\contentsline {subfigure}{\numberline {(b)}{\ignorespaces {}}}{74}{subfigure.12.2}
+\contentsline {subfigure}{\numberline {(c)}{\ignorespaces {}}}{74}{subfigure.12.3}
+\contentsline {figure}{\numberline {\relax 4.13}{\ignorespaces A cube represented as a 3D combinatorial map}}{75}{figure.caption.75}
+\contentsline {subfigure}{\numberline {(a)}{\ignorespaces {}}}{75}{subfigure.13.1}
+\contentsline {subfigure}{\numberline {(b)}{\ignorespaces {}}}{75}{subfigure.13.2}
+\contentsline {subfigure}{\numberline {(c)}{\ignorespaces {}}}{75}{subfigure.13.3}
+\contentsline {figure}{\numberline {\relax 4.14}{\ignorespaces Orientation in a combinatorial map}}{76}{figure.caption.76}
+\contentsline {figure}{\numberline {\relax 4.15}{\ignorespaces Representing holes using bridges}}{77}{figure.caption.77}
+\contentsline {subfigure}{\numberline {(a)}{\ignorespaces {}}}{77}{subfigure.15.1}
+\contentsline {subfigure}{\numberline {(b)}{\ignorespaces {}}}{77}{subfigure.15.2}
+\addvspace {10\p@ }
+\contentsline {figure}{\numberline {\relax 5.1}{\ignorespaces Involutions in a 2D generalised map}}{86}{figure.caption.78}
+\contentsline {subfigure}{\numberline {(a)}{\ignorespaces {}}}{86}{subfigure.1.1}
+\contentsline {subfigure}{\numberline {(b)}{\ignorespaces {}}}{86}{subfigure.1.2}
+\contentsline {subfigure}{\numberline {(c)}{\ignorespaces {}}}{86}{subfigure.1.3}
+\contentsline {figure}{\numberline {\relax 5.2}{\ignorespaces Partial permutations in a 1D combinatorial map}}{87}{figure.caption.79}
+\contentsline {figure}{\numberline {\relax 5.3}{\ignorespaces Partial permutations in a 2D combinatorial map}}{87}{figure.caption.80}
+\contentsline {figure}{\numberline {\relax 5.4}{\ignorespaces Darts of a cell}}{88}{figure.caption.81}
+\contentsline {subfigure}{\numberline {(a)}{\ignorespaces {}}}{88}{subfigure.4.1}
+\contentsline {subfigure}{\numberline {(b)}{\ignorespaces {}}}{88}{subfigure.4.2}
+\contentsline {figure}{\numberline {\relax 5.5}{\ignorespaces 3-sewing two cubes}}{89}{figure.caption.82}
+\contentsline {figure}{\numberline {\relax 5.6}{\ignorespaces Boolean set operations on Nef polygons}}{90}{figure.caption.83}
+\contentsline {subfigure}{\numberline {(a)}{\ignorespaces {}}}{90}{subfigure.6.1}
+\contentsline {subfigure}{\numberline {(b)}{\ignorespaces {}}}{90}{subfigure.6.2}
+\contentsline {figure}{\numberline {\relax 5.7}{\ignorespaces Duality in a 2D map}}{95}{figure.caption.84}
+\contentsline {subfigure}{\numberline {(a)}{\ignorespaces {}}}{95}{subfigure.7.1}
+\contentsline {subfigure}{\numberline {(b)}{\ignorespaces {}}}{95}{subfigure.7.2}
+\contentsline {subfigure}{\numberline {(c)}{\ignorespaces {}}}{95}{subfigure.7.3}
+\contentsline {figure}{\numberline {\relax 5.8}{\ignorespaces A 2D generalised map and its dual}}{96}{figure.caption.85}
+\contentsline {subfigure}{\numberline {(a)}{\ignorespaces {}}}{96}{subfigure.8.1}
+\contentsline {subfigure}{\numberline {(b)}{\ignorespaces {}}}{96}{subfigure.8.2}
+\contentsline {subfigure}{\numberline {(c)}{\ignorespaces {}}}{96}{subfigure.8.3}
+\contentsline {subfigure}{\numberline {(d)}{\ignorespaces {}}}{96}{subfigure.8.4}
+\contentsline {figure}{\numberline {\relax 5.9}{\ignorespaces Three pairs of tesseracts}}{97}{figure.caption.86}
+\contentsline {subfigure}{\numberline {(a)}{\ignorespaces {}}}{97}{subfigure.9.1}
+\contentsline {subfigure}{\numberline {(b)}{\ignorespaces {}}}{97}{subfigure.9.2}
+\contentsline {subfigure}{\numberline {(c)}{\ignorespaces {}}}{97}{subfigure.9.3}
+\addvspace {10\p@ }
+\contentsline {figure}{\numberline {\relax 6.1}{\ignorespaces A view of the 3D TOP10NL dataset}}{102}{figure.caption.93}
+\contentsline {figure}{\numberline {\relax 6.2}{\ignorespaces Extrusion from 2D to 3D}}{103}{figure.caption.94}
+\contentsline {subfigure}{\numberline {(a)}{\ignorespaces {}}}{103}{subfigure.2.1}
+\contentsline {subfigure}{\numberline {(b)}{\ignorespaces {}}}{103}{subfigure.2.2}
+\contentsline {figure}{\numberline {\relax 6.3}{\ignorespaces The extrusion intervals of the lower-dimensional cells}}{105}{figure.caption.95}
+\contentsline {subfigure}{\numberline {(a)}{\ignorespaces {}}}{105}{subfigure.3.1}
+\contentsline {subfigure}{\numberline {(b)}{\ignorespaces {}}}{105}{subfigure.3.2}
+\contentsline {figure}{\numberline {\relax 6.4}{\ignorespaces Extruding the embeddings}}{106}{figure.caption.96}
+\contentsline {subfigure}{\numberline {(a)}{\ignorespaces {}}}{106}{subfigure.4.1}
+\contentsline {subfigure}{\numberline {(b)}{\ignorespaces {}}}{106}{subfigure.4.2}
+\contentsline {figure}{\numberline {\relax 6.5}{\ignorespaces Extruding a 2D cell complex}}{106}{figure.caption.97}
+\contentsline {subfigure}{\numberline {(a)}{\ignorespaces {}}}{106}{subfigure.5.1}
+\contentsline {subfigure}{\numberline {(b)}{\ignorespaces {}}}{106}{subfigure.5.2}
+\contentsline {figure}{\numberline {\relax 6.6}{\ignorespaces Propagating the extrusion intervals}}{107}{figure.caption.98}
+\contentsline {figure}{\numberline {\relax 6.7}{\ignorespaces The darts in the cell complexes in \hyperref [fig:trianglecomplex]{Figure}~\ref {fig:trianglecomplex}}}{110}{figure.caption.101}
+\contentsline {subfigure}{\numberline {(a)}{\ignorespaces {}}}{110}{subfigure.7.1}
+\contentsline {subfigure}{\numberline {(b)}{\ignorespaces {}}}{110}{subfigure.7.2}
+\contentsline {figure}{\numberline {\relax 6.8}{\ignorespaces The darts in the cell complexes in \hyperref [fig:blockscomplex]{Figure}~\ref {fig:blockscomplex}}}{112}{figure.caption.102}
+\contentsline {subfigure}{\numberline {(a)}{\ignorespaces {}}}{112}{subfigure.8.1}
+\contentsline {subfigure}{\numberline {(b)}{\ignorespaces {}}}{112}{subfigure.8.2}
+\contentsline {figure}{\numberline {\relax 6.9}{\ignorespaces Extruding the footprint of the Aula Congress Centre in Delft to 3D}}{116}{figure.caption.107}
+\contentsline {figure}{\numberline {\relax 6.10}{\ignorespaces Extruding the footprint of the Aula Congress Centre in Delft to 4D}}{116}{figure.caption.108}
+\contentsline {subfigure}{\numberline {(a)}{\ignorespaces {}}}{116}{subfigure.10.1}
+\contentsline {subfigure}{\numberline {(b)}{\ignorespaces {}}}{116}{subfigure.10.2}
+\contentsline {subfigure}{\numberline {(c)}{\ignorespaces {}}}{116}{subfigure.10.3}
+\contentsline {figure}{\numberline {\relax 6.11}{\ignorespaces Extruding a dataset of the campus of the Delft University of Technology\relax }}{117}{figure.caption.109}
+\contentsline {subfigure}{\numberline {(a)}{\ignorespaces {}}}{117}{subfigure.11.1}
+\contentsline {subfigure}{\numberline {(b)}{\ignorespaces {}}}{117}{subfigure.11.2}
+\contentsline {subfigure}{\numberline {(c)}{\ignorespaces {}}}{117}{subfigure.11.3}
+\contentsline {figure}{\numberline {\relax 6.12}{\ignorespaces Collapsing cells}}{118}{figure.caption.110}
+\addvspace {10\p@ }
+\contentsline {figure}{\numberline {\relax 7.1}{\ignorespaces Two adjacent tetrahedra as a combinatorial map}}{123}{figure.caption.111}
+\contentsline {figure}{\numberline {\relax 7.2}{\ignorespaces Constructing the 0-cells of \hyperref [fig:2tetra]{Figure}~\ref {fig:2tetra}}}{124}{figure.caption.112}
+\contentsline {figure}{\numberline {\relax 7.3}{\ignorespaces Constructing the 2-cells of \hyperref [fig:2tetra]{Figure}~\ref {fig:2tetra}}}{125}{figure.caption.113}
+\contentsline {subfigure}{\numberline {(a)}{\ignorespaces {}}}{125}{subfigure.3.1}
+\contentsline {subfigure}{\numberline {(b)}{\ignorespaces {}}}{125}{subfigure.3.2}
+\contentsline {subfigure}{\numberline {(c)}{\ignorespaces {}}}{125}{subfigure.3.3}
+\contentsline {subfigure}{\numberline {(d)}{\ignorespaces {}}}{125}{subfigure.3.4}
+\contentsline {subfigure}{\numberline {(e)}{\ignorespaces {}}}{125}{subfigure.3.5}
+\contentsline {subfigure}{\numberline {(f)}{\ignorespaces {}}}{125}{subfigure.3.6}
+\contentsline {subfigure}{\numberline {(g)}{\ignorespaces {}}}{125}{subfigure.3.7}
+\contentsline {subfigure}{\numberline {(h)}{\ignorespaces {}}}{125}{subfigure.3.8}
+\contentsline {figure}{\numberline {\relax 7.4}{\ignorespaces Constructing the 3-cells of \hyperref [fig:2tetra]{Figure}~\ref {fig:2tetra}}}{128}{figure.caption.114}
+\contentsline {figure}{\numberline {\relax 7.5}{\ignorespaces A tesseract as a combinatorial map}}{130}{figure.caption.117}
+\contentsline {figure}{\numberline {\relax 7.6}{\ignorespaces Simple 2D+scale datasets}}{131}{figure.caption.119}
+\contentsline {figure}{\numberline {\relax 7.7}{\ignorespaces A large 2D+scale dataset}}{131}{figure.caption.120}
+\contentsline {figure}{\numberline {\relax 7.8}{\ignorespaces Construction time speed-up from the use of indices}}{132}{figure.caption.121}
+\contentsline {subfigure}{\numberline {(a)}{\ignorespaces {}}}{132}{subfigure.8.1}
+\contentsline {subfigure}{\numberline {(b)}{\ignorespaces {}}}{132}{subfigure.8.2}
+\contentsline {subfigure}{\numberline {(c)}{\ignorespaces {}}}{132}{subfigure.8.3}
+\addvspace {10\p@ }
+\contentsline {figure}{\numberline {\relax 8.1}{\ignorespaces Two LODs of a building footprint}}{136}{figure.caption.122}
+\contentsline {figure}{\numberline {\relax 8.2}{\ignorespaces Two LODs of a building footprint as a single polyhedron}}{137}{figure.caption.123}
+\contentsline {figure}{\numberline {\relax 8.3}{\ignorespaces Four linking schemes}}{140}{figure.caption.124}
+\contentsline {subfigure}{\numberline {(a)}{\ignorespaces {Simple linking}}}{140}{subfigure.3.1}
+\contentsline {subfigure}{\numberline {(b)}{\ignorespaces {Unmatched are collapsed}}}{140}{subfigure.3.2}
+\contentsline {subfigure}{\numberline {(c)}{\ignorespaces {Modification of topology}}}{140}{subfigure.3.3}
+\contentsline {subfigure}{\numberline {(d)}{\ignorespaces {Matching all to existing}}}{140}{subfigure.3.4}
+\contentsline {figure}{\numberline {\relax 8.4}{\ignorespaces Simple linking}}{143}{figure.caption.129}
+\contentsline {figure}{\numberline {\relax 8.5}{\ignorespaces Linking by collapsing}}{144}{figure.caption.130}
+\contentsline {figure}{\numberline {\relax 8.6}{\ignorespaces Linking using topology modifications}}{145}{figure.caption.131}
+\contentsline {figure}{\numberline {\relax 8.7}{\ignorespaces Linking using multiple methods}}{145}{figure.caption.132}
+\contentsline {figure}{\numberline {\relax 8.8}{\ignorespaces Linking by matching cells}}{146}{figure.caption.133}
+\contentsline {figure}{\numberline {\relax 8.9}{\ignorespaces Programming a complex linking example}}{148}{figure.caption.134}
+\contentsline {subfigure}{\numberline {(a)}{\ignorespaces {}}}{148}{subfigure.9.1}
+\contentsline {subfigure}{\numberline {(b)}{\ignorespaces {Constructing other cells}}}{148}{subfigure.9.2}
+\contentsline {subfigure}{\numberline {(c)}{\ignorespaces {Coordinates of the 17 vertices}}}{148}{subfigure.9.3}
+\addvspace {10\p@ }
+\contentsline {figure}{\numberline {\relax 9.1}{\ignorespaces Conic sections}}{152}{figure.caption.135}
+\contentsline {subfigure}{\numberline {(a)}{\ignorespaces {}}}{152}{subfigure.1.1}
+\contentsline {subfigure}{\numberline {(b)}{\ignorespaces {}}}{152}{subfigure.1.2}
+\contentsline {subfigure}{\numberline {(c)}{\ignorespaces {}}}{152}{subfigure.1.3}
+\contentsline {subfigure}{\numberline {(d)}{\ignorespaces {}}}{152}{subfigure.1.4}
+\contentsline {figure}{\numberline {\relax 9.2}{\ignorespaces Orthographic and perspective projections}}{153}{figure.caption.136}
+\contentsline {subfigure}{\numberline {(a)}{\ignorespaces {}}}{153}{subfigure.2.1}
+\contentsline {subfigure}{\numberline {(b)}{\ignorespaces {}}}{153}{subfigure.2.2}
+\contentsline {figure}{\numberline {\relax 9.3}{\ignorespaces Equirectangular projection}}{153}{figure.caption.137}
+\contentsline {figure}{\numberline {\relax 9.4}{\ignorespaces Perspective projection's frustum and orthographic projection's box}}{155}{figure.caption.138}
+\contentsline {subfigure}{\numberline {(a)}{\ignorespaces {}}}{155}{subfigure.4.1}
+\contentsline {subfigure}{\numberline {(b)}{\ignorespaces {}}}{155}{subfigure.4.2}
+\contentsline {figure}{\numberline {\relax 9.5}{\ignorespaces Geometry of an orthographic projection}}{156}{figure.caption.139}
+\contentsline {figure}{\numberline {\relax 9.6}{\ignorespaces Geometry of an perspective projection}}{156}{figure.caption.140}
+\contentsline {figure}{\numberline {\relax 9.7}{\ignorespaces Stereographic projection}}{159}{figure.caption.141}
+\contentsline {figure}{\numberline {\relax 9.8}{\ignorespaces Polyhedron and polychoron in Jenn 3D}}{160}{figure.caption.142}
+\contentsline {subfigure}{\numberline {(a)}{\ignorespaces {}}}{160}{subfigure.8.1}
+\contentsline {subfigure}{\numberline {(b)}{\ignorespaces {}}}{160}{subfigure.8.2}
+\contentsline {figure}{\numberline {\relax 9.9}{\ignorespaces 4D to 2D projection of a 4D house}}{161}{figure.caption.143}
+\addvspace {10\p@ }
+\contentsline {figure}{\numberline {\relax 10.1}{\ignorespaces Different interpretations of a polygon}}{165}{figure.caption.144}
+\contentsline {subfigure}{\numberline {(a)}{\ignorespaces {}}}{165}{subfigure.1.1}
+\contentsline {subfigure}{\numberline {(b)}{\ignorespaces {}}}{165}{subfigure.1.2}
+\contentsline {figure}{\numberline {\relax 10.2}{\ignorespaces Several invalid polygons}}{166}{figure.caption.145}
+\contentsline {figure}{\numberline {\relax 10.3}{\ignorespaces Rules used to interpret the interior of a polygon}}{168}{figure.caption.146}
+\contentsline {figure}{\numberline {\relax 10.4}{\ignorespaces Defining a snapping threshold}}{169}{figure.caption.147}
+\contentsline {figure}{\numberline {\relax 10.5}{\ignorespaces Steps to repair a (multi)polygon using a constrained triangulation}}{169}{figure.caption.148}
+\contentsline {subfigure}{\numberline {(a)}{\ignorespaces {}}}{169}{subfigure.5.1}
+\contentsline {subfigure}{\numberline {(b)}{\ignorespaces {}}}{169}{subfigure.5.2}
+\contentsline {subfigure}{\numberline {(c)}{\ignorespaces {}}}{169}{subfigure.5.3}
+\contentsline {subfigure}{\numberline {(d)}{\ignorespaces {}}}{169}{subfigure.5.4}
+\contentsline {figure}{\numberline {\relax 10.6}{\ignorespaces Processing the largest polygon in the CORINE land cover dataset}}{170}{figure.caption.149}
+\contentsline {subfigure}{\numberline {(a)}{\ignorespaces {}}}{170}{subfigure.6.1}
+\contentsline {subfigure}{\numberline {(b)}{\ignorespaces {}}}{170}{subfigure.6.2}
+\contentsline {subfigure}{\numberline {(c)}{\ignorespaces {}}}{170}{subfigure.6.3}
+\contentsline {subfigure}{\numberline {(d)}{\ignorespaces {}}}{170}{subfigure.6.4}
+\contentsline {figure}{\numberline {\relax 10.7}{\ignorespaces Steps to repair a planar partition using a constrained triangulation}}{170}{figure.caption.150}
+\contentsline {subfigure}{\numberline {(a)}{\ignorespaces {}}}{170}{subfigure.7.1}
+\contentsline {subfigure}{\numberline {(b)}{\ignorespaces {}}}{170}{subfigure.7.2}
+\contentsline {subfigure}{\numberline {(c)}{\ignorespaces {}}}{170}{subfigure.7.3}
+\contentsline {subfigure}{\numberline {(d)}{\ignorespaces {}}}{170}{subfigure.7.4}
+\contentsline {subfigure}{\numberline {(e)}{\ignorespaces {}}}{170}{subfigure.7.5}
+\contentsline {figure}{\numberline {\relax 10.8}{\ignorespaces Various repair methods based on relabelling (sets of) triangles}}{171}{figure.caption.151}
+\contentsline {subfigure}{\numberline {(a)}{\ignorespaces {}}}{171}{subfigure.8.1}
+\contentsline {subfigure}{\numberline {(b)}{\ignorespaces {}}}{171}{subfigure.8.2}
+\contentsline {subfigure}{\numberline {(c)}{\ignorespaces {}}}{171}{subfigure.8.3}
+\contentsline {subfigure}{\numberline {(d)}{\ignorespaces {}}}{171}{subfigure.8.4}
+\contentsline {figure}{\numberline {\relax 10.9}{\ignorespaces A planar partition of 16 tiles of the CORINE land cover dataset}}{171}{figure.caption.152}
+\contentsline {figure}{\numberline {\relax 10.10}{\ignorespaces Surface-based models vs.\ volumetric models}}{172}{figure.caption.153}
+\contentsline {figure}{\numberline {\relax 10.11}{\ignorespaces An IFC model of the FZK-house}}{173}{figure.caption.154}
+\contentsline {figure}{\numberline {\relax 10.12}{\ignorespaces The boundary representation scheme in ISO 19107}}{173}{figure.caption.155}
+\contentsline {figure}{\numberline {\relax 10.13}{\ignorespaces Openings in the IfcOpenHouse dataset}}{175}{figure.caption.156}
+\contentsline {subfigure}{\numberline {(a)}{\ignorespaces {}}}{175}{subfigure.13.1}
+\contentsline {subfigure}{\numberline {(b)}{\ignorespaces {}}}{175}{subfigure.13.2}
+\contentsline {subfigure}{\numberline {(c)}{\ignorespaces {}}}{175}{subfigure.13.3}
+\contentsline {figure}{\numberline {\relax 10.14}{\ignorespaces The volumes in the IfcOpenHouse dataset do not fit together}}{176}{figure.caption.157}
+\contentsline {subfigure}{\numberline {(a)}{\ignorespaces {}}}{176}{subfigure.14.1}
+\contentsline {subfigure}{\numberline {(b)}{\ignorespaces {}}}{176}{subfigure.14.2}
+\contentsline {subfigure}{\numberline {(c)}{\ignorespaces {}}}{176}{subfigure.14.3}
+\contentsline {figure}{\numberline {\relax 10.15}{\ignorespaces A large overlap in the IfcOpenHouse dataset}}{176}{figure.caption.158}
+\contentsline {subfigure}{\numberline {(a)}{\ignorespaces {}}}{176}{subfigure.15.1}
+\contentsline {subfigure}{\numberline {(b)}{\ignorespaces {}}}{176}{subfigure.15.2}
+\contentsline {subfigure}{\numberline {(c)}{\ignorespaces {}}}{176}{subfigure.15.3}
+\contentsline {figure}{\numberline {\relax 10.16}{\ignorespaces Computing the best fitting plane of every face}}{180}{figure.caption.159}
+\contentsline {subfigure}{\numberline {(a)}{\ignorespaces {}}}{180}{subfigure.16.1}
+\contentsline {subfigure}{\numberline {(b)}{\ignorespaces {}}}{180}{subfigure.16.2}
+\contentsline {figure}{\numberline {\relax 10.17}{\ignorespaces Vertex snapping}}{180}{figure.caption.160}
+\contentsline {figure}{\numberline {\relax 10.18}{\ignorespaces The steps of the IfcOpenHouse}}{181}{figure.caption.161}
+\contentsline {figure}{\numberline {\relax 10.19}{\ignorespaces A dimension-independent cell harmonised with ISO 19107}}{183}{figure.caption.162}
+\contentsline {figure}{\numberline {\relax 10.20}{\ignorespaces Cell complexes in the ISO 19107 standard}}{184}{figure.caption.163}
+\contentsline {figure}{\numberline {\relax 10.21}{\ignorespaces An $n$D space subdivision harmonised with ISO 19107}}{184}{figure.caption.164}
+\addvspace {10\p@ }
+\addvspace {10\p@ }
+\contentsline {figure}{\numberline {\relax A.1}{\ignorespaces Using C++ templates to convert a \texttt {string} into any number type}}{201}{figure.caption.167}
+\contentsline {figure}{\numberline {\relax A.2}{\ignorespaces Creating a dependent type using C++ templates}}{201}{figure.caption.168}
+\contentsline {figure}{\numberline {\relax A.3}{\ignorespaces Using recursive C++ templates to produce dimension independent code}}{202}{figure.caption.169}
+\contentsline {figure}{\numberline {\relax A.4}{\ignorespaces Dimension-independent algorithms using recursive C++ templates}}{203}{figure.caption.170}
+\addvspace {10\p@ }
+\contentsline {figure}{\numberline {\relax 1}{\ignorespaces A cube represented as the 6 square faces that bound it}}{227}{figure.caption.173}
+\contentsline {figure}{\numberline {\relax 2}{\ignorespaces 3D space, time and scale can be modelled as 5D space.\relax }}{227}{figure.caption.174}
+\contentsline {figure}{\numberline {\relax 3}{\ignorespaces 3D space subdivision model}}{227}{figure.caption.175}
+\contentsline {figure}{\numberline {\relax 4}{\ignorespaces A set of polygons is converted into a set of boxes by 2D-to-3D extrusion.}}{228}{figure.caption.176}
+\contentsline {figure}{\numberline {\relax 5}{\ignorespaces Two LODs of a 3D model of a house are linked into a 4D model}}{228}{figure.caption.177}
+\addvspace {10\p@ }
+\select@language {dutch}
+\contentsline {figure}{\numberline {\relax 1}{\ignorespaces Een kubus wordt gerepresenteerd als 6 vierkante 2D vlakken.}}{229}{figure.caption.179}
+\contentsline {figure}{\numberline {\relax 2}{\ignorespaces 3D ruimte, tijd en schaal kunnen worden gemodelleerd als 5D ruimte.\relax }}{229}{figure.caption.180}
+\contentsline {figure}{\numberline {\relax 3}{\ignorespaces 3D ruimtelijke opdeling}}{229}{figure.caption.181}
+\contentsline {figure}{\numberline {\relax 4}{\ignorespaces Een set polygonen wordt geconverteerd naar een set blokken.}}{230}{figure.caption.182}
+\contentsline {figure}{\numberline {\relax 5}{\ignorespaces Twee detailniveaus van een 3D model worden gelinkt tot een 4D model.}}{230}{figure.caption.183}
+\addvspace {10\p@ }
+\select@language {spanish}
+\contentsline {figure}{\numberline {\relax 1}{\ignorespaces Un cubo representado por las 6 caras cuadradas en su superficie}}{231}{figure.caption.185}
+\contentsline {figure}{\numberline {\relax 2}{\ignorespaces El espacio 3D, el tiempo y la escala modelados como un espacio 5D.\relax }}{231}{figure.caption.186}
+\contentsline {figure}{\numberline {\relax 3}{\ignorespaces Partición espacial 3D}}{231}{figure.caption.187}
+\contentsline {figure}{\numberline {\relax 4}{\ignorespaces Un conjunto de polígonos se extrude en un conjunto de paralelepípedos.}}{232}{figure.caption.188}
+\contentsline {figure}{\numberline {\relax 5}{\ignorespaces Dos niveles de detalle de una casa se enlazan en un modelo 4D}}{232}{figure.caption.189}
+\select@language {english}
+\addvspace {10\p@ }
