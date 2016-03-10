@@ -55,7 +55,9 @@ Storing and manipulating heterogeneous objects and their semantics is a difficul
 % Using time as a dimension
 
 The concept of time as a dimension is an established concept with proven applications.
-As \citet{Couclelis99} states, time has historically been linked to space and often considered as another dimension, and the 4D spatiotemporal manifold known as the Minkowski space \citep{Minkowski08} is used in the description of special relativity in mathematics and physics\footnote{Minkowski space is non-Euclidean, but similar representations and techniques can be used with it. For instance, \citet{Hanson01} show how computer graphics techniques can be used to visualise it.}.
+As \citet{Couclelis99} states, time has historically been linked to space and often considered as another dimension, and the 4D spatiotemporal manifold known as the Minkowski space \citep{Minkowski08} is used in the description of special relativity in mathematics and physics\footnote{Minkowski space is non-Euclidean, but similar representations and techniques can be used with it.
+For instance, \citet{Hanson01} show how computer graphics techniques can be used to visualise it.
+General relativity is instead described by Riemann space \citep{Riemann68}}.
 The ISO 19108 standard also states that `time is a dimension analogous to any of the spatial dimensions' \citep{ISO19108:2002}
 A representation where time is modelled as one more spatial dimension has been moreover used in several applications, mostly in the form of 2D space+time, such as to analyse paths \citep{Hagerstrand70}, to analyse motion in computer vision \citep{Basri05} and to visualise geographic information \citep{Kraak03}.
 3D+time systems have also been proposed, albeit usually at a conceptual level~\citep{Galton04}.
@@ -166,7 +168,7 @@ Moreover, as shown in \reffig{fig:2d+time}, such a representation can represent 
 \begin{figure}[tbp]
 \begin{center}
 \includegraphics[width=0.85\linewidth]{figs/2d+time}
-\caption[A 3D representation of 2D space+time]{A 2D space $(x,y)$ + time (vertical axis) view of the footprint of two buildings. These buildings were separate at time $t_{0}$, were then connected by a corridor (red) at time $t_{1}$, then became disconnected again when the corridor was removed at time $t_{2}$. This configuration remains unchanged until time $t_{3}$. The times $t_0$, $t_1$, $t_2$ and $t_3$ are shown along the thick line representing the front right corner of the right-side building.}
+\caption[A 3D representation of 2D space+time]{A 2D space $(x,y)$ + time (the vertical axis $t$) view of the footprint of two buildings. These buildings were separate at $t = t_{0}$, were then connected by a corridor (red) at $t = t_{1}$, then became disconnected again when the corridor was removed at time $t_{2}$. This configuration remains unchanged until time $t = t_{3}$. The times $t_0$, $t_1$, $t_2$ and $t_3$ are shown as points along the thick line representing the front right corner of the building on the left.}
 \label{fig:2d+time}
 \end{center}
 \end{figure}
@@ -583,7 +585,7 @@ However, an $n$-dimensional hole that is homeomorphic to an $n$-ball in an $n$-d
 \subfloat[]{
 \includegraphics[width=\marginparwidth]{figs/hole-split-structure}
 \label{subfig:hole-split-structure}}
-\caption[Two different techniques to handle holes in a 3D cell complex]{Two different techniques to handle holes in (a) a 3D cell complex representing a torus: (b) splitting the 3-cell into two parts and (c) using a bridge edge. (d) Note how these techniques allow for a hole to be representing while the combinatorial structure forms a single connected component.}
+\caption[Two different techniques to handle holes in a 3D cell complex]{Two different techniques to handle holes in (a) a 3D cell complex representing a torus: (b) splitting the 3-cell into two parts and (c) using a bridge edge. (d) Note how these techniques allow for a hole to be representing while the combinatorial structure forms a single connected component (\ie\ all cells form a single interlinked group).}
 \label{fig:hole}
 }
 
@@ -620,26 +622,26 @@ Ordered topological models are a representation method that combines characteris
 They work on the basis of a cell complex, but subdivide each cell into \emph{abstract} simplices using a purely combinatorial operation, a concept derived from what is known as an abstract simplicial complex in algebraic topology.
 
 The exact subdivision that is used depends on the data structure, but as shown in \reffigs{fig:simplices} and~\ref{fig:cmap-cube}, it is similar to a barycentric triangulation of a convex polytope, consisting of abstract vertices representing cells of different dimensions (\ie\ not only the 0-cells), and simplices that connect these vertices in a specific manner.
-The vertices representing the cells of dimensions higher than zero do not have a defined location in space (although they are usually depicted lying somewhere in the cells they are supposed to represent), but the simplices nevertheless form a combinatorially correct subdivision of the space.
+The vertices representing the cells of dimensions higher than zero do not have a well-defined location in space (although they are usually depicted lying somewhere in the cells they are supposed to represent), but the simplices nevertheless form a combinatorially correct subdivision of the space.
 For instance, adjacency and incidence do have meaning and can be defined just as in a geometric simplicial complex.
 Considering that a $j$-face of an $i$-simplex, $j \leq i$, is a $j$-simplex made from a subset of the vertices of the $i$-simplex, two $i$-simplices are adjacent if they have a common face, and an $i$-simplex and a $j$-simplex, $i \neq j$, are incident if either is a face of the other.
-\begin{figure}[tb]
+\begin{figure*}[tb]
 \centering
 \subfloat[]{
-\includegraphics[scale=0.17]{figs/gmaps-simplices}
+\includegraphics[width=0.27\linewidth]{figs/gmaps-simplices}
 \label{subfig:gmaps-simplices}}
 \quad
 \subfloat[]{
-\includegraphics[scale=0.17]{figs/cmaps-simplices}
+\includegraphics[width=0.27\linewidth]{figs/cmaps-simplices}
 \label{subfig:cmaps-simplices}}
 \quad
 \subfloat[]{
-\includegraphics[scale=0.17]{figs/vertex-simplices}
+\includegraphics[width=0.27\linewidth]{figs/vertex-simplices}
 \label{subfig:vertex-simplices}}
 \caption[Simplices in a generalised map and a combinatorial map]{The simplicial decomposition applied in order to obtain the simplices for a 2D:\ (a) generalised map and (b) combinatorial map. (c) All cells are represented as sets of 2-simplices, such as the vertex shown here, which is formed of a set of 4 triangles.
 Note that the locations of the vertices for the 1- and 2-cells are arbitrary, those for the 1-cells has been defined as the midpoint of the edge, and those for the 2-cells have been set so that the resulting simplices lie entirely in the interior of their corresponding 2-cell.}
 \label{fig:simplices}
-\end{figure}
+\end{figure*}
 \begin{figure}[tb]
 \centering
 \subfloat[]{
@@ -721,11 +723,11 @@ Holes and disconnected components in an ordered topological model can be dealt w
 \begin{figure}[tbp]
 \centering
 \subfloat[]{
-\includegraphics[scale=0.3]{figs/bridge-1}
+\includegraphics[scale=0.27]{figs/bridge-1}
 \label{subfig:bridge-1}}
 \quad
 \subfloat[]{
-\includegraphics[scale=0.3]{figs/bridge-2}
+\includegraphics[scale=0.27]{figs/bridge-2}
 \label{subfig:bridge-2}}
 \caption[Representing holes using bridges]{(a) A polygon with a hole is represented using a bridge edge to connect the hole with the exterior boundary.
 (b) The simplices in the combinatorial maps representation of the situation in (a).
