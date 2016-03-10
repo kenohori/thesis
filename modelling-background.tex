@@ -6,9 +6,9 @@
 This chapter describes how space is usually modelled in 2D/3D GIS and related disciplines, as well as the non-spatial characteristics that are typically used together with it, such as time and scale.
 % With a view to higher dimensions
 \refse{se:spatial-modelling} explains what spatial modelling is and the abstraction process through which it is accomplished, discussing the main approaches that can be followed at three levels in this abstraction process, which take the form of data models, data structures and dual combinatorial/embedding structures.
-\refse{se:modelling-space} describes how 2D and 3D space is currently modelled in a range of representative concrete cases, from the very minimal representations used in exchange file formats, in which simple structures and low storage requirements are preferred, up to those used internally in CAD-like software, in which the complex operations that are required entail the explicit storage of precise topological relationships.
+\refse{se:modelling-space} describes how 2D and 3D space is currently modelled in a range of representative concrete cases, from the very minimal representations used in exchange file formats, in which simple structures and low storage requirements are preferred, up to those used internally in CAD-like software, in which the complex operations that are required necessitate the explicit storage of precise topological relationships.
 
-Afterwards, this chapter contains sections on how specific non-spatial characteristics---that nevertheless have a strong link to space---are modelled: time in \refse{se:modelling-time}, and geographic scale or the level of detail of a model in \refse{se:modelling-scale}.
+Afterwards, this chapter contains sections on how specific non-spatial characteristics---that nevertheless have a strong link to space---are modelled: time in \refse{se:modelling-time} and geographic scale or the level of detail of a model in \refse{se:modelling-scale}.
 Finally, \refse{se:modelling-conclusions} concludes the chapter by pointing out some of the shortcomings of the aforementioned approaches to model 2D/3D space, time, scale and attributes.
 As will be seen in \refch{ch:nd-modelling}, many of these shortcomings can be resolved by using a higher-dimensional modelling approach.
 
@@ -17,7 +17,7 @@ As will be seen in \refch{ch:nd-modelling}, many of these shortcomings can be re
 
 Spatial modelling aims at the creation of digital representations of real-world objects.
 However, real-world objects are complex and vaguely defined, while computers can only operate on their heavily abstracted and precisely defined digital counterparts.
-The spatial modelling process therefore uses a series of progressive abstractions, which start by interpreting reality as a set of high-level concrete entities that still resemble real-world objects and processes, and ultimately aims at creating abstract low-level representations that are close to a computer implementation, possibly using intermediate levels in the process.
+The spatial modelling process therefore uses a series of progressive abstractions, which start by interpreting reality as a set of high-level concrete entities that still resemble real-world objects and processes, and ultimately aims at creating abstract low-level representations that are close to what is actually stored in a computer, possibly using intermediate levels in the process.
 
 This implies the existence of different levels of abstraction, and at each of these levels different approaches can be followed.
 While not all of these approaches are compatible with each other, the feasible combinations nevertheless result in a very large number of different computer representations.
@@ -51,6 +51,7 @@ This classification is not ideal as GIS data structures are usually specified in
 Apart from data models and data structures, some authors consider additional levels.
 \citet{Frank92} considers \emph{spatial concepts} as well, the human notions used to understand space.
 \citet{Peuquet84} considers \emph{reality} itself as a topmost level, including all aspects that may or may not be perceived by individuals, and a lowermost level with the \emph{file structure}, describing how the information is actually represented in hardware.
+These are certainly interesting and worthy of study, but they are out of the scope of this thesis.
 
 In the domain of geometric modelling and computer graphics, the schemes used are more varied, and thus the classifications used differ significantly.
 For 3D objects, there is usually a high-level classification with several \emph{solid representation schemes} \citep{Requicha80,Hoffmann92,Foley95}, general paradigms to model the world using a different approach to discretise and decompose objects.
@@ -61,7 +62,7 @@ While some of these schemes use 3D primitives stored as simple parametric struct
 These are usually described at a low level, generally consisting of 2D cell or simplicial complexes respectively in the form of \emph{polygon} or \emph{triangle meshes}, which use one of a few \emph{data structures} \citep{Joy03,Alumbaugh05,Blandford05,deFloriani05}.
 
 Some authors follow a more pragmatic approach, directly classifying data structures based on the class of objects that they are capable of representing.
-\citet{Comic12} does so for cell complexes, \citet{deFloriani05} for simplicial complexes, \citet{Lienhardt91} for spaces in different dimensions, \citet{deFloriani05a} for models supporting multiple levels of detail, \citet{Lienhardt09} for models for simplicial, simploidal\footnote{Cartesian products of simplices} and cell structures.
+\citet{Comic12} does so for cell complexes, \citet{deFloriani05} for simplicial complexes, \citet{Lienhardt91} for spaces in different dimensions, \citet{deFloriani05a} for models supporting multiple levels of detail, and \citet{Lienhardt09} for models for simplicial, simploidal\footnote{Cartesian products of simplices} and cell structures.
 
 Finally, at the lowest level, some authors distinguish between a \emph{topological} or \emph{combinatorial model} \citep{Lienhardt91}, which describes the connectivity between a set of predefined elements, and a \emph{geometric} or \emph{embedding model}, which specifies the exact shape and position of individual elements \citep{Mantyla88}.
 
@@ -77,8 +78,8 @@ Powerful structures are built upon small and simple primitives of a fixed form w
 However, partitioning complex objects into these simple primitives can be difficult and result in a large number of primitives, requiring significant preprocessing, making them space-intensive and limiting the types of objects that might be stored.
 In this sense, different data models make different choices and necessarily involve a trade-off.
 
-The main data models are briefly described in the following sections, roughly in order of increasing explicitness.
-A short statement on how well they extend to higher dimensions is included in each section.
+The main data models that are used in 2D and 3D are briefly described in the following sections, roughly in order of increasing explicitness.
+A short statement on how well they extend to higher dimensions is also included in each section.
 The most promising of these models are further analysed in a higher-dimensional context in \refse{se:data-structures}.
 
 \subsubsection{Primitive instancing}
@@ -92,7 +93,8 @@ Moreover, given these parameters and a primitive's position and orientation, a p
 Such an object can then be used either directly or as a base for further operations.
 
 Usually, the primitives used in primitive instancing are 3D volumetric objects, but they can actually be objects of any dimension.
-However, this approach is not practical for higher-dimensional models of geographic information as the objects modelled do not conform to a set of easily parametrisable primitives.
+However, this approach is not very practical for higher-dimensional models of geographic information, as the objects modelled generally do not conform to a set of easily parametrisable primitives\footnote{There are certainly exceptions, such as 3D+scale models as 4D which collapse to a point.
+However, the large number of primitives that would need to be defined for a system of this kind would make it impractical.}.
 
 \subsubsection{Sweep representations}
 
@@ -118,14 +120,14 @@ In most instances, these are volumetric primitives such as balls, cylinders, par
 \caption[An object represented as a tree of Boolean set operations]{An object represented as a tree of Boolean set operations on a sphere, a cube and three cylinders. From Wikimedia Commons.}
 \label{fig:csg}
 }
-CSG is particularly useful since it allows many operations to be distributed among the primitives in a tree.
+One of the strengths of CSG is that it allows many operations to be distributed among the primitives in a tree.
 
 The regularisation step ensures that the resulting objects of any Boolean set operation are both volumetric and water-tight \citep{Requicha78}, making many computations easy and robust.
 It also makes it relatively easy to transform a CSG tree to a more explicit representation.
 CSG is therefore used in most CAD software and in many game engines.
 
 While CSG extends naturally to higher dimensions, evaluating general CSG trees into more explicit representations is non-trivial in dimensions higher than three.
-A possible approach to do so would involve higher-dimensional Nef polyhedra, which are described below.
+A possible approach to do so would involve higher-dimensional Nef polyhedra, which are described afterwards.
 
 \subsubsection{Boolean set operations on half-spaces}
 
@@ -166,14 +168,14 @@ As \reffig{fig:nef} shows, the local pyramid of a vertex thus contains the symbo
 An incident volume thus becomes a face, an incident face becomes an edge, and an incident edge becomes a vertex on the surface of the local pyramid sphere/circle, essentially lowering the dimension of every object by one.
 An 2D/3D object can be represented as a set of local pyramids, which can individually be stored using simpler 1D/2D data structures.
 
-Nef polyhedra have two properties that make them very interesting representations for higher-dimensional models of geographic information: (i) the possibility to reduce the dimensionality of a representation by one, which can be applied recursively in order to model objects of any dimension, and (ii) the possibility to perform operations on the local pyramid level.
+Nef polyhedra have two properties that make them one of the most promising representations for higher-dimensional models of geographic information: (i) the possibility to reduce the dimensionality of a representation by one, which can be applied recursively in order to model objects of any dimension, and (ii) the possibility to perform operations on the local pyramid level.
 The former is discussed in more detail in \refse{ss:implicit-models} and the latter in \refse{ss:operations-nef}.
 
 \subsubsection{Function representation}
 
 Function representation, commonly abbreviated as F-rep, involves representing objects as point sets using an arbitrary continuous function \citep{Pasko95}, which is represented as an algebraic expression.
 When a given function $f(x_0, x_1, \ldots, x_n)$ is evaluated at a point with coordinates $(x_0, x_1, \ldots, x_n)$, it is possible to know if the point lies in the interior, boundary or exterior of an object.
-If it is positive the point is in the interior of the object, when it is zero it is on the boundary of the object, known as an isosurface, and when it is negative it is outside the object.
+If it is positive the point is in the interior of the object, when it is zero it is on the boundary of the object---in 2D known as an isoline and in 3D as an isosurface---, and when it is negative it is outside the object.
 
 By varying the number of input parameters, which in most cases represent a point along an axis, function representations are applicable to any dimension.
 Moreover, unlike a half-space inequality, such functions do not need to be linear.
@@ -182,7 +184,7 @@ However, evaluating these functions in higher dimensions can be complex, and obt
 
 \subsubsection{Exhaustive enumeration}
 
-Starting from the description of a domain that covers the objects that need to be described, a simple deterministic rule is used in order to partition the domain directly into cells, which are of the same dimension as the domain (\ie\ space-filling).
+Starting from the description of a domain that covers the objects that need to be described, a simple deterministic rule is used in order to partition the domain directly into cells, which are of the same dimension as the domain (\ie\ they are space-filling).
 In this manner, the decomposition rule is encoded into the model rather than in the data being represented, and so the cells do not need to store any geometric information of their own.
 Normally, the domain has a simple shape (\eg\ a rectangle, hexagon or box) \citep[\S{}6.8]{ISO19123:2007} and the rule partitions it into simple cells of the same size and shape (\eg\ rectangles or boxes themselves), in which case it is called a \emph{monohedral} tessellation \citep{Boots99}.
 If the cells are regular polygons or polyhedra, it is known as as \emph{regular} tessellation.
@@ -201,17 +203,18 @@ Exhaustive enumeration schemes are straightforward to extend to higher dimension
 \subsubsection{Hierarchical subdivisions using trees}
 
 A more general possibility to partition a domain involves using a hierarchical scheme where a space is recursively subdivided according to a particular criterion, resulting in a tree structure where a given node is a partition primitive that divides the space defined by its parent.
+The leaves of the tree are then used to record whether a cell belongs to the interior of an object or not.
 Such structures are generally known as space partitioning trees.
 In this manner, it is possible to efficiently partition spaces of any dimension, including areas and volumes where the objects' sizes are significantly different.
-However, the shape of a cell in the subdivision is only known after traversing a complete branch of the tree from its root to the leaf corresponding to the cell.
+However, the shape of a cell in the subdivision is only known after traversing a path of the tree all the way from its root to the leaf that corresponds to the cell.
 
 In the simplest case, the space can be split evenly into halves along all axes at every partition node, resulting in a \emph{quadtree} in 2D \citep{Finkel74} or an \emph{octree} in 3D \citep{Meagher80}.
 Bintrees \citep{Samet85} partition space alternating among dimensions rather than all at once, while $k$-d trees \citep{Bentley75} do so at an arbitrary point rather than at the midpoint of a space.
 Many other types of trees however exist.
 See \citep{Manolopoulos06}.
 
-As in exhaustive enumeration, this type of representation extends naturally to higher dimensions (\refse{ss:hierarchical-subdivisions}).
-The leaves of the tree can be easily used to record whether a cell belongs to the interior of an object or not.
+As in exhaustive enumeration, this type of representation extends very naturally to higher dimensions (\refse{ss:hierarchical-subdivisions}).
+However, the space used by hierarchical subdivisions can also increase exponentially on the dimension.
 
 \subsubsection{More general cell decompositions}
 
@@ -257,21 +260,21 @@ While in many cases it is possible to correctly interpret a volume from a wirefr
 They are therefore considered an incomplete representation and are generally not used in current systems.
 
 Despite their drawbacks, incomplete implicit models are however frequently used in 3D GIS and when modelling time, resulting in ill-defined volumes or unclear equivalences of objects across time.
-Many of these disadvantages are alluded later on in order to justify using explicit representations in higher dimensions.
+Many of these disadvantages are alluded later on in order to justify using more explicit representations in higher dimensions.
 
 \subsubsection{Boundary representation}
 
 Considering the Jordan curve theorem \citep{Jordan87}, which states that a closed curve separates the plane (\ie\ $\mathbb{R}^2$) into two parts: an \emph{interior} shape and an \emph{exterior} shape, it is possible to use this curve in order to \emph{implicitly but unambiguously} represent the interior (or exterior) shape.
-This theorem was generalised to higher dimensions as the Jordan-Brouwer theorem by \citet{Lebesgue11,Brouwer11}\footnote{This is somewhat contentious. See \citet[Ch.~5]{van-Dalen13}.}, implying that a volume in $\mathbb{R}^3$ can be represented by the 2D boundary surface that separates its interior from its exterior.
+This theorem was generalised to higher dimensions as the Jordan-Brouwer theorem by \citet{Lebesgue11} and \citet{Brouwer11}\footnote{This is somewhat contentious. See \citet[Ch.~5]{van-Dalen13}.}, implying that a volume in $\mathbb{R}^3$ can be represented by the 2D boundary surface that separates its interior from its exterior.
 This method, known as \emph{boundary representation}, \emph{B-rep} or \emph{surface modelling}, reduces the complexity of the problem by making it possible to use 2D data models/structures to store 3D objects, which are significantly simpler.
 Moreover, by decomposing the 2D surface into simple cells, \eg\ triangles or polygons, it becomes possible to represent the surface using one of the many data structures capable of representing 2D cell complexes, and if these cells support curved domains (\eg\ NURBS), these can be used to represent complex surfaces as well.
 
 While certain problems become more difficult by the use of boundary representation, such as the fact that it is easy to create invalid objects, some others can be performed directly on the 2D cells.
 For instance, visibility queries or determining if a point is in the interior of an object can be performed by shooting rays.
 
-As will be discussed in \refse{ss:data-structures} for 2D/3D and \refse{ss:cell-complexes} for $n$D, cell complexes are often represented using boundary representation schemes.
+As will be discussed in \refse{ss:data-structures} in 2D/3D and \refse{ss:cell-complexes} in $n$D, cell complexes are effectively represented using boundary representation schemes.
 \refse{ss:ordered-topological-models} instead shows how an $n$-dimensional cell complex can be represented using a data structure based on a simplicial complex.
-The latter approach arguably combines the benefits of both and used for most of the methods developed in the latter chapters of this thesis.
+The latter approach arguably combines the benefits of both simplicial complexes and cell complexes, and was thus used for most of the methods developed in the latter chapters of this thesis.
 
 \subsection{Data structures}
 \label{ss:data-structures}

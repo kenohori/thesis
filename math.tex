@@ -10,7 +10,7 @@ These formal models make it possible to create and store digital representations
 
 The current chapter describes some of these formal notions and their relevant context, which are used to study the spatial modelling approaches presented in the upcoming chapters.
 \refse{se:settheory} introduces some concepts of elementary set theory and mathematical logic, which are later used in definitions in this thesis.
-\refse{se:geometry} introduces geometry, which provides the basic concepts used to describe the position, shape and orientation of objects.
+\refse{se:geometry} introduces the basic concepts of geometry, which are used to describe the position, shape and orientation of objects.
 \refse{se:topology} builds on these to present topology, which formalises notions such as the boundary and interior of an object or the relationships between multiple objects.
 
 \section{Elementary set theory and mathematical logic}
@@ -20,20 +20,20 @@ Set theory is the branch of mathematics that studies \emph{sets}, which are coll
 While the study of set theory only formally started with \citet{Cantor74}, its intuitive and minimal concepts were later used in order to give a foundation to almost all areas of mathematics\footnote{Even as some mathematicians and philosophers have argued against set theory as a foundation for all of mathematics.}.
 Since the basic concepts of set theory are used in this thesis in order to describe many other concepts, this section gives a very short primer using the same notation that is used in this thesis.
 However, it is worth noting that the descriptions used here are reflect the concepts generally used in GIS, and so are meant to be intuitive and not very formal.
-Perhaps more importantly, these definitions do not reflect modern mathematical thought on the topic\footnote{In short, this intuitive definition of sets pretty much assumes that anything can be put into a set without leading to paradoxes, which is not the case.}, \eg\ axiomatic set theory.
+Perhaps more importantly, these definitions do not reflect modern mathematical thought on the topic\footnote{In short, this intuitive definition of sets pretty much assumes that anything can be put into a set without leading to paradoxes, which is not the case.}, which is much more precise but is much less accessible, \eg\ axiomatic set theory.
 
 Set theory starts by considering the existence of a given domain of objects from which one may build sets, which is known as the \emph{universe set} and denoted as $\mathbb{U}$.
 These objects can be anything, including other sets.
 Set theory allows sets to be regarded as single entities and operated upon \citep{Devlin93}.
-If an object $a$ is part of a set $\mathbb{X}$, it is denoted as $a \in \mathbb{X}$, read as $a$ is an \emph{element} of $\mathbb{X}$.
-If $a$ is not part of a set $\mathbb{X}$, it is denoted as $a \notin \mathbb{X}$, read as $a$ is not an element of $\mathbb{X}$.
+If an object $a$ is part of a set $\mathbb{X}$, it is denoted as $a \in \mathbb{X}$, read as `$a$ is an \emph{element} of $\mathbb{X}$'.
+If $a$ is not part of a set $\mathbb{X}$, it is denoted as $a \notin \mathbb{X}$, read as `$a$ is not an element of $\mathbb{X}$'.
 
 There are two broad ways to describe the elements in a set, both using curly braces, \ie\ \{ and \}.
 One way to do so is to enumerate all the elements of the set one by one.
 For instance, the set $\left\{ 1,2,3 \right\}$ is the set containing $1$, $2$ and $3$ as elements (and no others).
 The other way to do so is to specify one or more rules that the elements of the set need to fulfil.
 For instance, the set $\{ x \mid x$~\emph{is~a~prime~number}$\}$ consists of all prime numbers.
-It is read as $x$, such that $x$ is a prime number.
+It is read as `$x$, such that $x$ is a prime number'.
 
 Sets are by definition unordered and contain unique elements---duplicate items are ignored by convention.
 A set may contain an infinite number of elements (\eg\ as the prime number example above), or no elements at all, in which case it is a special set known as the \emph{null set} and denoted as $\{ \}$ or $\emptyset$.
@@ -82,7 +82,7 @@ A coordinate system makes it possible to uniquely describe the absolute location
 In particular, the Cartesian coordinate system uses a tuple of perpendicular directed lines as axes, with a positive direction and a negative direction, all of which intersect at a common point known as the origin.
 A point's coordinates in the system are then given by signed distances to the respective axes\footnote{A more rigorous and correct explanation would be based on a set of linearly independent vectors, but this creates a recursive definition.}.
 
-$n$-dimensional Euclidean space, which can be described by the set of points $\mathbb{R}^n$, has $n$ perpendicular axes intersecting at the origin $O$, defined by the $n$-tuple $(0, 0, \ldots, 0)$, and a point $p$ in $n$D space is described by an $n$-tuple $(p_1, p_2, \ldots, p_n)$, where $p_i$ is the signed distance to the $i$-th axis.
+$n$-dimensional Euclidean space, which can be described by the set of points $\mathbb{R}^n$, has $n$ perpendicular axes intersecting at the origin $O$, defined by the $n$-tuple $(0, 0, \ldots, 0)$, and a point $p$ in $n$D space is thus described by an $n$-tuple $(p_1, p_2, \ldots, p_n)$, where $p_i$ is the signed distance to the $i$-th axis.
 For example, as shown in \reffig{fig:point}, three-dimensional Euclidean space ($\mathbb{R}^3$), has three axes, usually named $X$, $Y$ and $Z$, such that a given point $p$ in 3D can be described by a treble $(p_x,p_y,p_z)$, where $p_x$ is the signed distance to the $X$ axis, $p_y$ to the $Y$ axis and $p_z$ to the $Z$ axis.
 \marginpar{
 \captionsetup{type=figure}
@@ -108,9 +108,10 @@ Some other objects can be described as a linear combination of linearly independ
 Considering the points $p_1,p_2,\ldots,p_n$, a linear combination of them takes the form $a_1 p_1 + a_2 p_2 + \cdots + a_n p_n$, where $\sum_{i=1}^n a_i = 1$.
 For every point $p_i$, $a_i$ is thus a scalar coefficient that determines its \emph{weight}.
 
-If negative weights are allowed, the linear combination of $n+1$ linearly independent points forms an $n$-dimensional unbounded linear object, \eg\ a line or plane, such that the points lie exactly on it.
-When the weights are restricted to the interval $[0,1]$, the linear combination of $n+1$ linearly independent points forms an $n$-dimensional simplex (called an $n$-simplex)---a convex shape with $n+1$ vertices.
-A \emph{0-simplex} is thus a point, a \emph{1-simplex} is a line segment, a \emph{2-simplex} is a triangle, and a \emph{3-simplex} is a tetrahedron.
+If negative weights are allowed, the linear combination of $n+1$ linearly independent points forms an $n$-dimensional unbounded linear object, \eg\ a line using two points or a plane using three points.
+All of these points lie exactly on the object.
+When the weights are instead restricted to the interval $[0,1]$, the linear combination of $n+1$ linearly independent points forms an $n$-dimensional simplex (called an $n$-simplex)---a convex shape with $n+1$ vertices.
+A \emph{0-simplex} is thus a point, a \emph{1-simplex} is a line segment, a \emph{2-simplex} is a triangle, a \emph{3-simplex} is a tetrahedron, and so on.
 
 Other, more complex objects can be described using equations, which describe particular subsets of $\mathbb{R}^n$.
 A hyperplane in $\mathbb{R}^n$, \ie\ a space of dimension $\mathbb{R}^{n-1}$ in $\mathbb{R}^n$, can be described by a linear equation of the form $a_1 x_1 + a_2 x_2 + \cdots + a_n x_n = b$, where $a_1, a_2, \ldots, a_n$ are the coefficients of the linear equation.
@@ -280,6 +281,7 @@ A 2D simplicial complex is known as a \emph{triangulation} and a 3D simplicial c
 
 A $j$-dimensional face ($j$-face) of an $i$-simplex, $j < i$, is a $j$-simplex made from a proper subset of its vertices.
 Sometimes the dimension of the face is omitted and it can be deduced from the context, but in GIS it generally refers to each of the $i+1$ $(i-1)$-faces of an $i$-simplex.
+In the context of an $i$-dimensional simplicial complex, a face refers to each of the $i$-simplices in the complex, such as the triangles in a triangular mesh.
 
 More formally, a simplicial complex can be defined as a collection of simplices such that:
 \begin{itemize}
@@ -307,6 +309,7 @@ Considering only linear geometries, 1-cells are thus line segments, 2-cells poly
 A $j$-dimensional face ($j$-face) of an $i$-cell is a $j$-cell, $j \leq i$, that lies on the boundary of the $i$-cell.
 A facet of an $i$-cell is an $(n-1)$-face of the cell.
 As in a simplicial complex, two $i$-cells are said to be adjacent if they have a common facet, and an $i$-cell and a $j$-cell, $i \neq j$, are said to be incident if either is a face of the other.
+In the context of an $i$-dimensional cell complex, a face refers to each of the $i$-cells in the complex, such as the polygons in a polygonal mesh.
 
 More formally, a cell complex can be defined inductively as in \citet{Hatcher02}.
 An $n$-dimensional cell complex is built by starting from a set of isolated vertices, and $\forall 0 < i \leq n$ an $i$-cell is built by attaching itself to the $(i-1)$-faces (facets) on its boundary, these facets having been previously added to the complex.
