@@ -3,11 +3,10 @@
 \chapter{Basic dimension-independent operations}
 \label{ch:operations-background}
 
-\refch{ch:nd-modelling} identifies the most promising data structures in the context of a higher-dimensional GIS
-and explains how certain fundamental operations are intimately related to the data structures for which they are defined.
+\refch{ch:nd-modelling} identified the most promising data structures in the context of a higher-dimensional GIS and explained how certain fundamental operations are intimately related to the data structures for which they are defined.
 This chapter therefore covers a number of basic dimension-independent operations, some of which need to be defined in the context of a specific data structure.
 These operations are by themselves useful, as they correspond to common simple queries and modification.
-In addition, some of them are used as building blocks for more complex operations described later in this thesis.
+In addition, some of them are used as building blocks for the more complex operations described in latter chapters of this thesis.
 
 \refse{se:operations} introduces basic properties and operations on generalised/combinatorial maps and on Nef polyhedra, which are later respectively used for more complex higher-dimensional operations (\refchs{ch:extrusion},~\ref{ch:incremental-construction} \&~\ref{ch:linking-lods}) and for cleaning 2D and 3D data (\refch{ch:cleaning}).
 \refse{se:ndmath} describes how to apply basic transformations to an $n$D simplicial/cell complex, which can be used to manipulate $n$D objects and to move around an $n$D scene (\refch{ch:slicing}).
@@ -41,8 +40,8 @@ That is, they are functions $f$ such that $f\big(f(x)\big) = x$, or equivalently
 \subfloat[]{\includegraphics[width=0.3\linewidth]{figs/2dcc-gmap}}
 \quad
 \subfloat[]{\includegraphics[width=0.3\linewidth]{figs/2dcc-alphas}}
-\caption[Involutions in a 2D generalised map]{For (a) 2D cell complex represented as a 2D generalised map (b) in a simplicial complex-based depiction as used in \refse{ss:ordered-topological-models}, (c) in a simpler depiction using half-edges and showing explicitly the relations between the darts.
-As involutions are pairwise relations between darts, they are their own inverse, \ie\ applying them twice means returning to the original dart.}
+\caption[Involutions in a 2D generalised map]{(a) A 2D cell complex represented as (b) a 2D generalised map  in a simplicial complex-based depiction as used in \refse{ss:ordered-topological-models}, and (c) in a simpler depiction using half-edges and showing explicitly the relations between the darts.
+As involutions are pairwise relations between darts, they are their own inverse, \ie\ applying them twice always means returning to the original dart.}
 \label{fig:2dcc}
 \end{figure}
 In addition, certain darts are $i$-free, which means that for a given dart $d$, $\alpha_i(d) = d$.
@@ -73,7 +72,7 @@ As shown in \reffig{fig:cmap-free}, polygonal curves in a combinatorial map resu
 For a given dart $d$ with an undefined relation $\beta_1$, this is encoded as $\beta_1(d) = \emptyset$ and the dart is said to be $1$-free.
 Because of this, the $\beta_1$ relations in a combinatorial map do not form involutions, but instead form only \emph{partial permutations}.
 % When ... he darts joined by $\beta_1$ relations consist of a subset of the darts in the map which form a \emph{cyclic permutation}, \ie\ they are connected to each other so as to form one cycle, which effectively represents the edges around a face.
-In addition, as shown in \reffig{fig:2dcc-betas}, in a combinatorial map of any dimension, the darts that lie on the boundary of the map also have certain undefined $\beta$ relations, which are linked to the special value $\emptyset$.
+In addition, as shown in \reffig{fig:2dcc-betas}, in a combinatorial map of any dimension, the darts that lie on the boundary of the map have certain undefined $\beta$ relations, which are set to the special value $\emptyset$.
 \marginpar{
 \captionsetup{type=figure}
 \centering
@@ -109,7 +108,7 @@ Starting from a given dart $d$ and a set of relations $\Alpha$, the orbit $\lang
 \begin{description}
 
 \item[Darts of a cell]
-Considering that cells in a generalised or combinatorial map are represented by \emph{sets of darts}, an important basic operation is obtaining all the darts that represent a given cell of any dimension.
+Considering that every cell in a generalised or combinatorial map is represented by a \emph{set of darts}, an important basic operation is obtaining all the darts that represent a given cell (of any dimension).
 In a generalised map, from a given dart $d$ known to be part of an $i$-cell, the darts of the $i$-cells are those that can be reached by recursively following all relations \emph{except} for $\alpha_i$.
 As shown in \reffig{fig:darts-of-cell}, this is given by the orbit $\langle\alpha_0, \ldots, \alpha_{i-1}, \alpha_{i+1}, \ldots, \alpha_n\rangle(d)$.
 In a combinatorial map, due to the oriented nature of the $\beta_1$ relations, in order to obtain the darts of a $0$-cell it is instead necessary to follow a composition of relations given by $\langle \{\beta_j\circ \beta_k \mid \forall 1 \leq k \leq n, \forall 1 \leq j \leq k\} \rangle(d)$.
@@ -131,17 +130,18 @@ Similarly, given two combinatorial maps $(D, \beta_{1}, \ldots, \beta_{n})$ and 
 \item[Sewable darts]
 Starting from isolated darts, these can be assembled together via the sewing operation, described below.
 However, it is important to first determine if they can be sewed together along a given dimension.
-Given a generalised map $(D,\alpha_{0},\ldots,\alpha_{n})$ and two darts from the map $d,d^\prime \in D$, $d$ and $d^\prime$ are $i$-sewable if and only if $d \neq d^\prime$, $d$ and $d^\prime$ are $i$-free, and there is an isomorphism between $\langle\alpha_0, \ldots, \alpha_{i-2}, \alpha_{i+2}, \ldots, \alpha_n\rangle(d)$ and $\langle\alpha_0, \ldots, \alpha_{i-2}, \alpha_{i+2}, \ldots, \alpha_n\rangle(d^\prime)$ such that $f(d) = d^\prime$.
-Similarly, given a combinatorial map $(D, \beta_{1}, \ldots, \beta_{n})$ and two darts from the map $d,d^\prime \in D$, $d$ and $d^\prime$ are $i$-sewable if and only if $d \neq d^\prime$, $d$ and the inverse of $d^\prime$ are $i$-free, and there is an isomorphism between $\langle\beta_1, \ldots, \beta_{i-2}, \beta_{i+2}, \ldots, \beta_n\rangle(d)$ and $\langle\beta_1, \ldots, \beta_{i-2}, \beta_{i+2}, \ldots, \beta_n\rangle(d^\prime)$ such that $f(d) = d^\prime$.
+Given a generalised map $(D,\alpha_{0},\ldots,\alpha_{n})$ and two darts from the map $d,d^\prime \in D$, $d$ and $d^\prime$ are $i$-sewable if and only if $d \neq d^\prime$, $d$ and $d^\prime$ are $i$-free, and there is an isomorphism between $\langle\alpha_0, \ldots, \alpha_{i-2}, \alpha_{i+2}, \ldots, \alpha_n\rangle(d)$ and $\langle\alpha_0, \ldots, \alpha_{i-2}, \alpha_{i+2}, \ldots, \alpha_n\rangle(d^\prime)$ such that $f(d) = d^\prime$\footnote{This last condition enforces the last criterion in the definition of a generalised map given above.}.
+Similarly, given a combinatorial map $(D, \beta_{1}, \ldots, \beta_{n})$ and two darts from the map $d,d^\prime \in D$, $d$ and $d^\prime$ are $i$-sewable if and only if $d \neq d^\prime$, $d$ and the inverse of $d^\prime$ are $i$-free, and there is an isomorphism between $\langle\beta_1, \ldots, \beta_{i-2}, \beta_{i+2}, \ldots, \beta_n\rangle(d)$ and $\langle\beta_1, \ldots, \beta_{i-2}, \beta_{i+2}, \ldots, \beta_n\rangle(d^\prime)$ such that $f(d) = d^\prime$\footnote{Similarly, this last condition enforces the last criterion in the definition of a combinatorial map given above.}.
 
 \item[Sewing]
 The sewing operation is the basic construction method used to link isolated darts in a map in order to form cell complexes.
-Intuitively, it is possible to link two $i$-cells along a common $(i-1)$-cell by sewing corresponding darts on the common $(i-1)$-cell on each $i$-cell.
+Intuitively, it is possible to link two $i$-cells along a common $(i-1)$-cell by sewing corresponding darts on the common bounding $(i-1)$-cell around each $i$-cell.
 \begin{figure}[tbp]
 \centering
 \includegraphics[width=\linewidth]{figs/3-sew}
 \caption[3-sewing two cubes]{Two cubes in a 3D generalised map can be linked together by 3-sewing corresponding darts on the common face (highlighted) on each cube. This operation uses the orbits of each face on each cube in order to link the corresponding darts.}
 \end{figure}
+This operation is thus equivalent to a parallel traversal of two maps that links its corresponding darts along an $(i-1)$-cell.
 Given a generalised map $(D,\alpha_{0},\ldots,\alpha_{n})$ and two darts $d,d^\prime \in D$ that are $i$-sewable using the isomorphism $f$, $i$-sewing $d$ and $d^\prime$ means that $\forall e \in \langle\alpha_0, \ldots, \alpha_n\rangle(d)$, $\alpha_i(e)$ should be set to $f(e)$ and $\alpha_i\big(f(e)\big)$ should be set to $e$.
 Given a combinatorial map $(D, \beta_{1}, \ldots, \beta_{n})$ and two darts $d,d^\prime \in D$ that are $1$-sewable using the isomorphism $f$, $1$-sewing $d$ and $d^\prime$ means that $\forall e \in \langle \{\beta_i\circ \beta_j \mid \forall 3 \leq k \leq n, \forall 3 \leq j \leq k\} \rangle(d)$, $\beta_1(e)$ should be set to $f(e)$ and $\forall e^\prime \in \langle \{\beta_i\circ \beta_j \mid \forall 3 \leq k \leq n, \forall 3 \leq j \leq k\} \rangle(d^\prime)$, $\beta_1(f(e^\prime))$ should be set to $e^\prime$.
 For the cells of dimension two and higher, if $d$ and $d^\prime$ are $i$-sewable ($i \geq 2$), $i$-sewing them means that $\forall e \in \langle\beta_{1}, \ldots, \beta_{n}\rangle(d)$, $\beta_i(e)$ should be set to $f(e)$ and $\beta_i\big(f(e)\big)$ should be set to $e$.
