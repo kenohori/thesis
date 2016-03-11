@@ -7,7 +7,7 @@ As presented in \refch{ch:modelling-background}, the most common approaches to m
 These have many advantages, but are also necessarily limiting when 3D objects are concerned, constraining the class of objects that they are capable of representing efficiently and the operations that can be efficiently performed on them.
 Even data structures specifically defined for sets of 3D objects have significant limitations, such as not being able to store the incidence and adjacency relationships between objects.
 Moreover, when the data has to be integrated with non-spatial characteristics (\eg\ time and scale), similar ad hoc adaptations to 2D structures are also used.
-Therefore, the problem of representing 3D, spatio-temporal and multi-scale data is not fully solved even by the most advanced 3D structures as they are currently used in GIS.\@
+Therefore, the problem of adequately representing 3D, spatio-temporal and multi-scale data is not fully solved even by the most advanced 3D structures as they are currently used in GIS.\@
 
 This chapter presents the higher-dimensional spatial information modelling approach---the main theme of this thesis---as a solution to all these problems, as well as the higher-dimensional data models and data structures that can be used to realise it.
 \refse{se:nd-modelling-foundations} introduces the topic by showing the strong theoretical foundations behind higher-dimensional modelling.
@@ -25,8 +25,8 @@ Significant parts of \refse{se:data-structures} and \refse{se:nd-modelling-concl
 
 % What, in brief
 
-A radical departure from the traditional approaches to model 2D/3D space, time and scale in GIS, as presented in \refch{ch:modelling-background}, consists in the representation of any number of \emph{parametrisable} characteristics (\eg\ the third spatial dimension, time and scale) as additional dimensions in a geometric sense.
-These dimensions are modelled so as to be orthogonal to each other, such that real-world 0D--3D entities are modelled as higher-dimensional objects\footnote{That is, as long as such objects exist along intervals along these other dimensions. If they only exist at a point (\eg\ a moment in time) along these dimensions, they are of the same dimension as the original object.} embedded in higher-dimensional space, which are consequently stored using \emph{higher-dimensional data structures}.
+A radical departure from the traditional approaches to model 2D/3D space, time and scale in GIS, as presented in \refch{ch:modelling-background}, consists in the representation of any number of \emph{parametrisable characteristics} (\eg\ the third spatial dimension, time and scale) as additional dimensions in a geometric sense.
+These dimensions are modelled so as to be orthogonal to each other, such that real-world 0D--3D entities are modelled as higher-dimensional objects\footnote{That is, as long as such objects exist along intervals along these other dimensions. If they only exist at a point along these dimensions (\eg\ a moment in time), they are of the same dimension as the original object.} embedded in higher-dimensional space, which are consequently stored using \emph{higher-dimensional data structures}.
 
 % Foundations (math)
 
@@ -37,19 +37,19 @@ Higher-dimensional modelling is well grounded in long-standing mathematical theo
 
 This approach opens the door to new possibilities.
 From an application point of view and as will be discussed in \refse{ss:nd-topology}, 4D topological relationships between 4D objects provide insights that 3D topological relationships cannot.
-Also, \citet{McKenzie01} contends that weather and groundwater phenomena cannot be adequately studied in less than four dimensions, and \citet{vanOosterom10} argue that the integration of space, time and scale into a 5D model for GIS can be used to ease data maintenance and improve consistency, as algorithms could detect if the 5D representation of an object is consistent and does not conflict with other objects.
+Also, \citet{McKenzie01} contends that weather and groundwater phenomena cannot be adequately studied in less than four dimensions, and \citet{vanOosterom10} argue that the integration of space, time and scale into a 5D model for GIS can be used to ease data maintenance and improve consistency, as algorithms could detect if the 5D representation of an object is self-consistent and does not conflict with other objects.
 
 % Disclaimer
 
-It is important to note that the higher-dimensional modelling approach---as presented in this thesis---bears no relation to the most common usage of 4D, 5D, 6D, \ldots, $n$D GIS/BIM in both GIS product descriptions and scientific literature.
-There, such terms are generally used as buzzwords that refer to \emph{any} kind of support for the storage of time information, costs, project life cycles, or any other kind of non-spatial characteristics.
+It is important to note that the higher-dimensional modelling approach---as presented in this thesis---bears no relation to the most common usage of 4D, 5D, 6D, \ldots, $n$D GIS/BIM in both GIS product descriptions and the scientific literature.
+There, such terms are generally used as buzzwords that refer to \emph{any} kind of support for the storage of time information, costs, project life cycles, or any other kind of non-spatial information.
 In most cases, this information is simply stored as a tuple of attributes that are appended to 2D/3D objects (\eg\ timestamps), or as external structures that are unlinked to any objects with a geometric description (\eg\ IFC scheduling information).
 If one were to interpret these objects geometrically, they would result in 2D/3D objects embedded in higher-dimensional space\footnote{Orthogonal and point-like with respect to the higher dimensions.}, and \emph{not in higher-dimensional objects embedded in higher-dimensional space}.
 
 % Past attempts
 
 However, it is worth noting that real strides towards higher-dimensional GIS have been made in various forms.
-Research in multidimensional GIS aims at the integrated storage and analysis of objects of different dimensions~\citep{Raper00,Gold05}, usually limited to 0D--3D objects but sometimes conceptually extended to higher dimensions.
+Research in multidimensional GIS aims at the integrated storage and analysis of heterogeneous objects of different dimensions~\citep{Raper00,Gold05}, usually limited to 0D--3D objects but sometimes conceptually extended to higher dimensions.
 Storing and manipulating heterogeneous objects and their semantics is a difficult challenge and is a notable weak point of current GIS tools.
 
 % Using time as a dimension
@@ -57,29 +57,31 @@ Storing and manipulating heterogeneous objects and their semantics is a difficul
 The concept of time as a dimension is an established concept with proven applications.
 As \citet{Couclelis99} states, time has historically been linked to space and often considered as another dimension, and the 4D spatiotemporal manifold known as the Minkowski space \citep{Minkowski08} is used in the description of special relativity in mathematics and physics\footnote{Minkowski space is non-Euclidean, but similar representations and techniques can be used with it.
 For instance, \citet{Hanson01} show how computer graphics techniques can be used to visualise it.
-General relativity is instead described by Riemann space \citep{Riemann68}}.
+General relativity is instead described by Riemann space \citep{Riemann68}.}.
 The ISO 19108 standard also states that `time is a dimension analogous to any of the spatial dimensions' \citep{ISO19108:2002}
 A representation where time is modelled as one more spatial dimension has been moreover used in several applications, mostly in the form of 2D space+time, such as to analyse paths \citep{Hagerstrand70}, to analyse motion in computer vision \citep{Basri05} and to visualise geographic information \citep{Kraak03}.
-3D+time systems have also been proposed, albeit usually at a conceptual level~\citep{Galton04}.
-In GIS and other fields, a 2D space+time representation is often called a space-time cube\footnote{The use of the term `cube' is useful for clarity of explanation but not strictly correct since it implies that the analysed region has the same length along each axis. \citet{Hagerstrand70}, who is largely credited with popularising the concept, refers to it as the space-time prism.}.
+3D+time systems have also been frequently proposed, albeit this usually is meant only at a conceptual (rather than implementation) level~\citep{Galton04}.
+In GIS and other fields, a 2D space+time representation is often called a \emph{space-time cube}\footnote{The use of the term `cube' is useful for clarity of explanation but not strictly correct since it implies that the analysed region has the same length along every axis.
+This term is thus not used elsewhere in this thesis.
+By contrast, \citet{Hagerstrand70}, who is largely credited with popularising the concept, refers to it as the space-time prism.}.
 
 % Using scale as a dimension
 
 Scale as a dimension has a shorter history, only recently being proposed as way to integrate 2D/3D space, time and scale \citep{vanOosterom10}.
 \citet{Dollner05} consider the notion of the LOD of a model as a conceptual dimension.
 \citet{Grasset-Simon06} discuss generalised map pyramids, which use $n$-dimensional generalised maps in order to create a hierarchical data structure of 2D/3D/$n$D images of different resolutions.
-\citet{Untereiner15} introduces the Compact Primal Hierarchy, an also hierarchical representation of manifold meshes in any dimension which are generated through successive refinement operations.
-\citet{vanOosterom14} discusses the integration of 2D maps at different scales in one 2D+scale model that is conceptually 3D---but is represented instead as a series of linked 2D structures---and is known as the space-scale cube.
+\citet{Untereiner15} introduce the Compact Primal Hierarchy, an also hierarchical representation of manifold meshes in any dimension which are generated through successive refinement operations.
+Finally, \citet{vanOosterom14} discuss the integration of 2D maps at different scales in one 2D+scale model that is conceptually 3D---but is represented instead as a series of linked 2D structures---and is known as the \emph{space-scale cube}\footnote{A similar objection could be made to it being called a cube though.}.
 
 \section{The higher-dimensional modelling paradigm}
 \label{se:nd-modelling-paradigm}
 
 Considering the strong foundations of higher-dimensional modelling explained in \refse{se:nd-modelling-foundations}, the higher-dimensional modelling of geographic information has great potential to integrate space (of any dimension) with any number of non-spatial characteristics.
-Such a representation is extremely powerful, capable of handling even complex situations like objects that are both changing shape and moving in time, but it is also complex in several ways.
+Such a representation is extremely powerful, capable of handling even complex situations like objects that are both changing shape (\ie\ \emph{morphing}) and moving in time, but it is also complex in several ways.
 
-This section serves as a broad overview of the higher-dimensional modelling paradigm, covering the main conceptual difficulties in how these models work and look.
-The first fundamental aspect, which characteristics can and should be modelled as dimensions, is described in \refse{ss:dimensions}.
-Afterwards, considering that understanding how objects in more than three dimensions are hard to visualise, \refse{ss:agile13} contains an intuitive explanation of how these objects look like based on 3D models using 2D+time and 2D+scale, as well as making analogies between the properties of higher-dimensional models and 2D/3D ones.
+This section serves as a broad overview of the higher-dimensional modelling paradigm, covering the main conceptual difficulties in how these models work and describing intuitively what they look like.
+The first fundamental aspect, deciding which characteristics can and should be modelled as dimensions, is described in \refse{ss:dimensions}.
+Afterwards, considering that understanding how objects in more than three dimensions are hard to visualise, \refse{ss:agile13} explains intuitively what these objects look like based on 3D models using 2D+time and 2D+scale, as well as making analogies between the properties of higher-dimensional models and 2D/3D ones.
 
 \refse{ss:nd-topology} discusses the key distinguishing feature of the higher-dimensional approach---the possibility to store and use topological relationships in arbitrary dimensions.
 Finally, \refse{ss:nd-partition} explains how the standard topological approach in GIS, creating a functional space partition from a set of objects, can also be used in higher dimensions to store these topological relationships in the data structures presented in \refse{se:data-structures}.
@@ -99,12 +101,12 @@ A point has 1 cell, a line segment $3$ ($2+1$) cells, a square $9$ ($4+4+1$) cel
 \label{fig:tesseract}
 }
 
-Because of this, while many characteristics can be used as a dimension, only those characteristics where such modelling would bring significant benefits should be modelled in this manner.
+Because of this, while many characteristics \emph{can} be used as a dimension, only those characteristics where such modelling would bring significant benefits \emph{should} be modelled in this manner.
 In fact, while there is no theoretical limit to the number of dimensions that can be used, the increasing space requirements of models with more dimensions generally limit the practical number of dimensions to 6--8.
 
 There are various requirements and desirable properties in the characteristics that are to be modelled as additional dimensions.
 At minimum, such characteristics should be parametrisable (\ie\ there should be a way to express them in terms of a parameter or parameters), so that these parameters can be entered into a computer, and preferably parametrised as numbers that determine the object's position along the axes of the dimensions.
-Many other properties are not strictly necessary but still desirable, including that there is a parametric function that models the characteristic in a natural way, and that this function is invertible so that the object's properties can be known from the inverse function.
+Many other properties are not strictly necessary but are still very desirable, including that there is a parametric function that models the characteristic in a natural way, and that this function is invertible so that the object's properties can be known from the inverse function.
 These are properties that are fulfilled by data that is quantitative in nature, which is related to measurements of an interval or ratio scale \citep{Stevens46}\footnote{Measurements might not be the best term here considering that much data is modelled without any measurements taking place, but this is the original terminology in \citet{Stevens46}.}.
 
 In addition, there are certain properties of the data to be represented that determine if the higher-dimensional modelling approach is worth the added complexity and size.
@@ -112,11 +114,13 @@ For this, it is possible to evaluate it by considering whether more compact alte
 For instance, if the value of one of the characteristics can be determined from the others without added knowledge, the former can be simply obtained from the latter.
 Also, when a given characteristic has a bounded number of values for every possible combination of the other characteristics, the former can be stored more efficiently as an attribute.
 A typical example of this latter case is a 2.5D terrain model, where there is only one height ($z$) value for any given combination of $(x,y)$ coordinates.
+Caves, tunnels, overhangs and arches are thus problematic.
 
 Time and scale---the examples used throughout this thesis---comply with most of the properties mentioned above.
 They are both intuitively quantifiable in a meaningful way.
 For instance, a point along a temporal axis defines a moment in time such that points on one side of it occur before it and points on the other side of it occur after it.
-Additionally, in the general case, an object's position in time or its geographic scale cannot be known based solely on its position in 2D or 3D space, and an object can be at the same position at different moments in time (\eg\ by not moving) or at different scales.
+Similarly, an object at a given LOD is finer than those at a lower LOD and coarser than those at a higher LOD.\@
+Moreover, in the general case, an object's position in time or its geographic scale cannot be known based solely on its position in 2D or 3D space, and an object can be at the same position at different moments in time (\eg\ by not moving) or at different scales.
 
 \subsection{How higher-dimensional data looks}
 \label{ss:agile13}
@@ -159,11 +163,12 @@ As shown in \reffig{fig:aula-transformations}, applying translation, rotation or
 \includegraphics[width=0.25\linewidth]{figs/aula-scaled}
 \label{subfig:aula-scaled}
 }
-\caption[Object transformations in 2D space+time]{In a 2D+time setting, applying certain transformations to (a) a polygon during a time interval results in: (a) a parallelepiped in the case of a translation, (b) a screw shape with curved surfaces similar to a \emph{twisted prism} in the case of a rotation, and (c) a \emph{frustum} in the case of scaling.}
+\caption[Object transformations in 2D space+time]{In a 2D+time setting, applying certain transformations to (a) a polygon during a time interval results in: (b) a parallelepiped in the case of a translation, (c) a screw shape with curved surfaces similar to a \emph{twisted prism} in the case of a rotation, and (d) a \emph{frustum} in the case of scaling.}
 \label{fig:aula-transformations}
 \end{figure*}
 
 In the context of geographic information, where many kids of features are represented as planar partitions of polygons, the resulting 2D space+time polyhedra form a 3D space partition---if the polygons do not overlap, the resulting polyhedra do not overlap either.
+This property is later exploited by the extrusion algorithm in \refch{ch:extrusion}.
 Moreover, as shown in \reffig{fig:2d+time}, such a representation can represent the state of the partition at any point in time.
 \begin{figure}[tbp]
 \begin{center}
@@ -173,9 +178,9 @@ Moreover, as shown in \reffig{fig:2d+time}, such a representation can represent 
 \end{center}
 \end{figure}
 At any one moment in time (\ie\ a slice perpendicular to the 2D space plane), a polygon is still represented as a polygon but one that is embedded in 3D space, parallel to the 2D space plane $(x,y)$ and orthogonal to the time axis.
-Every object existing (and not moving or changing shape) during a time period would then be prism shaped, with identical base and top faces that are parallel to the 2D-space plane and the other faces being orthogonal to it.
+Every object existing (and not moving or changing shape) during a time period would then be prism shaped, with identical base and top faces that are parallel to the 2D space plane and the other faces being orthogonal to it.
 
-Extending this to a 4D representation of 3D space and time, a set of polyhedra can be represented as a set of \emph{polychora}\footnote{A polychoron is the four-dimensional analogue of a polygon or polyhedron.}.
+Extending this to a 4D representation of 3D space and time, a set of polyhedra can be represented as a set of \emph{polychora}\footnote{A polychoron is the 4D analogue of a 2D polygon or 3D polyhedron.}.
 At any one moment in time, a polyhedron is still represented as a polyhedron but one that is embedded in 4D space.
 If it is not moving or changing shape, it would take the form of a prismatic polychoron.
 As in the previous cases, if the polyhedra form a 3D space subdivision, the polychora form also a 4D space subdivision.
@@ -186,7 +191,9 @@ As shown in \reffig{fig:2d+scale}, such a representation of a planar partition o
 \captionsetup{type=figure}
 \centering
 \includegraphics[width=\marginparwidth]{figs/2d+scale}
-\caption[A 3D representation of 2D space+scale]{A 3D representation of 2D space (horizontal plane) and scale (vertical axis). The vertical edges connecting corresponding features are omitted for legibility reasons. From \citet{Meijers11}.}
+\caption[A 3D representation of 2D space+scale]{A 3D representation of 2D space (horizontal plane) and scale (vertical axis).
+The vertical edges connecting corresponding features are omitted for legibility.
+From \citet{Meijers11}.}
 \label{fig:2d+scale}
 }
 As shown in \reffig{fig:scale3d2} and discussed by \citet{Meijers11}, this approach enables the storage of continuous levels of detail---an approach that can be extended to higher dimensions as well \citep{Stoter12,Stoter12a}.
@@ -194,12 +201,13 @@ As shown in \reffig{fig:scale3d2} and discussed by \citet{Meijers11}, this appro
 \captionsetup{type=figure}
 \centering
 \includegraphics[width=\marginparwidth]{figs/scale3d2}
-\caption[A 2D+scale representation of four polygons being generalised]{A 2D+scale representation of four polygons being generalised. From \citet{vanOosterom11}.}
+\caption[A 2D+scale representation of four polygons being generalised]{A 2D+scale representation of four polygons being smoothly ($C^0$) generalised.
+From \citet{vanOosterom11}.}
 \label{fig:scale3d2}
 }
 
 In a general setting, it is then possible to define an $n$-dimensional model where a set of 0D--3D objects are integrated with any number of additional characteristics and modelled as up-to-$n$-dimensional objects embedded in $n$-dimensional space.
-These higher-dimensional objects can be stored or used for analysis as is, or 0D--3D objects can be extracted from them by looking at specific `slices' of these objects---intersections of the objects with specific subsets of space (\eg\ a plane parallel to the 2D space plane), projections to certain planes or regions of 3D space, or more broadly transformations to arbitrarily defined 2D/3D coordinate systems.
+These higher-dimensional objects can be stored or used for analysis as is, or 0D--3D objects can be extracted from them by looking at specific `slices' of these objects---intersections of the objects with specific subsets of space (\eg\ a plane parallel to the 2D space plane), projections to certain planes or regions of 3D space, or more broadly, transformations to arbitrarily defined 2D/3D coordinate systems.
 This is described in more detail in \refch{ch:slicing}.
 
 \subsection{Topological relationships in higher dimensions}
@@ -217,6 +225,7 @@ By contrast, a data structure without even these topological relationships could
 
 Despite their apparent limitations, these types of structures can be in fact used to store objects of any dimension thanks to the Jordan-Brouwer theorem \citep{Lebesgue11,Brouwer11} described in \refse{ss:data-models}.
 Just as independent 2D primitives are defined as sequences of points (with coordinates) that are connected using implicit line segments, 3D primitives can be then represented as sets of such 2D elements, which are otherwise unlinked, and $n$D objects can be represented as aggregations of their $(n-1)$D-face bounding elements.
+This property is later exploited in the incremental construction scheme proposed in \refch{ch:incremental-construction}.
 Since every point in such an object can have any number of coordinates, an $n$D object can be embedded in $n$D space as well.
 
 \newsavebox{\sfsiidbox}
@@ -271,66 +280,66 @@ This will be discussed in more detail in \refse{se:duality}.
 \label{ss:nd-partition}
 
 In order to store the higher-dimensional topological relationships described in \refse{ss:nd-topology}, it is a practical requirement is that the objects being represented can be made to functionally form a space partition.
-For this, it is possible to use the standard topological modelling approach used in GIS---utilising an intermediate type of representation where a set of (possibly overlapping) original objects is transformed into a set of non-overlapping regions, such that each of these regions represents \emph{a set of the original objects} \citep{Rossignac89}, which might be the empty set in the case of holes or empty regions between the objects.
+For this, it is possible to use the standard topological modelling approach used in GIS---utilising an intermediate type of representation where a set of (possibly overlapping) original objects is transformed into a set of non-overlapping regions, such that each of these regions represents \emph{a set of the original objects} \citep{Rossignac89}, which might be the empty set in the case of the regions that are not covered by any of the original objects (\eg\ some holes).
 An original geometry can be obtained by performing a Boolean set union of the regions labelled as belonging to it.
 
 This transformation can be computed in various ways.
-In 2D and 3D, all objects are generally first overlaid with each other, the intersections in their boundaries are computed and the new regions are obtained by traversing the structures in the newly created areas \citep[\S{}2.3]{deBerg08}.
-It is worth noting however that implementing such a procedure in more than 3D is not a trivial undertaking.
+In 2D and 3D, all objects are generally first overlaid on top of each other, the intersections between their boundaries are computed, and new regions are obtained by finding closed connected regions uncrossed by any other boundaries (\eg\ cycles in 2D) \citep[\S{}2.3]{deBerg08}.
+It is worth noting however that implementing such a procedure robustly in more than 3D is not a trivial undertaking.
 
 Using this newly created space partition, even complex topological relationships between the original objects can be reduced to a combination of set membership, adjacency and incidence.
 In fact, many schemes of topology in GIS can be implemented solely on inspecting which objects are in a set \citep{Egenhofer91,Worboys92a,Guting00}.
-These can be very intuitive, as they can be equivalent to natural language equivalents \citep{Dube12}.
+These can be very intuitive, as they often have direct correspondences to natural language equivalents (\eg\ `inside', `touches', `equals', etc.) \citep{Dube12}.
 
 Moreover, it possible to use the data structures presented in \refse{se:data-structures} to store a traversable structure containing the objects, in which the boundaries of the sets are explicitly represented, and to easily query the topological relationships that exist between the objects.
 
-The most promising structures for higher-dimensional GIS are therefore those that starting from a space subdivision, are capable of storing a well-defined and relatively broad class of objects of arbitrary dimension, embedded into Euclidean space of the same or higher dimension, attributes attached to such objects, and enough topological relationships between them to allow for quick traversal of the structure and the basic operations, such as testing if two given objects are identical, adjacent or overlapping.
+The most promising structures for higher-dimensional GIS are therefore those that starting from a space subdivision, are capable of storing a well-defined and relatively broad class of objects of arbitrary dimension, embedded into Euclidean space of the same or higher dimension, attributes attached to such objects, and enough topological relationships between them to allow for the quick traversal of the structure and for basic operations, such as testing if two given objects are identical, adjacent or overlapping.
 
 \section{Higher-dimensional data models and structures}
 \label{se:data-structures}
 
 This section presents all the main possibilities to represent dimension-independent objects, which are presented as a series of data models, each with related data structures.
-These are: exhaustive enumeration (\eg\ rasters) in \refse{ss:regular-partitions}, hierarchical space subdivisions using simple tree-like structures (\eg\ BSP-trees) in \refse{ss:hierarchical-subdivisions}, more general implicit vector models (\eg\ constructive solid geometry) in \refse{ss:implicit-models}, geometric simplicial complexes (\eg\ triangulations) in \refse{ss:simplicial-complexes}, cell complexes in \refse{ss:cell-complexes}, and ordered topological models (\eg\ generalised and combinatorial maps) in \refse{ss:ordered-topological-models}.
+These are: exhaustive enumeration (\eg\ rasters) in \refse{ss:regular-partitions}, hierarchical space subdivisions using simple tree-like structures (\eg\ BSP-trees) in \refse{ss:hierarchical-subdivisions}, more general implicit vector models (\eg\ constructive solid geometry) in \refse{ss:implicit-models}, geometric simplicial complexes (\ie\ triangulations) in \refse{ss:simplicial-complexes}, cell complexes in \refse{ss:cell-complexes}, and ordered topological models (\eg\ generalised and combinatorial maps) in \refse{ss:ordered-topological-models}.
 Short notes on other, less relevant vector data structures are discussed in \refse{ss:vector-others}.
 
 \subsection{Exhaustive enumeration}
 \label{ss:regular-partitions}
 
 Exhaustive enumeration in higher dimensions works in a similar manner as in 2D and 3D.
-The shape of an $n$-dimensional domain is first specified, generally opting for a simple shape such as an axis-parallel \emph{$n$-orthotope}, the $n$-dimensional analogue of a 2D rectangle or a 3D cuboid or box, which can be defined based on two points in $\mathbb{R}^n$ on opposite corners of the orthotope.
+The shape of an $n$-dimensional domain is first specified, generally opting for a simple shape such as an axis-parallel \emph{$n$-orthotope}, the $n$-dimensional analogue of a 2D rectangle or a 3D box (more formally a \emph{cuboid}), which can be defined based on two points in $\mathbb{R}^n$ on opposite corners of the orthotope.
 Afterwards, a simple deterministic rule is then used in order to partition the domain directly into $n$-cells.
-A programatic order or path that traverses all cells is defined, and the order of the path along these cells is used to record whether the cell belongs to the interior of the object or not, or in the case of multiple objects, which objects are present inside the cell.
+A programatic order or path that traverses all cells is defined, and the order of the path along these cells is used to record whether a cell belongs to the interior of the object or not, or in the case of multiple objects, which objects are present inside a cell.
 
 Regular tessellations involve the subdivision of $n$-dimensional space directly into primitive cells forming \emph{regular $n$-polytopes}---the $n$-dimensional analogue of regular polygons and regular polyhedra.
 A regular $n$-polytope is one whose bounding faces are regular $(n-1)$-polytopes\footnote{More formally, one whose symmetry is transitive on its flags.}.
 As in 2D and 3D, it is possible to create arbitrary rules in order to produce cells of any shape and size, which can be used to create optimal configurations that are related to $n$-ball packing or kissing number problems in geometry \citep{Conway92}.
-For instance, such cells can be arranged in the form of the 24-cell honeycomb in 4D.
+For instance, such cells could be arranged in the form of the optimal 24-cell honeycomb in 4D.
 
 However, operations on these optimum configurations can be rather complex.
-Axis-aligned regular grids consisting of congruent \emph{cuboids}, such as those taking the form of pixels in 2D and voxels in 3D, are much simpler in practice and offer a good enough approximation for practical purposes.
+Axis-aligned regular grids consisting of congruent orthotopes, such as those taking the form of pixels in 2D and voxels in 3D, are much simpler in practice and offer a good enough approximation for practical purposes.
 
 As in 2D and 3D, semi-regular tessellations, which consist of more than one type of polytope are also possible but are significantly more complex in practice.
-Creating optimal configurations of these tessellations is a problem related to the unequal hypersphere packing, as the general aim is still to create polytopes that are as close to balls as possible.
+Creating optimal configurations of these tessellations is a problem related to the unequal hypersphere packing, as the general aim is still to create polytopes that are as close to balls (of appropriate sizes) as possible.
 
 Exhaustive enumeration schemes are relatively straightforward even in higher dimensions and can be stored and processed using similar techniques as their 2D and 3D counterparts.
 However, these representations suffer from the same problems as 2D/3D grids: they are incapable of representing precise boundaries, their contents vary when they are translated, rotated or scaled, and are cumbersome for the representation of objects \citep{Fisher97}, especially when they are of mixed dimensions.
-Moreover, they have extremely high space requirements---increasing \emph{exponentially} with the dimension.
+Moreover, they have extremely high space requirements---increasing \emph{exponentially} with the dimension in grids with a similar number of divisions along each dimension.
 
 Nevertheless, up to 4D grids using time as a dimension have been used in the context of GIS since the 1990s.
-These are currently used widely for computer simulations in various fields and have recently been implemented in GIS software\footnote{\url{http://video.esri.com/watch/3653/new-dimensions-with-arcmap}}.
-\citet{Mason94} implemented a system using a 4D grid of ocean temperatures with support for interpolation and generalisation operations.
+These are currently used widely for computer simulations in various fields and have recently been implemented in standard GIS software\footnote{\url{http://video.esri.com/watch/3653/new-dimensions-with-arcmap}}.
+Much earlier, \citet{Mason94} implemented a system using a 4D grid of ocean temperatures with support for interpolation and generalisation operations.
 \citet{Bernard98} also implemented a 4D grid of atmospheric variables (\eg\ temperature, wind or pollution), which can be used for simulations.
 
 Also worth noting is that outside the domain of GIS, the use of magnetic resonance (MRI) and computer tomography (CT) equipment has greatly increased the availability of acquired 4D raster images on which computational methods are often applied \citep{LorenzoValdes04}.
-Similar methods are also applied on numerical simulations generated in other fields, such as the computation of topological invariants used in metallurgy \citep{Kaczynski04}.
+Similar methods are also applied on numerical simulations generated in other fields, such as the computation of topological invariants in metallurgy \citep{Kaczynski04}.
 
 \subsection{Hierarchical subdivisions using trees}
 \label{ss:hierarchical-subdivisions}
 
 Higher-dimensional hierarchical subdivisions using trees also work in a similar fashion as their 2D and 3D counterparts.
-An $n$-dimensional domain is specified, generally having a simple shape.
-It is then subdivided using `partition' primitives, which attempt to split space incrementally in an adaptive manner---each primitive recursively partitioning the space defined by its parent so that the shape of the cells in the subdivision is only known after the last partition primitive.
-Even though this means that it is necessary to traverse a tree of partitions in order to extract a single cell, this makes it possible to use a custom partition at every step and so store cells of varying sizes more efficiently.
+An $n$-dimensional domain is specified, which generally has a simple shape.
+It is then subdivided using `partition' primitives, which attempt to split space incrementally in an adaptive manner---each primitive recursively partitioning the space defined by its parent so that the shape of the cells in the subdivision is only known after traversing a path in the tree from its root to a leaf representing the last relevant partition primitive.
+Even though this means that it is necessary to traverse many nodes in order to extract a single cell, this makes it possible to use a custom partition at every step and so store cells of varying sizes more efficiently.
 
 Many different structures with only small variations have been created for this purpose, of which hyperoctrees, bintrees and k-d trees are by far the most widely used.
 The simplest possibility is to recursively subdivide space along all dimensions homogeneously at their midpoints at every partition primitive, so that one partition primitive subdivides $n$D space into $2^n$ regions.
@@ -338,9 +347,9 @@ Hyperoctrees \citep{Yau83} and k-trees \citep{Jackins83} do this, being identica
 Bintrees \citep{Samet85} instead split dimensions alternately rather than all at one, while k-d trees split dimensions at specified points rather than at their midpoints.
 
 Hierarchical subdivisions using trees have also been previously used in a higher-dimensional GIS setting, usually combined with exhaustive enumeration approaches.
-\citet{Varma90} defined HHCodes in order to do efficient topological queries on abstracted 4-orthotopes, such as whether a pair of them overlap both spatially and temporally.
+\citet{Varma90} defined HHCodes in order to perform efficient topological queries on abstracted 4-orthotopes, such as whether a pair of them overlap both spatially and temporally.
 \citet{Oconaill92} aggregated 4D raster images using trees, permitting the efficient storage of large sparse datasets.
-\citet{Mason94} used 4D bintrees in order to index and do fast queries and operations (\eg\ interpolation and generalisation) on the aforementioned 4D grid of ocean temperatures.
+\citet{Mason94} used 4D bintrees in order to index and perform fast queries and operations (\eg\ interpolation and generalisation) on the aforementioned 4D grid of ocean temperatures.
 
 \subsection{(Implicit) vector models}
 \label{ss:implicit-models}
@@ -359,11 +368,11 @@ This type of implicit approach might be especially useful in certain contexts, s
 However, these are less capable of storing objects and their attributes \emph{directly}, especially those of lower dimensionality, and therefore have to be generally `evaluated' into another, more explicit model in order for them to be visualised \citep{Mantyla88} or to perform the type of computations expected in GIS, such as geometric intersection operations.
 They are therefore less interesting for a higher-dimensional GIS.\@
 
-Nevertheless, a possible implementation of Nef polyhedra in arbitrary dimensions deserves an additional mention.
-As shown in \refse{ss:data-models}, a set of Nef polygons can be reduced to a set of circular intervals and a set of Nef polyhedra to a set of faces on a sphere.
-This approach extends naturally to higher dimensions: the method can be recursively repeated in decreasing dimension in order to have a complete description of a Nef polytope.
+Nevertheless, a possible future implementation of Nef polyhedra in arbitrary dimensions deserves an additional mention.
+As shown in \refse{ss:data-models}, a set of Nef polygons can be reduced to a structure of sets of circular intervals and a set of Nef polyhedra to a structure of sets of faces on a sphere.
+This approach extends naturally to higher dimensions as the method can be recursively repeated in decreasing dimension in order to have a complete description of a higher-dimensional Nef polytope.
 However, the practical benefits of doing do decrease as the dimension increases and the navigation becomes more cumbersome.
-It is also very complex to implement this in a fully dimension-independent manner, requiring a hyperspherical projective kernel capable of computing point-set intersections in any dimension.
+It is also very complex to implement this in a fully dimension-independent manner, requiring a hyperspherical projective kernel capable of representing cells of any dimension embedded on higher-dimensional spheres which is also capable of computing point-set intersections in any dimension.
 To the best of my knowledge, no such system has every been implemented, and it is unlikely to be implemented in the near future.
 
 \subsection{Geometric simplicial complexes}
@@ -385,12 +394,13 @@ Two $i$-simplices are adjacent if they have a common face, and an $i$-simplex an
 In an $n$-dimensional simplicial complex, each $n$-simplex is adjacent to at most $n+1$ other $n$-simplices and has exactly $n+1$ $(n-1)$-faces on its boundary.
 To each $n$-simplex it is therefore possible to apply $n+1$ different boundary and neighbour operators, where the $n$-th boundary operator returns the $(n-1)$-face of the $n$-simplex on the opposite side of the $n$-th vertex---obtained by removing the $n$-th element of the tuple of vertices---, and the $n$-th neighbour operator returns the adjacent $n$-simplex on the opposite side of the $n$-th vertex, if any, which is also incident to the face given by the $n$-th boundary operator.
 
-The biggest challenge of using a geometric simplicial complex for the representation of $n$D objects is the difficulty of triangulating the possibly complex $n$D objects being modelled, \ie\ algorithmically dividing them into geometric simplices so that the union of the simplices representing an object corresponds exactly to its original geometry.
+The biggest challenge of using a geometric simplicial complex for the representation of $n$D objects is the difficulty of triangulating the possibly complex $n$D objects being modelled, \ie\ algorithmically dividing them into non-overlapping geometric simplices so that the union of the simplices representing an object corresponds exactly to its original geometry.
 While triangulations of sets of points in $n$D have been studied extensively and there is robust software to compute them, \eg\ Quickhull \citep{Barber96}, such triangulations are generally not applicable to $n$D objects since a triangulation of the vertices of an object usually results in simplices that do not conform to the object's boundary, \ie\ that are partially inside and partially outside the object.
 
 However, it is possible to make sure that the boundaries are part of the triangulation through the use of a constrained or conforming triangulation.
-Both of these force the triangulation to include certain simplices as part of the triangulation in the form of \emph{constraints}, which in this case would be the boundaries of the objects, with the difference that the constraints in constrained triangulations are directly part of the structure, while in conforming triangulations they are allowed to be split into smaller simplices.
-While the properties of $n$D constrained triangulations have been described \citep{Shewchuk07} and algorithms to construct them in some cases have been developed \citep{Shewchuk00}, their construction in the general case is very difficult in practice, having to deal with robustness issues and possibly requiring the addition of a large number of additional vertices (Steiner points) and subsequently additional simplices, as not every object of dimension 3 or higher is triangulable without additional vertices \citep{Ruppert92}, such as the Sch\"onhardt polyhedron shown in \reffig{fig:schoenhardt}.
+Both of these force the triangulation to include certain simplices as part of the triangulation in the form of \emph{constraints}, which in this case would be the objects' boundaries.
+In a \emph{constrained triangulation}, the constraints are directly part of the structure of the simplicial complex.
+While the properties of $n$D constrained triangulations have been described \citep{Shewchuk07} and algorithms to construct them in some cases have been developed \citep{Shewchuk00}, their construction in the general case is very difficult in practice, having to deal with robustness issues and possibly requiring the addition of a large number of additional vertices (Steiner points) and subsequently additional simplices, as not every object of dimension three or higher is triangulable without additional vertices \citep{Ruppert92}, such as the Sch\"onhardt polyhedron shown in \reffig{fig:schoenhardt}.
 \marginpar{
 \captionsetup{type=figure}
 \centering
@@ -401,29 +411,31 @@ Starting from a triangular prism whose rectangular faces have been triangulated,
 Note how any tetrahedron built from the 3 vertices of any of its faces plus any other vertex of the polyhedron necessarily passes through the outside of the Sch\"onhardt polyhedron.}
 \label{fig:schoenhardt}
 }
-Deciding where to best add these additional simplices seems to be the hardest part of this problem\footnote{Suggested by \href{http://www.cs.berkeley.edu/~jrs/}{Jonathan Shewchuk}.}. % From JRS, source?
-
-A \emph{conforming triangulation} forces the triangulation to contain these constraints as well, but instead of adding them directly as simplices of the triangulation, it allows them to be split into multiple smaller simplices.
-This allows a conforming triangulation to fulfil other geometric criteria such as the Delaunay property (\ie\ the circumsphere of a simplex does not contain any other vertex).
 In fact, it is already an NP-hard problem to determine whether a polyhedron is tetrahedralisable without adding Steiner points \citep{Ruppert92}.
-Unfortunately, while there are robust and reliable constrained and conforming triangulation libraries existing in 2D and 3D, such as Triangle \citep{Shewchuk96}, CGAL \citep{Boissonnat02}, and Tetgen \citep{Si05}, there seem to be no software or algorithm capable of performing a constrained or conforming triangulation in more than 3D.
+Deciding where to best add these additional simplices in $n$D seems to be the hardest part of this problem\footnote{In the opinion of \href{http://www.cs.berkeley.edu/~jrs/}{Jonathan Shewchuk}.}.
+
+A \emph{conforming triangulation} forces the triangulation to contain some constraints as well, but instead of adding them directly as simplices of the triangulation, it allows them to be split into multiple smaller simplices.
+This allows a conforming triangulation to fulfil other geometric criteria such as the Delaunay property (\ie\ the circumsphere of a simplex does not contain any other vertex).
+
+Unfortunately, while there are robust and reliable constrained and conforming triangulation libraries existing in 2D and 3D, such as Triangle in 2D \citep{Shewchuk96}, CGAL in 2D \citep{Boissonnat02}, and Tetgen in 3D \citep{Si05}, there seems to be no software capable of performing a constrained or conforming triangulation in more than 3D.
 % Note: It should be possible to to an nd conforming triangulation using a greedy algorithm, right?
 
 Assuming that the objects have been triangulated successfully, managing holes and disconnected components in a simplicial complex becomes trivial since these become integrated into the combinatorial structure of the triangulation, as will be discussed in \refse{se:pprepair}.
-Generally, a triangulation algorithm works initially on the basis of a set of points and ensures that the entire convex hull of all of the points is triangulated, something that can be done using the concept of a `big triangle' or faraway point \citep{Liu08}, and therefore connects formerly disconnected components or components that were not connected by highest-dimensional simplices.
+Generally, a triangulation algorithm works initially on the basis of a set of points and ensures that the entire convex hull of all of the points is triangulated, something that can be done using the concept of a `big triangle' or faraway point \citep{Liu08}, and therefore connects formerly disconnected components or components that were not connected by using new simplices ($n$-simplices in an $n$D simplicial complex).
 Similarly, as the interiors of polytopes with holes are triangulated, additional simplices connect the void regions representing holes with the rest of the structure.
-In this manner, 2D holes can be represented as sets of triangles marked as void, 3D holes as sets of tetrahedra, and similarly so for higher (and lower) dimensions.
+In this manner, 2D holes can be represented as sets of triangles labelled as being empty, 3D holes as similar sets of tetrahedra, and so on for higher (and lower) dimensions.
 This ensures that it is always possible to navigate between all the simplices in the complex.
 
 Another advantage of simplicial complexes is that many operations on them are efficient and easy.
 For instance, a simplicial complex can be traversed efficiently without any external data structure.
-Starting from any simplex, it is possible to `walk' the simplicial complex in the desired direction in order to find \eg\ in which simplex a point would be located \citep{Devillers02a}, with each step taking only constant time.
-Comparing objects composed of sets of simplices is also trivial, assuming that they have been triangulated in a deterministic way\footnote{Note that this is not trivial. Also, if the triangulations are different, such a comparison would necessarily require geometric operations.}, since they can be compared one by one (in order) after finding a common simplex, which can be done by walking the respective simplicial complexes.
-Checking if two objects are adjacent or intersect geometrically are examples of other operations that can be done simplex by simplex.
+Starting from any simplex, it is possible to `walk' the simplicial complex in the desired direction in order to find any given simplex, \eg\ inside which simplex a point is located \citep{Devillers02a}, with each walking step taking only constant time.
+Comparing objects composed of sets of simplices is also trivial, assuming that they have been triangulated in a deterministic way\footnote{Note that triangulating objects deterministically is not so simple.
+If the triangulations are not deterministic, such a comparison could possibly require geometric operations.}, since they can be compared one by one (in order) after finding a common simplex, which can be done by walking the respective simplicial complexes.
+Checking if two objects are adjacent or intersect geometrically are examples of other operations that can be done simply and efficiently simplex by simplex.
 
-Since the number of vertices, $(n-1)$-faces and adjacent simplices of an $n$-simplex in an $n$-dimensional simplicial complex is fixed and known, it is easily represented in a computer using simple arrays, rather than linked lists or other variable-length data structures.
+Since the number of incident vertices, bounding $(n-1)$-faces and adjacent simplices of an $n$-simplex in an $n$-dimensional simplicial complex is fixed and known, it is easily represented in a computer using simple arrays, rather than linked lists or other variable-length data structures.
 This can be done through an $n$-simplex-based data structure, shown in \reffig{fig:ds_simplex} for 2D, where $n$-simplices are the main primitives.
-It is sometimes called as the adjacency or incidence model, depending on the dimensions of the simplices that are represented in the structure---only the highest-dimensional ones in the adjacency model, but possibly all in the incidence model.
+Related data structures are often said to to follow the adjacency or incidence model, depending on the dimensions of the simplices that are represented in the structure---only the highest-dimensional ones in the adjacency model, but possibly all in the incidence model.
 \begin{figure}[tbp]
 \centering
 \subfloat[]{
@@ -443,7 +455,7 @@ It is sometimes called as the adjacency or incidence model, depending on the dim
 \quad
 \subfloat[]{
 \includegraphics[scale=0.2]{figs/0-simplex}}
-\caption[Relationships in a simplex-based data structure]{Some of the possible relationships between primitives and storage of geometry in a 2-simplex (triangle) based data structure.
+\caption[Relationships in a simplex-based data structure]{Some of the possible relationships between primitives and the storage of a geometry using a 2-simplex (triangle) based data structure.
 (a) Adjacency relationships of a 2-simplex.
 (b) Boundary relationships of a 2-simplex.
 (c) Vertices of a 2-simplex.
@@ -482,24 +494,25 @@ Simplicial complexes in more than 3D are commonly described in theory but rarely
 \subsection{Cell complexes}
 \label{ss:cell-complexes}
 
-For the purposes of a higher-dimensional data structure, cell complexes differ from simplicial complexes in two main related aspects: (i) there is a variable number of facets on the boundary of a cell, each of which has also a different number of facets, continuing recursively down to the vertex level; and (ii) obtaining a geometric interpretation of a cell requires looking recursively at its facets.
-This leads cell complexes to have a much more complex representation and algebra to manipulate them compared to simplicial complexes.
-For instance, simplicial complexes can be easily constructed by adding and removing simplices expressed by sets of vertices, or by splitting and merging existing ones, but cell complexes require much more complex operations in order to add or remove cells as these have to be described based on their facets---something that will be described in detail in \refch{ch:incremental-construction}.
+For the purposes of a higher-dimensional data structure, cell complexes differ from simplicial complexes in two main related aspects: (i) there is a variable number of facets on the boundary of a cell, each of which has also a different number of facets, continuing recursively down to the vertex level; and (ii) obtaining a geometric interpretation of a cell requires looking recursively at its facets\footnote{Or at some similarly complex recursive representation, such as with Nef polyhedra \citep{Bieri88}.}.
+This causes cell complexes to have a much more complex representation and algebra to manipulate them compared to simplicial complexes.
+For instance, simplicial complexes can be easily constructed by adding and removing simplices expressed by sets of vertices, or by splitting and merging existing ones, but cell complexes require much more complex operations in order to add or remove cells---something that will be described in detail in \refch{ch:incremental-construction}.
 Traversing a cell complex (\eg\ to find in which cell a point lies or to see which cells intersect a given geometry) is also much more difficult \citep{deBerg97}.
 
-However, the flexible structure of a cell complex allows it to represent objects directly or with minimal preprocessing.
-As long as an $i$-dimensional object is homeomorphic to an $i$-ball---or can be modified so that it is functionally so by using simple `tricks' or combinatorial operations only---, it can be modelled as an $i$-cell in the complex with attached attributes.
+However, the flexible structure of a cell complex allows it to represent objects either directly or with minimal preprocessing.
+As long as an $i$-dimensional object is homeomorphic to an $i$-ball---or can be modified so that it is functionally so by using simple `tricks' at the combinatorial level---, it can be modelled as an $i$-cell in the complex with attached attributes.
 Also, the lower number of cells in a cell complex compared to the simplices in a simplicial complex representing the same set of objects means that they can store objects more efficiently, as long as an adequate data structure is used.
 
 Cell complexes are usually modelled based on techniques that represent them based on their $(n-1)$-dimensional boundary (\ie\ boundary representation), unlike simplicial complexes in which objects are usually modelled using mainly primitives of the same dimension (\ie\ object representation, but better known by its 3D name as solid or volume representation).
 This is a subtle distinction, but it implies that cells are described (and stored) in a more implicit manner based on a recursive definition, unlike simplices which can be stored explicitly as a tuple of vertices.
 Since this can slow down many operations, access to cells can be improved by adding indexing structures storing links to all the cells of a given dimension and/or to all the cells in a given spatial extent.
+On the other hand, the use of data structures for the cells of every dimension mean that these can be easily used to store attributes.
 
 The most common data structures for arbitrary cell complexes are incidence graphs and other related structures \citep{Rossignac89,Masuda93,Sohanpanah89}, which store all the cells (of every dimension) in a complex as individual embedding primitives containing  geometric information and attributes.
 Just as with simplicial complexes, if only linear geometries are required, the only geometric information needed is the coordinates of the points for the 0-cells.
 However, since a set of vertices is not enough to describe a cell, all the embedding structures of every dimension need to exist (albeit they can be as simple as a unique ID or memory address per cell).
 As shown in \reffig{fig:ds_incidence_graph}, these are connected through a combinatorial structure containing the incidence relationships between the cells, such as an $i$-cell having an $(i-1)$-cell on its boundary, vice versa (known as the co-boundary or star), or both.
-\begin{figure*}[tbp]
+\begin{figure*}[tb]
 \centering
 \subfloat[]{
 \includegraphics[width=0.22\linewidth]{figs/cellcomplex-polygons}
@@ -541,7 +554,7 @@ As shown in \reffig{fig:ds_incidence_graph}, these are connected through a combi
 (f) Double co-boundary relationships of a 0-cell.
 (g) Co-boundary relationships of a 0-cell.
 (h) Embedding of a 0-cell.
-Note that (c), (d) and (e) correspond to an $i$-cell that is linked to the $(i-1)$-cells on their boundary or vice versa.}
+Note that (c), (e) and (h) correspond to the incidence graph, a minimal structure where every $i$-cell is linked to the $(i-1)$-cells on its boundary.}
 \label{fig:ds_incidence_graph}
 \end{figure*}
 Since the number of these incidences is generally not fixed or bounded, unlike in a simplicial complex, they are more difficult to integrate into the cell primitives.
@@ -557,12 +570,13 @@ Most importantly for a spatial data model, manifolds have two very useful proper
 \item
 An $n$-manifold with boundary has the property that its boundary is a $(n-1)$-manifold, ensuring that an $n$-dimensional object can be represented recursively by its $(n-1)$-dimensional boundary using a manifold data structure.
 \item
-An $(i-1)$-cell is incident to at most two $i$-cells within an $(i+1)$-cell\footnote{This is the definition of a quasi-manifold, a combinatorial interpretation of the topological concept of a manifold. Quasi-manifolds are always manifolds up to 2D, but not necessarily in higher dimensions.}, limiting the number of links required between primitives in a boundary representation based model of the complex.
+An $(i-1)$-cell is incident to at most two $i$-cells within an $(i+1)$-cell\footnote{This is the definition of a quasi-manifold, a combinatorial interpretation of the topological concept of a manifold.
+Quasi-manifolds are the same as manifolds in up to two dimensions, but this is not necessarily true in higher dimensions.}, limiting the number of links required between primitives in a boundary representation based model of the complex.
 \end{itemize}
 
 Some data structures for cell complexes in 2D and 3D are thus restricted to manifolds, or split objects into manifold sections \citep{Pesco04,Lopes97}, which allows such data structures to be more efficient as they need to handle simpler configurations \citep{Aguila03}.
 These are subsequently linked in a special structure that allows one to navigate around these `non-manifold parts' \citep{Weiler88,Gursoz90,Lee01}.
-In higher dimensions, if the representation is restricted to a $n$-dimensional cell complex to manifold domains for each cell, an $(n-2)$-cell is incident to at most two $(n-1)$-cells, $(n-2)$-cells can be used as primitives or pointed to while being able to navigate around them.
+In higher dimensions, if the representation is restricted to a $n$-dimensional cell complex to manifold domains for each cell, an $(n-2)$-cell is incident to at most two $(n-1)$-cells, and thus $(n-2)$-cells can be used as primitives or pointed to while being able to navigate around them.
 
 One major difficulty with data structures based on cell complexes is dealing with holes and disconnected objects, both of which would ordinarily result in a disconnected graph using any of the data structures as described above.
 Since $n$-cells in a cell complex are assumed to be homeomorphic to open $n$-balls, holes violate the mathematical definition of a cell complex.
@@ -591,25 +605,26 @@ However, an $n$-dimensional hole that is homeomorphic to an $n$-ball in an $n$-d
 
 \begin{description}
 \item[Splitting cells]
-The cell containing a hole is subdivided into multiple cells, all of which are adjacent to it.
+The $i$-cell containing an $i$-dimensional hole is subdivided into multiple $i$-cells, all of which are adjacent to it.
 This solution is conceptually simple and is effectively equivalent to what is done with simplicial complexes.
-This also best respects the definition of a cell, since the subdivided cells can be homeomorphic to balls and the hole is a cell like any other but representing an empty region.
+This also best respects the mathematical definition of a cell, since the subdivided $i$-cells can be homeomorphic to $i$-balls and the hole is either non represented (when the dimension of the complex is higher than $i$ and the hole is not completely bounded by other $i$-cells) or is represented as a cell like any other but labelled as being empty.
 However, finding a way to split a cell accordingly requires geometric operations and can be difficult in practice, especially in dimensions 3 and higher.
 \item[Bridge cells]
 A hole is connected to the rest of the combinatorial structure using a `bridge' cell of lower dimensionality than the hole.
 This bridge cell usually takes the form of an edge connecting the hole with the cell where it is contained.
-This solution is simpler to implement, usually requiring only the finding of an appropriate bridge (\eg\ an edge that lies entirely in the interior of the cell).
-The cell containing the hole is no longer homeomorphic to a ball, but most computations work with few or no changes \citep{Bryant85}.
-However, mainly topological queries might need the addition of special cases to handle it (\eg\ not displaying such an edge when visualising the cell or accounting for the fact the bridge will have the same cell on all sides).
+This solution is generally simpler to implement, usually requiring only the finding of an appropriate bridge (\eg\ an edge that lies entirely in the interior of the cell).
+While the cell containing the hole is no longer homeomorphic to a ball, most computations work with few or no changes \citep{Bryant85}.
+However, some queries might need the addition of special cases to handle it (\eg\ not displaying such an edge when visualising the cell or accounting for the fact the bridge will have the same cell on all sides in topological computations).
 \item[Holes as attributes]
 Holes can be stored as fully independent cells, linked as special attributes of the objects inside of which they are, or vice versa, something that can be extended so as to have full hierarchies of objects in a tree \citep{Worboys12}.
-This solution might be the simplest to implement in terms of storage, but it goes against the mathematical definition of a cell complex and will break or require a complex special treatment for topological computations.
-It is also very simple to create invalid holes in this manner, such as holes lying (partially) outside the cell that is supposed to contain them.
+This solution might be the simplest to implement in terms of storage, but it goes against the mathematical definition of a cell complex and will break or require a complex special treatment for geometric and topological computations.
+It is also very simple to inadvertently create invalid holes in this manner, such as holes lying (partially) outside the cell that is supposed to contain them.
 \end{description}
 
-However, it is worth noticing that complex holes that are not homeomorphic to $n$-balls can exist, \eg\ tori, and finding a good subdivision that can be used to deal with such a hole might be very complex.
-The latter two methods can be applied for disconnected components as well.
+The latter two described methods can be applied for disconnected components as well.
 Two disconnected components can be connected by a bridge cell, or all components can be considered as holes of the (empty) universe cell.
+
+It is worth noticing that complex holes that are not homeomorphic to $n$-balls can exist, \eg\ tori-shaped holes inside a volume, and finding a good subdivision that can be used to deal with such a hole might be very complex.
 
 In terms of applications, cell complexes in more than 3D have been rarely described or implemented.
 \citet{Hazelton90} described how incidence graphs can be put into a relational database schema in order to store 4D polytopes, on which 4D topological relationships can be queried \citep{Hazelton92}.
@@ -621,9 +636,10 @@ However, to the best of my knowledge, this has never been put into practice in a
 Ordered topological models are a representation method that combines characteristics of both simplicial complexes and cell complexes, and are therefore commonly grouped with either of them \citep{deFloriani05,Comic12}.
 They work on the basis of a cell complex, but subdivide each cell into \emph{abstract} simplices using a purely combinatorial operation, a concept derived from what is known as an abstract simplicial complex in algebraic topology.
 
-The exact subdivision that is used depends on the data structure, but as shown in \reffigs{fig:simplices} and~\ref{fig:cmap-cube}, it is similar to a barycentric triangulation of a convex polytope, consisting of abstract vertices representing cells of different dimensions (\ie\ not only the 0-cells), and simplices that connect these vertices in a specific manner.
+The exact subdivision that is used depends on the data structure, but as shown in \reffigs{fig:simplices} and~\ref{fig:cmap-cube}, it is similar to a barycentric triangulation of a convex polytope, consisting of abstract vertices representing cells of different dimensions (\ie\ the vertices of such a simplicial complex are not equivalent to only 0-cells), and simplices that connect these vertices in a specific (ordered) manner.
 The vertices representing the cells of dimensions higher than zero do not have a well-defined location in space (although they are usually depicted lying somewhere in the cells they are supposed to represent), but the simplices nevertheless form a combinatorially correct subdivision of the space.
-For instance, adjacency and incidence do have meaning and can be defined just as in a geometric simplicial complex.
+
+Adjacency and incidence do have a meaning, albeit not the same as in a geometric simplicial complex, even if their mathematical definition is just as in a geometric simplicial complex.
 Considering that a $j$-face of an $i$-simplex, $j \leq i$, is a $j$-simplex made from a subset of the vertices of the $i$-simplex, two $i$-simplices are adjacent if they have a common face, and an $i$-simplex and a $j$-simplex, $i \neq j$, are incident if either is a face of the other.
 \begin{figure*}[tb]
 \centering
@@ -661,22 +677,22 @@ Note that the locations of the vertices for the 1- and 2-cells are arbitrary, th
 
 In an ordered topological model, objects are represented by sets of simplices, similar to how they are represented in a geometric simplicial complex.
 However, unlike in a geometric simplicial or cell complex, where an $i$-dimensional object is represented as a set of $i$-simplices or $i$-cells, in an $n$-dimensional ordered topological model an object of \emph{any} dimension is represented as a set of $n$-simplices.
-More concretely, a cell is represented as the set of simplices that have a vertex at that cell.
-In this manner, even vertices are represented as (possibly large) sets of simplices.
+More concretely, a cell is represented as the set of simplices that have a symbolic vertex at that cell.
+In this manner, even vertices are represented as (possibly large) sets of simplices\footnote{Geometrically, this set would consist of all the $n$-simplices incident to the vertex.}.
 
 Attributes and geometry can be attached to the simplicial complex in an ordered topological model in a similar way as in a geometric simplicial complex.
-Since the vertices of each simplex have a known order, and each vertex of each simplex represents a cell, it is possible to link each simplex in an ordered topological model to a tuple of attributes and geometric information for the cells that its vertices represent.
+Since the symbolic vertices of each simplex have a known order, and each vertex of each simplex represents a cell, it is possible to link each simplex in an ordered topological model to a tuple of attributes and geometric information for the cells that its vertices represent.
 Many operations that are possible on a geometric simplicial complex are also possible in an ordered topological model, even considering that many of its vertices do not have a specific location in space.
 Topological queries can be handled in an identical way, and some geometric operations require minimal changes.
 For instance, the length, area, volume, etc.\ of a cell, can be computed using the inclusion-exclusion principle, which works similarly to the computation of the area of a polygon using the `shoelace formula' \citep{Meister71}.
 Comparing objects can also be done simplex by simplex \citep{Gosselin11} taking advantage of the ordering properties of ordered topological models.
 
-Since this simplicial decomposition performed in an ordered topological model is done only combinatorially, it is not necessary to build a constrained triangulation of the input, which as stated in \refse{ss:simplicial-complexes}, might be very difficult to accomplish.
-However, using an ordered topological model still allows one to use the stronger algebraic properties present in a simplicial complex, which are used in order to traverse and manipulate a cell complex.
-The resulting simplicial complex can have a larger or smaller number of simplices compared to one triangulated geometrically, but it also has the advantage that the number of vertices and simplices in it is known in advance and does not depend on the geometry.
+Since this simplicial decomposition performed in an ordered topological model is done only combinatorially, it is not necessary to build a constrained or conforming triangulation of the input, which as stated in \refse{ss:simplicial-complexes}, might be very difficult to accomplish.
+However, using an ordered topological model still allows one to use the stronger algebraic properties present in a simplicial complex, which are used in order to traverse and manipulate a cell complex in a more efficient manner than it would otherwise possible be.
+The resulting simplicial complex might have a larger number of simplices compared to one triangulated geometrically, but it also has the advantage that the number of vertices and simplices in it is known in advance and does not depend on the geometry.
 
-There are two different simplicial decomposition schemes used in ordered topological models, one for the cell-tuple structure \citep{Brisson89} and generalised maps \citep{Lienhardt94}, and one for $n$-dimensional combinatorial maps \citep{Lienhardt94}.
-Assuming an input $n$-dimensional cell complex that is in the form of an incidence graph containing all the cells (of every dimension) as nodes, and the incidence relationships from each $i$-cell to the $(i-1)$-faces on its boundary as directed edges, the simplicial decompositions are shown in \reffig{fig:simplices} and explained as follows:
+There are two different simplicial decomposition schemes used in ordered topological models, one for the cell-tuple structure \citep{Brisson89} and generalised maps \citep{Lienhardt94}, and another for $n$-dimensional combinatorial maps \citep{Lienhardt94}.
+Starting from an input $n$-dimensional cell complex that is in the form of an incidence graph containing: (i) all the cells (of every dimension) as nodes and (ii) the incidence relationships from each $i$-cell to the $(i-1)$-faces on its boundary as directed edges, the simplicial decompositions are shown in \reffig{fig:simplices} and explained as follows:
 
 \begin{description}
 \item[Cell-tuple / generalised maps]
@@ -687,10 +703,11 @@ It can be seen as a generalisation of the lath-based structures~\citep{Joy03} so
 
 \item[$n$-dimensional combinatorial maps]
 Each possible path in the graph from an $n$-cell to a 1-cell yields one simplex, with the vertices for the cells from dimension $n$ to 2 used directly, prepended with the two vertices corresponding to the two 0-cells incident to the 1-cell (\ie\ the vertices at the endpoints of the edge).
-Each $n$-simplex can be thus defined by an $n$-tuple $(c_{0}, c_{0}^\prime, \ldots, c_{n})$, where $c_{0}$ and $c_{0}^\prime$ are the two 0-cells incident to the 1-cell, and for $i > 0$, $c_{i}$ is also a vertex representation of an $i$-dimensional cell in the cell complex, all of which are incident to each other and to the two 0-cells.
-As the two 0-cells could be given in any order, the order is set by specifying an orientation for the cell complex (or for each connected component) by specifying which vertices are respectively $c_{0}$ and $c_{0}^\prime$ in one simplex, and then building the $n$-tuples for the other simplices so that adjacent simplices have them in the opposite order.
-As \reffig{fig:cmaps-orientation} shows, this can result in two possible orientations for each cell combinatorial map (or connected component).
-In practice, this means that if one considers the 1-faces formed by $c_{0}$ and $c_{0}^\prime$ as directed edges from $c_{0}$ to $c_{0}^\prime$, surfaces form loops of directed edges, and opposite surfaces have opposite orientations, just as in most 2D/3D structures that are based on half-edges, \eg\ DCEL \citep{Muller78}.
+Each $n$-simplex can be thus defined by an $n$-tuple $(c_{0}, c_{0}^\prime, \ldots, c_{n})$, where $c_{0}$ and $c_{0}^\prime$ are the two 0-cells incident to the 1-cell, and for $i > 0$, $c_{i}$ is a vertex representation of an $i$-dimensional cell in the cell complex, all of which are incident to each other and to the two 0-cells.
+As the two 0-cells could be given in any order, the order is set by specifying an orientation for the entire cell complex (or for each connected component when there are more than one) by specifying which vertices are respectively $c_{0}$ and $c_{0}^\prime$ in one simplex, and then building the $n$-tuples for the other simplices so that adjacent simplices have them in the opposite order.
+As \reffig{fig:cmaps-orientation} shows, this can result in two possible orientations for each cell in a combinatorial map (or connected component).
+While not shown here, this orientation determination scheme works in any dimension.
+In practice, this means that if one considers the edges bounded by $c_{0}$ and $c_{0}^\prime$ as being directed (from $c_{0}$ to $c_{0}^\prime$), surfaces form loops of directed edges, and opposite surfaces have opposite orientations, just as in most 2D/3D structures that are based on half-edges, \eg\ DCEL \citep{Muller78}.
 \end{description}
 \marginpar{
 \captionsetup{type=figure}
@@ -707,16 +724,16 @@ In practice, this means that if one considers the 1-faces formed by $c_{0}$ and 
 }
 
 The cell-tuple structure \citep{Brisson89}, and generalised maps and $n$-dimensional combinatorial maps \citep{Lienhardt94}, support this model directly.
-The cell-tuple structure was developed as a generalisation of the quad-edge \citep{Guibas85} data structure in 2D and the facet-edge data structure \citep{Dobkin87} in 3D.
-In it, an $n$-simplex is called a cell-tuple, the neighbour operator is called switch, and the set of cell-tuples that represent a cell $c$ is called the set of associated cell-tuples of $c$.
-Generalised maps and $n$-dimensional combinatorial maps \citep{Lienhardt94} evolved instead as a generalisation of 2D combinatorial maps \citep{Edmonds60}.
+The \textbf{cell-tuple structure} was developed as a generalisation of the quad-edge \citep{Guibas85} data structure in 2D and the facet-edge data structure \citep{Dobkin87} in 3D.
+In it, an $n$-simplex is called a \emph{cell-tuple}, the neighbour operator is called \emph{switch}, and the set of cell-tuples that represent a cell $c$ is called the \emph{set of associated cell-tuples} of $c$.
+\textbf{Generalised maps} and $n$-dimensional \textbf{combinatorial maps} \citep{Lienhardt94} evolved instead as a generalisation of 2D combinatorial maps \citep{Edmonds60}.
 They were extended to support open (topologically closed) maps in \citet{Poudret07}, so as to support empty space around objects without representing it explicitly.
-An $n$-simplex is called a dart, the neighbour operator is called $\alpha$ (for generalised maps) or $\beta$ (for combinatorial maps), and the set of darts that represent a cell is called its orbit.
+An $n$-simplex is called a \emph{dart}, the neighbour operator is called $\alpha$ (for generalised maps) or $\beta$ (for combinatorial maps), and the set of darts that represent a cell is called its \emph{orbit}.
 These were developed independently, with generalised maps being mathematically shown to be able to represent a wider class of objects than the cell-tuple, but both work out to very similar or identical implementations in practice.
-Chains of maps \citep{Elter94} supplement the approach followed by generalised maps with an incidence graph in order to support non-manifolds, but they are rarely used because of their very high space requirements.
+Chains of maps \citep{Elter94} supplement the approach followed by generalised maps with an incidence graph in order to support non-manifolds, but they are rarely used because of their extremely high space requirements.
 
-It is worth mentioning that ordered topological models are no more efficient in terms of space than the Simple Features-like \citep{SimpleFeatures1} approach shown in \refse{ss:nd-topology} and \reffig{fig:sfsnd}.
-In fact, every combinatorial maps dart is equivalent to a consecutive pair of vertices in the Simple Features approach, while generalised maps and the cell tuple have exactly twice as many.
+It is worth mentioning that ordered topological models are not significantly more efficient in terms of space than the Simple Features-like \citep{SimpleFeatures1} approach shown in \refse{ss:nd-topology} and \reffig{fig:sfsnd}.
+Every dart in a combinatorial map is equivalent to a consecutive pair of vertices in the Simple Features approach, while a dart in a combinatorial map is equivalent to two darts in a generalised map or to two cell-tuples.
 However, ordered topological models consist of combinatorial primitives that can be traversed efficiently, unlike the Simple Features approach in which many operations involve brute force comparisons.
 
 Holes and disconnected components in an ordered topological model can be dealt with any of the techniques described for cell complexes in \refse{ss:cell-complexes}, with bridge edges modelled as a pair of simplices with the same vertices but opposite orientations as shown in \reffig{fig:bridge}.
@@ -733,28 +750,28 @@ Holes and disconnected components in an ordered topological model can be dealt w
 (b) The simplices in the combinatorial maps representation of the situation in (a).
 There are two simplices with the same vertices representing each side of the bridge edge.
 As in \reffig{fig:simplices}, the location of the vertex for the 2-cell shown in (b) is arbitrary but chosen so as to lie in the interior of the polygon.
-The combinatorial triangles are shown with curved lines so as to form a planar embedding to show that they are able to form a partition of the space.}
+The combinatorial triangles are shown with curved lines so as to form a planar embedding to show that they effectively form a partition of the space.}
 \label{fig:bridge}
 \end{figure}
-Attributes can be handled using an attributes tuple that links each cell of the vertices tuple to a corresponding structure to store an attribute for it, such that if the $i$-th element of the vertices tuple represents a cell, the $i$-th element of the attributes tuple can link to the attributes of the cell.
+Attributes can be handled using an attributes tuple that links each cell of the vertices tuple to a corresponding structure to store an attribute for it, such that if the $i$-th element of the vertices tuple represents a cell, the $i$-th element of the attributes tuple can link to a structure storing the attributes of the cell.
 
 While ordered topological models are relatively difficult to implement, they have nevertheless been implemented in several open source libraries and software, including CGAL\footnote{\url{http://www.cgal.org}}, Moka\footnote{\url{http://moka-modeller.sourceforge.net}}, and CGoGN\footnote{\url{http://cgogn.unistra.fr}} \citep{Kraemer14}.
 Although not discussed further here, I showed in \citet{ArroyoOhori13a} in more detail how generalised maps can be implemented to support various characteristics of real-world data, such as such as markers, locks (for parallel algorithms), simple construction operations and indexing of darts and attributes for the objects of all dimensions.
 
 However, even as all of the aforementioned implementations are stable, and the implementation of CGAL Combinatorial Maps is impressively sophisticated in many respects (such as the customisable constant time iterators through darts implemented using C++11 variadic templates), it is important to note that they are limited to providing basic navigation and construction functions at the dart/simplex level.
-The contribution of this thesis thus lies in showing how to use this type of libraries in practice, how to build higher-dimensional representations of real-world objects, and how one can build more complex algorithms on top of these basic operations in order to implement higher-level (user-facing) functions.
+The contribution of this thesis thus lies in showing how to use this type of libraries in practice, how to build on them to create higher-dimensional representations of real-world objects, and how one can create more complex algorithms on top of these basic operations in order to implement higher-level (and possibly user-facing) functions.
 
 In terms of applications, 
 \citet{Fradin02} used generalised maps in architecture building models such that the level of detail is modelled using the same kind of relations that are used to model geometric dimensions.
-\citet{Thomsen08} used generalised maps in order to manage topology in 2D/3D GIS in a unified (not dimension dependent) manner.
+\citet{Thomsen08} used generalised maps in order to manage topology in 2D/3D GIS in a unified (and dimension-independent) manner.
 \citet{Le13} used Gocad\footnote{\url{http://www.gocad.org/}} (which internally uses generalised maps) to create 4D geological models by interpolating separate 3D models at various points in time.
 
 \subsection{Other possible vector models}
 \label{ss:vector-others}
 
 While this thesis attempts to comprehensively cover the ways in which higher-dimensional objects might be modelled, its principal aim is to \emph{realise} one of these models up to its implementation and basic operations.
-Because of this---and especially considering the great number of possible models developed in different fields---, there are interesting possibilities that have not been studied in depth in the context of the PhD project.
-Some of these possibilities are presented in brief in this section.
+Because of this---and especially considering the great number of possible models developed in different fields---, there are interesting possibilities that it has not been possible to study in depth within the context of the PhD project corresponding to this thesis.
+Nevertheless, as a documentation of these preliminary observations, some other representation possibilities are presented in brief in this section.
 
 Models containing only points in $n$D space \citep{Pasko01} are widely used in the context of remote sensing and data mining, and are particularly relevant in the representation of $n$D fields.
 These can be used together with an appropriate interpolation function \citep{Miller97} or a geometric construction that generates $n$D cells from the points (\eg\ Voronoi diagrams \citep{Ledoux06} and their weighted generalisations \citep{Edelsbrunner14}).
@@ -773,22 +790,25 @@ For instance, geometric algebra \citep{Artin11} can be used to describe objects 
 \label{se:nd-modelling-conclusions}
 
 Using higher-dimensional representations of objects offers a solution to the integration of parametrisable characteristics, such as time and scale, into GIS in a generic manner.
-This makes it possible to store all the topological relationships and the correspondences between objects across (discrete or continuous) time or scale by modelling them as if they were continuous, and can be used for several applications, such as guaranteeing the consistency of a model or for the automatic update of datasets \citep{vanOosterom10}.
+This makes it possible to store all the topological relationships and the correspondences between objects across (discrete or continuous) time or scale by modelling them as if they were continuous, and can be used for several applications, such as for guaranteeing the internal consistency of a model, for the definition of dimension-independent constraints, or for the automatic update of datasets \citep{vanOosterom10}.
 
 The approach is well-founded upon long-standing mathematical theories, and so is able to deal with complex cases and with the special requirements of each dimension more robustly than solutions in which parametrisable characteristics are handled in an ad hoc fashion.
+For instance, if moving objects were to be added to an existing representation (with only static objects), arbitrary motions could be supported rather than those that can be deduced from simple parameters stored in attributes.
+
 While higher-dimensional representations are space intensive, this factor ameliorated by the fact that many GIS applications use relatively sparse data \citep{McKenzie01,Mason94}.
+However, analysing the properties of the non-spatial characteristics to be modelled as dimensions is crucial, as there is no advantage in modelling such characteristics as dimensions when attributes clearly suffice.
 
 There are many different data models and data structures that can be used to implement this \emph{higher-dimensional spatial modelling} approach.
 However, just as in 2D and 3D, there is not a single data structure that works best for all purposes and applications, so choosing an appropriate one is critical.
 
 4D rasters and hierarchies of trees have been used successfully in the past in a GIS context \citep{Mason94,Varma90,Bernard98,Oconaill92}.
-These can use similar structures and algorithms as their 2D/3D counterparts and are therefore easy to implement, but they are only capable of achieving rough approximations of the objects' boundaries \citep{Blaschke10} and grow in size exponentially as the dimension increases.
+These can use similar structures and algorithms as their 2D/3D counterparts and are therefore easy to implement, but they are only capable of achieving rough approximations of the objects' boundaries \citep{Blaschke10} and can grow in size exponentially as the dimension increases.
 Vector data structures with limited topological information, such as Simple Features \citep{SimpleFeatures1}, possibly combined with the computation of topology on the fly \citep{ESRITopology}, also explode in terms of size in higher dimensions and are difficult to efficiently traverse.
 The most promising option is therefore a topological vector approach that allows for the representation of real-world objects of heterogeneous dimensions with holes and attributes, which moreover should be efficient to traverse.
 This requires the use of higher-dimensional topological vector data structures.
 
 The dimension-independent vector data structures that are able to support this approach can be classified into three broad data models: geometric simplicial complexes, cell complexes and ordered topological models.
-The data structures belonging to each of these tend to have similar properties in terms of space complexity since they contain a number of primitives of the same order\footnote{The number of primitives might not be the same since a discretised element in the model might be implemented as one or multiple separate structures.}.
+The data structures belonging to each of these tend to have similar properties in terms of space complexity since they contain a number of primitives of the same order\footnote{The exact number of primitives might not be the same since a discretised element in the model might be implemented as one or as multiple separate structures.}.
 Operations performed on them also tend to have the same computational complexity since they can have similar topological relationships, and when they do not, their cost is bounded by the conversion cost from one to the other, which is often easy and can be done primitive by primitive.
 
 Since algorithms operate on primitives, which are defined by a data model, this analysis also serves to know which fundamental operations can be applied on a data structure.
@@ -799,7 +819,7 @@ Regarding the three broad data models identified in this thesis, on one end it i
 Cell complexes are on the other end, as they are trivial to construct but only support a much weaker set of fundamental operations, which increases the complexity of many computations.
 Ordered topological models, such as the cell-tuple/generalised maps and combinatorial maps, combine characteristics of the previous two and have both a relatively powerful algebra and are easy to construct, although they are also the most space-intensive and the most complex to implement.
 However, this last point is easily overcome in practice since there are good implementations of them in several open source libraries and software, including CGAL, Moka, and CGoGN---although special handling for holes and non-manifold geometries might still be required.\@
-Because of this, ordered topological models are deemed to be the most promising alternatives for higher-dimensional spatial modelling and are used as a base for further operations in the following chapters of this thesis.
+Because of this, \emph{ordered topological models are deemed to be the most promising alternatives for higher-dimensional spatial modelling and are used as a base for further operations in the following chapters of this thesis}.
 
 Using a higher-dimensional representation of objects enables combined geometric and topological queries across all dimensions.
 For instance, applied to 4D BIM\footnote{\url{http://enr.construction.com/technology/bim/2014/0602-Dynamic-Models-for-Safer-Sites.asp?page=2}} models that include the construction process of a building, it is possible to efficiently do safety checks (\eg\ dangerous work is not being performed concurrently and close to other activities, or ensuring that all building components are connected properly at all times) by performing well-defined 4D queries rather than by doing many 3D tests that might not encompass all possible undesirable cases.

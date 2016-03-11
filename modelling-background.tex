@@ -715,11 +715,12 @@ However, apart from this direct meaning, scale also has an indirect relation to 
 Considering limits in resolution in printing and manufacturing technologies, the detail that can be put into a map or model is limited by its scale.
 Moreover, since humans are only able to reliably distinguish features of a certain size---a commonly accepted measure for maps being 0.5 mm \citep{Goodchild01}---, an adequate representation at a given scale presupposes objects being of a certain minimum size and a minimum distance apart.
 
-The above mentioned factors limit the detail that \emph{can} be present in a model/map at a given scale, but there are additional limits on the detail that \emph{should} be present in a map at a given scale.
-Considering that maps are first and foremost communication tools, good maps need to have content of an appropriate level of precision and detail in order to convey their intended message \citep{Hardy12}.
+The above mentioned factors limit the detail that \emph{can} be present in a model/map at a given scale, but there are additional limits on the detail that \emph{should} be present.
+Considering that maps are first and foremost communication tools, good maps need to have content that has an appropriate level of precision and detail for the good conveyance of their intended message \citep{Hardy12}.
 
-In the digital realm, where models and maps both become data and the direct meaning of geographic scale as a ratio between a model/map and reality disappears, scale preserves only its indirect meaning as the level of detail that is present in a model or map, and accordingly the term `level of detail' is more widely used \citep{Biljecki14}.
-An increase in the detail of a model enables more applications, but means that its representations occupy larger sizes and their processing involves higher computational costs.
+In the digital realm, where models and maps both become data and the direct meaning of geographic scale as a ratio between a model/map and reality disappears, scale preserves only its indirect meaning as the level of detail that is present in a model or map, and accordingly the term `level of detail' is more appropriate \citep{Biljecki14}.
+An increase in the detail of a model enables more applications, but means that its representations occupy larger sizes and their processing involves higher computational costs\footnote{However, the consequences of more detailed maps/models should not been seen as a merely technical issue.
+High memory usage and processing time directly affect the usability of a model or map, and too much detail can often detract from its intended message.}.
 When the term `scale' is used instead, the level of detail that is expected is often presented in relation to its physical predecessor, such as in the map fragments shown in \reffig{fig:generalisation}.
 In digital models and maps, having an adequate level of detail also becomes important as a higher level of detail entails a correspondingly higher memory and computational requirements \citep{Luebke03}.
 \begin{figure}[tbp]
@@ -731,7 +732,9 @@ In digital models and maps, having an adequate level of detail also becomes impo
 \subfloat[1:250 000]{
 \includegraphics[width=0.46\linewidth]{figs/generalisation3}
 \label{ss:generalisation3}}
-\caption[Topographic maps at different scales around Delft]{Fragments of two Dutch topographic maps at different scales around Delft. Note that the region depicted in both maps is the same and maps are (here) presented at the same size, and thus the scale of both in a literal sense is the same. However, the level of detail in each map differs. \copyright\ Kadaster\protect\footnotemark.}
+\caption[Topographic maps at different scales around Delft]{Fragments of two Dutch topographic maps at different scales around Delft.
+Note that the region depicted in both maps is the same and maps are (here) presented at the same size, and thus the scale of both in a literal sense is the same.
+However, the level of detail in each map differs. \copyright\ Kadaster\protect\footnotemark.}
 \label{fig:generalisation}
 \end{figure}
 \footnotetext{\url{http://www.kadaster.nl}}
@@ -740,25 +743,27 @@ Geographic information at different scales is generally managed as fully indepen
 In 3D, the CityGML standard \citep{CityGML2} defines the five LODs shown in \reffig{fig:citygml-filip}, which can be stored jointly but are effectively separate datasets except when their geometries are linked (\cf\ \citet{Biljecki15}).
 This is similar to the snapshot model for spatiotemporal information \citep{Basoglu78,Langran88} as presented in \refse{se:modelling-time}, since these datasets are labelled with the scale (or range of scales) that they are associated with.
 This representation is simple and matches nicely with paper map series---in which a region is depicted at multiple scales in different maps.
-However, many objects are represented several times (once at each scale in which they are present) \citep{Friis-Christensen03}, and it is difficult to maintain consistency between these representations \citep{Buttenfield89}, as the different representations of an object are unlinked or linked only by common identifiers.
+However, many objects are represented several times (once at each scale in which they are present) \citep{Friis-Christensen03}, and it is difficult to maintain consistency between these representations \citep{Buttenfield89}, as the different representations of an object are unlinked or linked only by common identifiers\footnote{Which can be messy in practice as many times there is not a one-to-one mapping between the different representations.}.
 
+% Actually from CEUS paper under review. Not published on time.
 \begin{figure}[tbp]
 \centering
 \includegraphics[width=\linewidth]{figs/citygml-filip}
-\caption[The LODs in CityGML]{The CityGML standard \citep{CityGML2} defines five LODs for 3D city models, which range from building footprints to detailed architectural models of their interior and exterior. From \citet{Biljecki14a}.}
+\caption[The LODs in CityGML]{The CityGML standard \citep{CityGML2} defines five LODs for 3D city models, which range from building footprints to detailed architectural models of their interior and exterior.
+From \citet{Biljecki14a}.}
 \label{fig:citygml-filip}
 \end{figure}
-% TODO: Check Filip's citation (paper accepted?)
 
 In order to achieve consistency and complete coverage of a region at a given scale, it becomes important to be able to create a map of that scale using a more detailed map of the same region as input, resulting in maps at different scales covering the same region.
 This is achieved by the process of cartographic (or map) generalisation.
 In it, the amount of information in a map is reduced \citep{Tofper66}, abstracting objects for a given scale using a set of well-defined cartographic rules \citep{SGK75}.
-Many of these rules can be automated in the form of algorithms (\eg\ line simplification \citep{Douglas73}), resulting in several automatic generalisation algorithms \citep{Weibel97}, and their recent resulting software implementations \citep{Jones05,Stoter09}.
+Many of these rules can be automated in the form of algorithms (\eg\ line simplification \citep{Douglas73}), resulting in several automatic \emph{map generalisation algorithms} \citep{Weibel97}, and their (much more recent) resulting software implementations \citep{Jones05,Stoter09}.
 In fact, it is now possible to generalise maps fully automatically in certain cases and with good results \citep{Stoter14}.
 
-In 3D modelling, similar procedures are widely used to create simplified versions of complex 3D models \citep{Meng07,Kada07,Zhu09,Zhao12}---using visualisation rather than cartographic criteria---using techniques such as mesh simplification \citep{Garland97,Lindstrom98}.
-Considering that these techniques can be applied to the very detailed 3D models that are generated using surface reconstruction \citep{Amenta98,Kazhdan06} from laser-scanned point clouds, or the reuse of detailed architectural models \citep{Geiger15}, they allow the generation of entire series of progressively simpler models up to an arbitrary level of detail in a process that is largely automatic, at least in theory\footnote{In practice, it is a very challenging process. Fully automated surface reconstruction requires a certain density of sampling points (see \citet[Ch.~13]{Cheng12}), which is hard to guarantee.
-The generalisation of real-world 3D objects is also very challenging in practice due to imperfect data.}.
+In 3D modelling, similar algorithms are widely used to create simplified versions of complex 3D models \citep{Meng07,Kada07,Zhu09,Zhao12}---using visual or geometric criteria rather than cartographic---based on techniques such as mesh simplification \citep{Garland97,Lindstrom98}.
+Considering that these techniques can be applied to the very detailed 3D models that are generated using surface reconstruction \citep{Amenta98,Kazhdan06} from laser-scanned point clouds, or those resulting from the reuse of detailed architectural models \citep{Geiger15}, they allow the generation of entire series of progressively simpler models up to an arbitrary level of detail in a process that is largely automatic---at least in theory\footnote{In practice, it is a very challenging process with many engineering stumbling blocks.
+For one, fully automated surface reconstruction requires a certain density of sampling points (see \citet[Ch.~13]{Cheng12}), which is hard to guarantee.
+The generalisation of real-world 3D objects is also very challenging in practice due to a variety of reasons, such as the errors caused by the acquisition of data at different times, from different angles, from different sources, or using different methods.}.
 
 Using automatic map generalisation, it becomes possible to create digital objects of any given scale, and thus to create and populate structures where an object at many scales is represented as a single entity, usually as a tree where detail is added progressively.
 For polygonal curves, this is accomplished by structures such as: strip trees \citep{Ballard81}, the multi-scale line tree \citep{Jones86}, the arc tree \citep{Gunther88} and the binary line generalisation tree \citep{vanOosterom90}.
@@ -772,14 +777,14 @@ Considering all the possible ways in which these techniques can be combined toge
 These vary in fundamental aspects, such as their explicitness, their use of geometry and topology, and the class of objects that they are able to handle efficiently.
 
 However, despite these very real and substantial differences, the representation approaches in \emph{2D GIS} have become largely interchangeable in practice.
-There is a myriad of well-known topological data structures that can be used, such as the DCEL \citep{Muller78} and the quad-edge \citep{Guibas85}, and even when certain objects are not directly supported in them (\eg\ those with a non-manifold shape or with holes), they can usually be nevertheless stored using various simple `tricks', such as repeated combinatorial primitives (as shown previously in \reffig{fig:nonmanifold-012}) or external data structures such as indices.
+There is a myriad of well-known topological data structures that can be used, such as the DCEL \citep{Muller78} and the quad-edge \citep{Guibas85}, and even when certain objects are not directly supported in them (\eg\ those with a non-manifold shape or with holes), they can usually be nevertheless stored using various simple `tricks', such as repeated combinatorial primitives (as shown previously in \reffig{fig:nonmanifold-012}), special kinds of attributes or external data structures such as indices.
 
 Moreover, many 2D GIS applications do not even require the explicit topology of a topological data structure.
 Visualisation and simple computations can just as easily do without it, and consequently use data structures with very little or no topology, opting for a Simple Features-like representation \citep{SimpleFeatures1}.
 Also, considering that the computation of topological relationships between 2D objects is relatively simple, it can be done on-the-fly only when it is needed \citep{ESRITopology}---something that is especially true for the relatively small size of most 2D datasets, which often pale in comparison to the computing power that is now readily available.
-All of these reasons point towards a similar conclusion: 2D objects (\ie\ points, line segments and polygons) can be represented using either topological or non-topological approaches with little difference in practice.
+All of these reasons point towards a similar conclusion: objects of up to two dimensions (\ie\ points, line segments and polygons) can be represented using either topological or non-topological approaches with little difference in practice.
 
-In 3D, the situation is more complex and topology brings more significant advantages, even storing topological relationships comes at a significantly increased cost in terms of memory.
+In 3D, the situation is more complex and topology brings more significant advantages, even as storing topological relationships comes at a significantly increased cost in terms of memory.
 Compared to the circumstances in 2D, there are more topological relationships between 3D objects, and these are more difficult and expensive to compute, so their storage becomes highly desirable in many instances.
 At the same time, datasets are usually much larger, which makes topological relationships more valuable in order to traverse them efficiently.
 More complex applications such as simulations greatly benefit from 3D topological representations as well---or at least from data that is known to be valid, for which 3D topological data structures are used \citep{Ledoux13}.
@@ -788,10 +793,10 @@ Moreover, many of the strong properties that allow for simple but powerful data 
 For instance, there is a natural order for the vertices or line segments around a polygon---used \eg\ to efficiently store a polygon as a sequence of vertices---but there is no similar natural order for the faces around a polyhedron.
 Similarly, storing a complete planar partition as a set of edge primitives where every edge records the polygons that lie on each of its two sides \citep{Peucker75} is straightforward and efficient, but a 3D space partition stored as a set of faces where every face only knows the volumes that lie on both of its sides is very cumbersome to navigate---even a simple operation such as extracting the volumes in the partition is difficult without the adjacency relationships between the faces.
 
-Partly because of this, as well as the general increase in complexity due to an increase in dimension, the topological data structures that are capable of storing topological relationships between sets of 3D objects are less used in practice.
+Partly because of this, as well as the general increase in complexity that comes with an increase in the number of dimensions, the topological data structures that are capable of storing topological relationships between sets of 3D objects are less used in practice.
 The third spatial dimension, time, and scale are mainly implemented using ad hoc adaptations to 2D data structures, effectively limiting the capabilities of GIS software.
-3D GIS often mimic the third dimension by using a so-called 2.5D structure \citep{Raper89}, essentially treating the third dimension as an attribute and limiting the geometries that can be represented; or represent 3D objects individually and only implicitly through their 2D boundary, using a 2D data structure with no 3D topological relationships\footnote{\ie\ topological relationships involving 3D primitives, such as adjacencies between two volumes or incidences between a volume and a vertex/edge/face}.
-This implies that many operations are only possible using expensive searches involving many more objects than needed.
+3D GIS often mimic the third dimension by using a so-called 2.5D structure \citep{Raper89}, essentially treating the third dimension as an attribute and restricting the geometries that can be represented; or represent 3D objects individually and only implicitly through their 2D boundary, using a 2D data structure with no 3D topological relationships\footnote{\ie\ topological relationships involving 3D primitives, such as the adjacencies between two volumes or the incidences between a volume and a vertex/edge/face}.
+This implies that many operations are only possible using expensive searches involving many more objects than otherwise needed.
 
 Time and scale are considered to be inseparable in the representational process by theorists, since events have an intrinsic place in space and time, as well as specific spatial and temporal resolutions \citep{Raper00}.
 However, spatiotemporal GIS keep multiple representations of 2D \citep{Armstrong88} or 3D \citep{Hamre97} structures, or a list of changes per object \citep{Worboys92,Peuquet94}, limiting combined spatio-temporal analysis of such objects.
