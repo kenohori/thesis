@@ -552,5 +552,5 @@ common 2-cell (comparisons) & 13 824 & 57 600 & 4.17 \\
 
 This difference only becomes more pronounced with more complex objects and those of higher dimensions, as the advantage of having an index pointing to a well-defined starting point for a traversal is inversely proportional to the number of possible starting points.
 
-However, it is worth noting that the differences between the two could be heavily reduced by using a modicum of topology in the Simple Features-like representation.
+However, it is worth noting that the differences between the two could be heavily reduced by using a modicum of topology in the Simple Features-like representation\footnote{Even if this is a moot point in practice, as topology seems to be anathema to Simple Features.}.
 If the lowest-level lists representing the coordinates of a point were exchanged for unique pointers to an external array with the coordinates of all points, many of these searches and the overall storage of the Simple Features approach could be significantly optimised.
