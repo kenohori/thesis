@@ -20,7 +20,7 @@ Set theory is the branch of mathematics that studies \emph{sets}, which are coll
 While the study of set theory only formally started with \citet{Cantor74}, its intuitive and minimal concepts were later used in order to give a foundation to almost all areas of mathematics\footnote{Even as some mathematicians and philosophers have argued against set theory as a foundation for all of mathematics.}.
 Since the basic concepts of set theory are used in this thesis in order to describe many other concepts, this section gives a very short primer using the same notation that is used in this thesis.
 However, it is worth noting that the descriptions used here are reflect the concepts generally used in GIS, and so are meant to be intuitive and not very formal.
-Perhaps more importantly, these definitions do not reflect modern mathematical thought on the topic\footnote{In short, this intuitive definition of sets pretty much assumes that anything can be put into a set without leading to paradoxes, which is not the case.}, which is much more precise but is much less accessible, \eg\ axiomatic set theory.
+Perhaps more importantly, these definitions do not reflect modern mathematical thought on the topic\footnote{In short, these intuitive definitions pretty much assume that anything can be put into a set without leading to paradoxes, which formally is not the case.}, which is much more precise but also less accessible, \eg\ axiomatic set theory.
 
 Set theory starts by considering the existence of a given domain of objects from which one may build sets, which is known as the \emph{universe set} and denoted as $\mathbb{U}$.
 These objects can be anything, including other sets.
@@ -72,7 +72,7 @@ Euclidean geometry consists of a small set of geometric axioms considered to be 
 \marginpar{
 \captionsetup{type=figure}
 \includegraphics[width=\marginparwidth]{figs/line}
-\caption{There is a single line that passes through two points}
+\caption[A single line passes through two points]{There is exactly one line that passes through any pair of points.}
 \label{fig:line}
 }
 
@@ -172,7 +172,7 @@ Point-set topology, also known as general topology, describes objects as sets of
 \includegraphics[width=\marginparwidth]{figs/pointset}
 \caption[Two rectangles and two points defined as point sets]{The rectangle $\mathbb{A}$ is represented by the set of points where $1 \leq x \leq 4$ and $1 \leq y \leq 3$. In more compact (set builder) notation, $\mathbb{A} = \left\{ (x,y) \middle| x \in [1,4] \wedge y \in [1,3] \right\}$.
 For the other objects, rectangle $\mathbb{B} = \left\{ (x,y) \middle| x \in [2,3] \wedge y \in [1,2] \right\}$, point $a \in \mathbb{A}$, point $b \in \mathbb{B}$ and point $b \in \mathbb{A}$.
-$\mathbb{B}$ is a subset of $\mathbb{A}$ ($\mathbb{B} \subset \mathbb{A}$).
+$\mathbb{B}$ is a subset of $\mathbb{A}$ (\ie\ $\mathbb{B} \subset \mathbb{A}$).
 }
 \label{fig:pointset}
 }
@@ -217,7 +217,8 @@ An example of these is shown in \reffig{fig:annulus}.
 \marginpar{
 \captionsetup{type=figure}
 \includegraphics[width=\marginparwidth]{figs/annulus}
-\caption[An annulus partitions the Euclidean plane into three parts]{An annulus with boundary partitions the Euclidean plane into three parts: its interior (yellow), its boundary (black) and its exterior (white). Note that none of these necessarily have to be connected.}
+\caption[An annulus partitions the Euclidean plane into three parts]{An annulus with boundary partitions the Euclidean plane into three parts: its interior (yellow), its boundary (black) and its exterior (the rest of this page).
+Note that none of these necessarily have to be connected.}
 \label{fig:annulus}
 }
 The \emph{interior} of a point set $\mathbb{S}$ consists of all points where there exists an open ball centred at them such that all the points in the ball are in $\mathbb{S}$, the boundary of $\mathbb{S}$ consists of the points where all possible open balls centred at them have points in $\mathbb{S}$ and out of $\mathbb{S}$, and the exterior of $\mathbb{S}$ consists of all points where there exists an open ball centred at them such that all the points in the ball are out of $\mathbb{S}$.
@@ -227,15 +228,16 @@ The \emph{regularisation} of $\mathbb{S}$ is the closure of its interior and a p
 Once objects are defined as sets of points, point-set topology works with functions that relate these sets to each other.
 A function from one point set to another is said to be \emph{continuous} if the preimage (\ie\ the inverse image) of every open set is open.
 If a function is continuous and its inverse function is also continuous, it is known as a \emph{homeomorphism}.
-When such a function exists between two point sets, they are said to be \emph{homeomorphic} or, more informally, \emph{topologically equivalent}, such as the two objects shown in \reffig{fig:homeomorphism}\footnote{Related to the joke: `A topologist is a mathematician who can't tell the difference between a coffee mug and a donut'.}.
+When such a function exists between two point sets, they are said to be \emph{homeomorphic} or, more informally, \emph{topologically equivalent}, such as the two objects shown in \reffig{fig:homeomorphism}.
 
 \begin{figure}[b]
 \centering
 \subfloat[A coffee mug]{\includegraphics[width=\marginparwidth]{figs/mug}} \quad
 \subfloat[A donut]{\includegraphics[width=\marginparwidth]{figs/donut}}
-\caption[A coffee mug and a donut are homeomorphic]{A coffee mug and a donut are homeomorphic. Intuitively, this can be known as it is possible to deform one into the other. The mug was rendered from the model at \url{http://www.thingiverse.com/thing:7953}.}
+\caption[A coffee mug and a donut are homeomorphic]{A coffee mug and a donut are homeomorphic\footnotemark. Intuitively, this can be known as it is possible to deform one into the other. The mug was rendered from the model at \url{http://www.thingiverse.com/thing:7953}.}
 \label{fig:homeomorphism}
 \end{figure}
+\footnotetext{Related to the joke: `A topologist is a mathematician who can't tell the difference between a coffee mug and a donut'.}
 
 \begin{figure*}[tbp]
 \centering
@@ -286,9 +288,9 @@ In the context of an $i$-dimensional simplicial complex, a face refers to each o
 More formally, a simplicial complex can be defined as a collection of simplices such that:
 \begin{itemize}
 \item
-Every face of a simplex is also in the simplicial complex
+every face of a simplex is also in the simplicial complex;
 \item
-The intersection of any two simplices is either empty or is a common face of both of them\footnote{Note that this implies a definition where a simplex contains its boundary.}
+the intersection of any two simplices is either empty or is a common face of both of them\footnote{Note that this implies a definition where a simplex contains its boundary.}.
 \end{itemize}
 
 Based on the set of common vertices shared by two simplices, it is possible to define certain \emph{topological relationships} between them.
