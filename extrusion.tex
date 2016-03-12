@@ -12,7 +12,7 @@ The chapter starts by presenting some background on 2D-to-3D extrusion and an in
 Afterwards, \refse{se:extrusion-algos} describes an dimension-independent extrusion algorithm.
  % that can create $n$-dimensional cell complexes from $(n-1)$-dimensional space partitions.
 % by assigning one or more intervals to each $(n-1)$-cell
-\refse{se:extrusion-implementation} describes how this algorithm was implemented based on the Computational Geometry Algorithms Library (CGAL).
+\refse{se:extrusion-implementation} describes how this algorithm was implemented based on the implementation of combinatorial maps in CGAL.\@
 \refse{se:extrusion-experiments} summarises experiments using this implementation, which created consistent objects in up to 6D by combining publicly available GIS datasets.
 \refse{se:extrusion-generalisation} describes how extrusion can be used not only directly, but as a base to create dimension-independent generalisation operations.
 Finally, \refse{se:extrusion-conclusions} concludes the chapter with the main findings and the possibilities to use extrusion for higher-dimensional datasets.
@@ -40,17 +40,17 @@ This process thus creates simple 3D representations of each building, where a bu
 
 Such an extrusion process is appealing largely because of its simplicity.
 All the information that is required for the previous example is notoriously easy to obtain: building footprints are widely available---including in open datasets such as OpenStreetMap\footnote{\url{http://www.openstreetmap.org/}}---or can be easily obtained from satellite imagery, while the height information can be acquired with techniques like airborne laser scanning or photogrammetry.
-Not coincidentally, this type of 3D models are commonly generated in practice and often appear in standards such as CityGML LOD1 \citep{CityGML2}.
+Not coincidentally, this type of 3D models are commonly generated in practice and often appear in standards such as CityGML \citep{CityGML2}, where it is defined as the level of detail (LOD) 1.
 
 Moreover, it is easy to ensure that extruded models are generated in a topologically consistent manner~\citep{Ledoux11a}.
-If the input forms a planar partition---or is processed to form a planar partition, \eg\ using the method described in \refse{se:pprepair}---the output polyhedra can never overlap.
+If the input forms a planar partition---or is processed to form a planar partition, \eg\ using the method described in \refse{se:pprepair}---and the extrusion direction is orthogonal to the planar partition, \emph{the output polyhedra are guaranteed not to overlap}.
 
-While not every possible 3D shape can be generated using extrusion---the top and bottom faces will always be horizontal, and the side faces connecting them will always be vertical---, many shapes can still be constructed using this type of method \citep{Ferrucci93}.
-This is especially true when simple extensions are considered, such as multiple intervals per 2-cell, possibly overlapping 2-cells in the input, or an arbitrary extrusion direction.
+While not every possible 3D shape can be generated using extrusion---the top and bottom faces will always be horizontal, and the side faces connecting them will always be vertical---, a remarkable number of shapes can be constructed using this type of method \citep{Ferrucci93}.
+This is especially true when simple extensions to the method are considered, such as multiple intervals per 2-cell, possibly overlapping 2-cells in the input, or an arbitrary extrusion direction.
 
 Viewed at a more fundamental level, shown in \reffig{fig:extrusion}, extrusion `lifts' a 2D cell complex to form a 3D cell complex.
-In order to form a valid cell complex as defined in \refse{ss:algebraic-topology}, cells must not overlap, but instead they should form a structure of cells of dimension from 0 to 3, where $i$-cells are bounded by sets of $(i-1)$-cells.
-The extruded cells must therefore take into account the incidence and adjacency relationships between cells, splitting cells of every dimension at the places where the common boundaries of higher-dimensional cells start or end.
+In order to form a valid cell complex as defined in \refse{ss:algebraic-topology}, cells must not overlap, but instead they should form a structure of cells of dimension from 0 to 3, where $i$-cells ($\forall i > 0$) are bounded by sets of $(i-1)$-cells.
+The extruded cells must therefore take into account the incidence and adjacency relationships between cells, splitting cells of every dimension at the places where the common boundaries of higher-dimensional cells start and end.
 \begin{figure}[tbp]
 \centering
 \subfloat[]{
@@ -60,32 +60,41 @@ The extruded cells must therefore take into account the incidence and adjacency 
 \subfloat[]{
 \includegraphics[width=0.5\linewidth]{figs/extrusion-2}
 \label{subfig:extrusion-2}}
-\caption[Extrusion from 2D to 3D]{(a) A 2D cell complex, where each 2-cell is associated with a height, is extruded to generate (b) a 3D cell complex. Note how the vertex $v$ in (a) causes the generation of the vertex $v^\prime$ in (b) at the height of the top face back left polyhedron.
+\caption[Extrusion from 2D to 3D]{(a) A 2D cell complex, where each 2-cell is associated with a height, is extruded to generate (b) a 3D cell complex. Note how the extrusion of vertex $v$ in (a) causes the generation of several vertices and edges.
+In particular, the vertex $v^\prime$ in (b), which is at the height of the top face of the back left polyhedron.
 This vertex needs to be used in the representation of the all 4 edges, 5 faces and 3 volumes that are incident to it, not only in those that are part of the back left polyhedron. This ensures that the cells in (b) are pairwise disjoint and have the expected correct topology.}
 \label{fig:extrusion}
 \end{figure}
 
-Extrusion, as defined in the previous paragraph, has a natural extension to higher dimensions.
-A dimension-independent operation thus `lifts' an $(n-1)$-dimensional cell complex, to an $n$-dimensional cell complex by assigning one or more intervals to each $(n-1)$-cell, \ie\ a subset of 1D Euclidean space\footnote{This is equivalent to one or more edges in \citet{Lienhardt04} or 1-dimensional polyhedra in \citet{Ferrucci93}.}, along which this cell is defined.
-For instance, a building footprint can be extruded by an interval $(0, height)$, or a building can be extruded along the time intervals $(1700, 1960) \cup (2010, \infty)$.
+Extrusion, in the sense of its GIS definition as exposed in the previous paragraph, has a natural extension to higher dimensions.
+A dimension-independent extrusion operation thus `lifts' an $(n-1)$-dimensional cell complex, to an $n$-dimensional cell complex by assigning one or more intervals to each $(n-1)$-cell, \ie\ a subset of 1D Euclidean space\footnote{This is equivalent to one or more edges in \citet{Lienhardt04} or 1-dimensional polyhedra in \citet{Ferrucci93}.}, along which this cell is defined.
+For instance, just as a polygon representing the footprint of a building is commonly extruded using an interval $(0, height)$, a polyhedron representing a building can be extruded along the time interval $(construction, destruction)$.
+As \reffig{fig:Frauenkirche} shows, extrusion using multiple unconnected intervals is also a possible use case.
+\marginpar{
+\captionsetup{type=figure}
+\centering
+\includegraphics[width=\marginparwidth]{figs/Frauenkirche}
+\caption[The Frauenkirche in Dresden]{The Frauenkirche in Dresden, Germany, was originally built in 1743, destroyed during the bombing of Dresden in 1945, and reconstructed in 2005.
+A simple 4D model of the building could be made by extruding a 3D model of it along the interval $(1743, 1945) \cup (2005, \infty)$.
+Photograph by David M\"uller in Wikimedia Commons.
+}
+\label{fig:Frauenkirche}
+}
 
 In the related literature, there are two methods that can be used for a similar purpose.
 The Cartesian product, a more general operation defined for generalised maps in \citet{Lienhardt04}, generates a combinatorial structure equivalent to the extrusion of all the objects along a single interval by computing the Cartesian product of the original (unextruded) cell complex with an edge.
-However, since such an operation is limited to a single interval (and thus the same for all the input objects), the output cannot be directly applied for modelling real-world datasets.
+However, since such an operation is limited to a single interval (which is the same for all the input objects), the output cannot be directly applied for modelling real-world datasets.
 A related possibility, presented by \citet{Ferrucci93}, is to first pre-process all the intervals (for all cells), splitting them into fragments at the other intervals' endpoints so that each fragment intersects another one if and only if they have the same endpoints, and then computing the output purely combinatorially for each possible combination of fragment and for each input cell.
-While this allows us to model real-world objects, the process of splitting the input intervals might greatly increase the number of output cells since two intersecting intervals are split even if their corresponding cells are not incident or adjacent to each other.
-The method presented in this chapter follows a similar approach, but instead process the input intervals for each input cell separately based on its incidence relationships with other cells, thus generating a smaller number of cells and a considerably smaller combinatorial structure.
+While this allows us to model real-world objects, the process of splitting the input intervals might greatly increase the number of output cells since two intersecting intervals are split even if their corresponding cells are far away from each other.
+The method presented in this chapter follows a similar approach, but instead process the input intervals for each input cell separately based on the incidence relationships with other cells, thus generating fewer total intervals, a smaller number of cells and a considerably smaller combinatorial structure.
 
 \section{A dimension-independent extrusion algorithm}
 \label{se:extrusion-algos}
 
-The dimension-independent extrusion algorithm requires two input arguments: an $(n-1)$-dimensional space partition of $(n-1)$-polytopes embedded into $(n-1)$-dimensional space, stored as an $(n-1)$-dimensional generalised map $G$; and a map of extrusion intervals $\rho$ that links each $(n-1)$-cell $c$ in $G$ to a set $R$ of 1-dimensional intervals, where every interval $r$ in $R$ is represented as a pair of values $(r_{\min}, r_{\max})$ where $c$ is extruded along the $n$-th dimension.
+The dimension-independent extrusion algorithm requires two input arguments: an $(n-1)$-dimensional space partition of $(n-1)$-polytopes embedded into $(n-1)$-dimensional space, stored as an $(n-1)$-dimensional generalised map $G$; and a map of extrusion intervals $\rho$\footnote{I originally referred to these as \emph{ranges} and thus used variations of $R$ and $\rho$ (rho).
+While a kind anonymous reviewer correctly suggested that it is more precise to refer to them as \emph{intervals}, $\rho$ is more distinctive than iota ($\iota$) and upsilon ($\upsilon$), and so it remains as $\rho$ here.} that links each $(n-1)$-cell $c$ in $G$ to a set $R$ of 1-dimensional intervals, where every interval $r$ in $R$ is represented as a pair of values $(r_{\min}, r_{\max})$ where $c$ is extruded along the $n$-th dimension.
 The intervals in $\rho$ for the cells of lower dimension do not need to be given, since they can be computed by the algorithm based on their incidence relationships to the $(n-1)$-cells.
 Note that, as \reffig{fig:extrusion-intervals} shows, multiple intervals for the same cell are possible.
-
-There are two cases in which a cell has multiple intervals.
-For an $(n-1)$-dimensional cell, multiple intervals may be explicitly provided in the input (\eg\ if the input complex represents a set of buildings, and the buildings should be extruded along the time dimension, there could be a building that existed in two separate periods of time).
-For a lower-dimensional cell, multiple extrusion intervals may be passed to this cell from several adjacent higher-dimensional cells.
 \begin{figure}[tbp]
 \centering
 \subfloat[]{
@@ -96,12 +105,17 @@ For a lower-dimensional cell, multiple extrusion intervals may be passed to this
 \includegraphics[width=0.5\linewidth]{figs/intervals-2}
 \label{subfig:extrusion-intervals-2}}
 \caption[The extrusion intervals of the lower-dimensional cells]{All the cells are given extrusion intervals based on the intervals for the $(n-1)$-cells.
-Note how it is possible to have multiple intervals per cell both in the input, \eg\ the right square is extruded along two intervals, and in the output, \eg\ the two edges $v^{(0,1)}$, $v^{(1.5,2)}$ and $v^{(2,3)}$ are the result of the extrusion of a single vertex $v$ whose extrusion interval was not given as input.}
+Note how it is possible to have multiple intervals per cell both in the input, \eg\ the purple square on the right is extruded along two intervals, and in the output, \eg\ the two edges $v^{(0,1)}$, $v^{(1.5,2)}$ and $v^{(2,3)}$ are the result of the extrusion of a single vertex $v$ whose extrusion interval was not directly given.}
 \label{fig:extrusion-intervals}
 \end{figure}
-Its result is an $n$-dimensional generalised map $G^{\prime}$ representing a $n$-dimensional cell complex containing a set of prismatic $n$-polytopes, the $n$-dimensional analogue of a set of prisms, which also form a space partition.
+
+There are two cases in which a cell has multiple intervals.
+One of these is that for an $(n-1)$-dimensional cell, multiple intervals may be explicitly provided in the input (\eg\ the example previously given in \reffig{fig:Frauenkirche}).
+The other case is that for a lower-dimensional cell, multiple extrusion intervals may be passed to it by several adjacent higher-dimensional cells.
+
+The result of the extrusion algorithm is an $n$-dimensional generalised map $G^{\prime}$ representing a $n$-dimensional cell complex containing a set of prismatic $n$-polytopes, the $n$-dimensional analogue of a set of prisms, which also form a $n$-dimensional space partition.
 It is important to note that the output map $G^\prime$ creates entirely new structures, \ie\ it does not reuse the darts or embeddings of $G$, since the $(n-1)$-simplices in $G$ are similar but not identical to the $n$-simplices in the base of $G^\prime$.
-Concretely, these differ in terms of the highest-dimensional involution $\alpha_{n-1}$ and the total number of involutions per dart.
+These differ in terms of the highest-dimensional involution $\alpha_{n-1}$ and---importantly for an implementation---in the total number of involutions per dart.
 
 As \reffigs{fig:trianglecomplex} and~\ref{fig:blockscomplex} show, the cells in the new $n$-dimensional cell complex in $G^\prime$ have a direct relation to and can be expressed in terms of the $(n-1)$-cells in $G$ and their extrusion intervals in $\rho$.
 This property is used in order to define the cells of the output cell complex, which are equivalent to the embeddings in $G^\prime$.
@@ -122,7 +136,7 @@ A series of prismatic facets linking corresponding $(n-2)$-cells (\ie\ ridges) $
 \subfloat[]{
 \includegraphics[width=0.45\linewidth]{figs/trianglecomplex-2}
 \label{subfig:trianglecomplex-2}}
-\caption[Extruding the embeddings]{Extruding the embeddings of an $i$-cell $c$ along a single interval $r = (a,b)$ such that $a,b \in \mathbb{R}, a < b$, generates the embeddings of three cells: two $i$-cells $c^{a}$ and $c^{b}$, and an $(i+1)$-cell $c^{r} = c^{(a,b)}$ lying between them.}
+\caption[Extruding the embeddings]{Extruding the embeddings of an $i$-cell $c$ along a single interval $r = (a,b)$ such that $a,b \in \mathbb{R}, a \neq b$, generates the embeddings of three cells: two $i$-cells $c^{a}$ and $c^{b}$, and an $(i+1)$-cell $c^{r} = c^{(a,b)}$ lying between them.}
 \label{fig:trianglecomplex}
 \end{figure}
 
@@ -166,7 +180,7 @@ In order to generate non-intersecting cells, these need to be split into a set o
 \label{fig:intersectingintervals}
 }
 A sketch of a simple process to do this is shown in \refalgo{algo:propagateintervals}, which assumes that the sets of intervals are kept sorted.
-Note that this is essentially a one dimensional analogue to other operations used in GIS, \eg\ vector map overlays \citep[\S{}2.3]{deBerg08} and time-composites in spatio-temporal modelling \citep{Langran88}.
+Note that this is essentially a one dimensional analogue of other operations used in GIS, \eg\ vector map overlays \citep[\S{}2.3]{deBerg08} and time-composites in spatio-temporal modelling \citep{Langran88}.
 % \begin{figure}
 \begin{algorithm}[tb]
 \small
@@ -211,14 +225,14 @@ Considering what happens when a single new interval is passed to a cell in the i
 However, when taking into account $r$ intervals passed to the same cell, the total number of intervals for the cell can only increase to $2r-1$.
 As each extrusion interval is bounded by two values, $r$ intervals lead to at most $2r$ boundary values and thus the number of intervals cannot be higher than $2r-1$.
 
-Assuming that a new interval can be added to a cell in $O(\log r)$ time, \eg\ by maintaining an augmented red-black tree which stores the endpoints of the intervals, the total time to construct the ordered set of all intervals for a cell $c$ is $O(r \log r)$, where $r$ is the number of intervals that are passed onto $c$.
+Assuming that a new interval can be added to a cell in $O(\log r)$ time, \eg\ by maintaining a sorted list or an augmented red-black tree with the endpoints of the intervals, the total time to construct the ordered set of all intervals for a cell $c$ is $O(r \log r)$, where $r$ is the number of intervals that are passed onto $c$.
 The overall computational complexity of this step depends on the incidence relationships between the cells in the complex.
 
 \subsection{Generating the new embeddings}
 \label{ss:embeddings}
 
-Intuitively, when a single $i$-cell is extruded along a single interval $r = (r_{\min}, r_{\max})$, three new cells are generated: two $i$-cells that correspond to the end points of the interval $r_{\min}$ and $r_{\max}$, and a prismatic $(i+1)$-cell lying between them.
-For instance, extruding a polygon results in `top' and `bottom' polygonal faces and a polyhedron that lies between them.
+Intuitively, when a single $i$-cell is extruded along a single interval $r = (r_{\min}, r_{\max})$, three new cells are generated: two $i$-cells that correspond to the end points of the interval $r_{\min}$ and $r_{\max}$, and a prismatic $(i+1)$-cell along all of $r$, \ie\ lying between the two $i$-cells.
+For instance, extruding a polygon results in `top' and `bottom' polygonal faces and a polyhedron that lies between the two polygons.
 
 Analogously, considering the \emph{embedding} structures that store the necessary attributes for each cell, such that an $i$-dimensional embedding ($i$-embedding) structure keeps the attributes of an $i$-cell, \emph{extruding an $i$-dimensional embedding results in two $i$-embeddings and one $(i+1)$-embedding}.
 In the case of linear geometries, extruding a point entails the creation of two additional points, one with an appended $r_{\min}$ coordinate, and one with an $r_{\max}$ one.
@@ -269,16 +283,15 @@ map $ex$ that links an input embedding to its extruded embeddings}
 \end{algorithm}
 % \end{figure*}
 
-Since this part of the algorithm iterates through all the cells in the input cell complex, and it generates at most three new embeddings per interval for each cell, the computational complexity can be $O(rn)$ per cell, where $r$ is the total number of intervals and $n$ is the dimension, as long as the map $ex$ can be queried and the new embeddings can be created in time that is linear on the dimension (which in practice is a relatively small constant).
+Since this part of the algorithm iterates through all the cells in the input cell complex, and it generates at most three new embeddings per interval for each cell, the computational complexity can be $O(rn)$ per cell, where $r$ is the total number of intervals and $n$ is the dimension, \ie\ as long as the map $ex$ can be queried and the new embeddings can be created in time that is linear on the dimension (which in practice is a relatively small constant).
 
 \subsection{Generating the new combinatorial structure and linking it to its correct embeddings}
 \label{ss:combinatorial}
 
-The extrusion of a \emph{single} dart in the input map $G$ along a single interval $r = (r_{\min}, r_{\max})$ generates a series of connected darts in $G^\prime$ connected by a sequence of involutions $\alpha_{n-1}, \alpha_{n-2}, \ldots, \alpha_{1}, \alpha_{0}, \alpha_{1}, \ldots, \alpha_{n-2}, \alpha_{n-1}$, as shown in \reffig{fig:triangle} for the cell complex from \reffig{fig:trianglecomplex}.
+The extrusion of a \emph{single} dart in the input map $G$ along a single interval $r = (r_{\min}, r_{\max})$ generates a series of connected darts in $G^\prime$ connected by a sequence of involutions $\alpha_{n-1}, \alpha_{n-2}, \ldots, \alpha_{1}, \alpha_{0}, \alpha_{1}, \ldots, \alpha_{n-2}, \alpha_{n-1}$.
 Intuitively, these are equivalent to stacked $n$-simplices that together form a prism\footnote{This is always true combinatorially, but it might not be true geometrically if the $(n-1)$-simplex is not embedded so as to lie in the interior of the cell, as shown in \refse{ss:ordered-topological-models}.}.
-Since two darts connected by an $\alpha_i$ involution share all but the $i$-th node, and the $i$-th node in a generalised map means that a dart belongs to a certain $i$-cell\footnote{In this specific case, where cells have linear geometries.}, this series of darts represents a succession of simplices that progressively change from the cells at the `base' ($r_{\min}$) to those at the `side' ($(r_{\min}, r_{\max})$) to those at the `top' ($r_{\max}$).
-As the pattern that is followed in each stack of darts in $G^\prime$ is the same for all the darts in $G$, assuming that their extrusion intervals are the same, they can also be expressed in terms of the dart in $G$ being extruded and their position in the stack.
-The darts at a certain level in the stack are thus called a \emph{layer}, and various functions will map an input dart in $G$ to the equivalent dart at a specific layer in $G^\prime$.
+\reffig{fig:triangle} shows a simple extrusion of the cell complex from \reffig{fig:trianglecomplex} including all its darts.
+
 \begin{figure}[tbp]
 \centering
 \subfloat[]{
@@ -293,6 +306,33 @@ Note that one can obtain a dart's representation as a simplex by considering add
 \label{fig:triangle}
 \end{figure}
 
+\marginpar{
+\captionsetup{type=figure}
+\centering
+\setcounter{subfigure}{6}\subfloat[]{\includegraphics[width=0.7\marginparwidth]{figs/stack-6}\label{subfig:stack-6}}\\
+\vspace{-10mm}
+\setcounter{subfigure}{5}\subfloat[]{\includegraphics[width=0.7\marginparwidth]{figs/stack-5}\label{subfig:stack-5}}\\
+\vspace{-8mm}
+\setcounter{subfigure}{4}\subfloat[]{\includegraphics[width=0.7\marginparwidth]{figs/stack-4}\label{subfig:stack-4}}\\
+\vspace{-6mm}
+\setcounter{subfigure}{3}\subfloat[]{\includegraphics[width=0.7\marginparwidth]{figs/stack-3}\label{subfig:stack-3}}\\
+\vspace{-5mm}
+\setcounter{subfigure}{2}\subfloat[]{\includegraphics[width=0.7\marginparwidth]{figs/stack-2}\label{subfig:stack-2}}\\
+\vspace{-6mm}
+\setcounter{subfigure}{1}\subfloat[]{\includegraphics[width=0.7\marginparwidth]{figs/stack-1}\label{subfig:stack-1}}\\
+\vspace{-3mm}
+\setcounter{subfigure}{0}\subfloat[]{\includegraphics[width=0.7\marginparwidth]{figs/stack-0}\label{subfig:stack-0}}\\
+\caption[The stack of simplices in an extruded dart]{The extrusion of a single dart (blue) results in a stack of simplices that together form a prism.
+In order to visualise it more intuitively, the procedure here is shown from bottom (a) to top (g).
+}
+\label{fig:stack}
+}
+
+Since two darts connected by an $\alpha_i$ involution share all but the $i$-th node, and the $i$-th node in a generalised map means that a dart belongs to a certain $i$-cell\footnote{In this specific case, where cells have linear geometries.}, this series of darts represents a succession of simplices that progressively change from the cells at the `base' (at $r_{\min}$) to those at the `side' (at the interval $(r_{\min}, r_{\max})$) to those at the `top' (at $r_{\max}$).
+This can be more clearly seen in \reffig{fig:stack}.
+As the pattern that is followed in each stack of darts in $G^\prime$ is the same for all the darts in $G$, assuming that their extrusion intervals are the same, they can also be expressed in terms of the dart in $G$ being extruded and their position in the stack.
+The darts at a certain level in the stack are thus called a \emph{layer}, and various functions will map an input dart in $G$ to the equivalent dart at a specific layer in $G^\prime$.
+
 An intuitive justification for this is that if one considers the darts in the base and top facets in the extrusion of a cell $e$ along a single interval $r = (r_{\min}, r_{\max})$, these belong to different cells of every dimension except for their $n$-cell---which is $ex(e, r)$.
 Considering a function $e_i: D \rightarrow E$ that links a dart $d \in D$ to its $i$-embedding in $E$, for every dimension $i < n$, the darts of the base facet belong to the extruded $ex\left(e_i\left(d\right), r_{\min}\right)$ cells, while the top darts belong to the extruded $ex\left(e_i\left(d\right), r_{\max}\right)$ cells.
 The darts of the faces on the sides, which connect corresponding ridges of the base and top, belong instead to a mixture of cells in $ex\left(e_i\left(d\right), r_{\min}\right)$, $ex\left(e_i\left(d\right), r_{\max}\right)$ and $ex\left(e_i\left(d\right), r\right)$.
@@ -302,7 +342,7 @@ This means that there must be a natural progression of layers of darts: starting
 
 The algorithm to generate the extruded combinatorial structure therefore works by generating layers of darts that follow a pattern based on the darts in the input cell complex, starting from those for the base face, moving on to the $2n-2$ layers for the side faces, and finishing with the top face.
 The output darts and the involutions between them are expressed in terms of the input generalised map $G$.
-For this, a function $cur: G \rightarrow G^\prime$ maps the darts of $G$ to the current layer of the output map $G^\prime$.
+For this, a function $cur: G \rightarrow G^\prime$ maps a dart in $G$ to the corresponding dart in the currently being generated layer of the output map $G^\prime$.
 Note that this means that the algorithm needs to keep track of only two layers of darts at any given time, one in $G$ and one in $G^\prime$, each of which has at most the number of darts in the input map.
 This bounds the memory usage of this part of the algorithm, which is therefore on the order of $O(d)$, with $d$ the number of darts in the input space partition.
 
@@ -310,9 +350,10 @@ As shown by \citet{Ferrucci93}, when multiple intervals are involved this proced
 However, it is possible to greatly reduce the number of darts generated by skipping the creation of some of the darts.
 This is possible because the extrusion intervals have been independently propagated to each cell of every dimension.
 Based on the algorithm, the lower-dimensional cells in the complex have received all the intervals from their incident higher-dimensional cells so that the intervals in the lower-dimensional cells contain all the endpoints of the intervals of their incidences.
-However, the same is not true in the opposite direction: the intervals for the higher-dimensional cells have not been subdivided so as to exactly match the ones of their incident lower-dimensional cells.
+However, the same is not true in the opposite direction: the intervals for the higher-dimensional cells have not been subdivided so as to contain all the ones of their incident lower-dimensional cells.
 Nevertheless, as \reffig{fig:blocks} shows, even when an extrusion interval that would be used by the pattern described above is not in a cell, it is possible to map it to a \emph{bigger} interval that contains it.
-If one considers the darts that would be generated using the above mentioned approach for all the non-intersecting intervals in the cell complex, but mapping the extrusion intervals to bigger containing ones when the smaller ones do not exist, this can result in many darts that are equivalent (\ie\ they have nodes at the same cells), and thus can be skipped during the process.
+If one considers the darts that would be generated using the above mentioned approach for all the non-intersecting intervals in the cell complex, but at the same time mapping the non-existent extrusion intervals to their immediately bigger containing ones, this can result in many darts that are equivalent (\ie\ they have nodes at the same cells).
+These darts are those that can be skipped during the extrusion process.
 \begin{figure*}[tbp]
 \centering
 \subfloat[]{
@@ -323,7 +364,7 @@ If one considers the darts that would be generated using the above mentioned app
 \includegraphics[width=0.45\linewidth]{figs/blocks-2}
 \label{subfig:blocks-2}}
 \caption[The darts in the cell complexes in \reffig{fig:blockscomplex}]{The darts in the cell complexes in \reffig{fig:blockscomplex}.
-Note that the darts of the right cube in (b), when viewed as individual stacks, are similar to the ones in \reffig{fig:triangle}.
+Note that the darts of the right cube in (b), when viewed as individual stacks, are similar to the ones in \reffigs{fig:triangle} and~\ref{fig:stack}.
 The darts of the left box are however different: those on the left all involve an extrusion along the interval $(a,c)$ due to the fact that there is no vertex, edge or facet extruded to $b$.
 On the other hand, those in the right do have a vertex and an edge at $b$, but not a facet and still belong to the same volume.}
 \label{fig:blocks}
@@ -332,8 +373,8 @@ On the other hand, those in the right do have a vertex and an edge at $b$, but n
 Therefore, in order to generate the darts for all intervals of all cells, this procedure is repeated for all the intervals in $\rho$, after making them non-intersecting using the same procedure delineated in \refse{ss:propagation}, and skipping all the darts that would be equivalent to those that have already been created.
 This is done using a sweep-hyperplane-like algorithm that generates up to $n$ layers of darts at the events at the beginning or end of an interval, creating darts only when the sweep-hyperplane\footnote{\ie\ a $(n-1)$-dimensional shape that is unbounded along $n-1$ dimensions in $n$D space, \eg\ a line in $\mathbb{R}^2$ or a plane in $\mathbb{R}^3$.} passes by the beginning or end of their extrusion intervals (\ie\ not while it is in their interior).
 The darts are linked to their appropriate embedding according to the same pattern.
-The complete procedure to generate the combinatorial structure is presented in \refalgo{algo:gmapextrusion}, which uses the \refalgo{algo:gmaplayerbase} when the sweep plane passes by the beginning of an interval and \refalgo{algo:gmaplayertop} by the end of one.
-If an input dart is denoted as $d$, its corresponding dart in the current layer of the output are denoted as $cur(d)$, the dart linked to $d$ by an $i$-involution as $\alpha_{i}(d)$, and the $i$-embedding of $d$ as $e_{i}(d)$.
+The complete procedure to generate the combinatorial structure is presented in \refalgo{algo:gmapextrusion}, which uses the \refalgo{algo:gmaplayerbase} when the sweep hyperplane passes by the beginning of an interval and the similar \refalgo{algo:gmaplayertop} when the sweep hyperplane by the end of one.
+If an input dart is denoted as $d$, its corresponding dart in the currently being generated layer of the output is denoted as $cur(d)$, the dart linked to $d$ by an $i$-involution as $\alpha_{i}(d)$, and the $i$-embedding of $d$ as $e_{i}(d)$.
 
 % \begin{figure}
 \begin{algorithm}[tb]
@@ -562,7 +603,7 @@ It was generated in 3 seconds using 15 MB of RAM.\@
 \label{subfig:aula4d-top-bottom}}
 \caption[Extruding the footprint of the Aula Congress Centre in Delft to 4D]{The footprint of the Aula Congress Centre (\reffig{fig:aula-ex}) extruded twice to create a 4D model.
 It is shown here in three parts for clarity: (a) the faces in the two end volumes, (b) the lateral faces connecting corresponding vertical edges, and (c) the top and bottom faces connecting corresponding horizontal edges.
-Not shown here are the 16 different polyhedra that are formed from these faces.}
+Not shown here are the 16 different polyhedra that bound the polychoron and which are all bounded by different sets of these faces.}
 \label{fig:aula4d}
 \end{figure*}
 
@@ -624,7 +665,8 @@ Perhaps more importantly, it is possible to gradually reduce the complexity of t
 
 After such transformations, it is possible to easily detect and remove degenerate cells, as they can be identified because they have all their vertices at the same location.
 In the case of a topological model, such as a generalised or combinatorial map, the topological relationships around the collapsed cells will have to be recomputed.
-However, this is possible to achieve either by finding the new incidences and adjacencies, or by regenerating all topological relationships in a brute for manner using the method described in \refch{ch:incremental-construction}.
+However, this is possible to achieve either by finding the changed incidences and adjacencies, or by regenerating all topological relationships using the method described in \refch{ch:incremental-construction}.
+For the latter, it is simply necessary to ignore all degenerate cells (as defined by having all their vertices at the same embedding in $\mathbb{R}^n$).
 
 \section{Conclusions}
 \label{se:extrusion-conclusions}
@@ -639,9 +681,13 @@ It is also relatively fast, with a worst case complexity of $O(ndr)$ in the main
 
 Moreover, the algorithm has been implemented using CGAL Combinatorial Maps and the source code has been made publicly available under a permissive licence.
 It has also been tested with publicly available datasets commonly used in GIS.\@
-Apart from being applied cell by cell, it can also be combined with other operations, such as building $n$D cell complexes incrementally, where more complex models are required for a subset of the objects in a model.
+Apart from being applied cell by cell, it can also be combined with other operations, such as the generalisation operations described here or building certain $n$D cells incrementally, where more complex models are required only for a subset of the objects in a model.
 
-While the implementation presented here performs well enough for typical GIS datasets, it could be improved upon by integrating the extrusion intervals into the embeddings of the cells, allowing for constant time access to the extrusion intervals.
-This would make it possible to support much larger datasets and match the theoretical complexity of the algorithm.
+While the implementation presented here performs well enough for typical GIS datasets, it could be made faster by integrating the extrusion intervals into the embeddings of the cells, allowing for constant time access to the extrusion intervals.
+This would make it possible to support much larger datasets and make the implementation match the theoretical complexity of the algorithm.
 In order to improve memory usage, another possibility would be implementing the algorithm in a more compact representation of a simplicial complex, \eg\ \citet{Boissonnat12}.
-Finally, it would be interesting to consider other types of models that can be generated using extrusion-like algorithms, such as sweeps and $n$-dimensional cells of revolution.
+
+In the future, it would be interesting to consider other types of models that can be generated using extrusion-like algorithms, such as sweeps and $n$-dimensional cells of revolution.
+These are both simple extensions either using either non-linear embeddings or discretised approximations with small cells with linear geometries.
+A more complex extension would involve starting from a \emph{series of cell complexes} that each form a planar partition, such as series of 3D models of the same region at different levels of detail.
+While most of the algorithm described here should work directly on this latter example, managing the differing boundaries of the cells along the $n$-th dimension could be challenging---possibly requiring the computation of all intersections in an arrangement of $(n-1)$-cells.
