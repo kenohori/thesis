@@ -194,6 +194,7 @@ When other shapes are used, it is normally desirable to have cells that resemble
 \emph{Semi-regular} tessellations, which consist of more than one type of polygon/polyhedron are also possible but are not widely used, even in 2D.
 In 2D, the most commonly used other shapes are triangles and hexagons.
 In 3D, parallelepipeds or cubes are almost always used, but the face-centred cubic or hexagonal close-packed lattices are possibilities that resemble balls more closely.
+For instance, the new model cycle from the European Centre for Medium-Range Weather Forecasts\footnote{\url{http://www.ecmwf.int/en/about/media-centre/news/2016/new-forecast-model-cycle-brings-highest-ever-resolution}} uses a cube-octahedron honeycomb that wraps around the Earth.
 
 These cells are then used to record whether the cell belongs to the interior of the object or not, or in the case of multiple objects, which objects are present inside the cell.
 After such a tessellation is defined, a programatic order or path that traverses all cells (\ie\ a space filling curve) is defined \citep{Sagan94}, and the order of the cells along this curve is used to store them by \emph{enumerating} for each cell whether a cell belongs to the interior of an object.
