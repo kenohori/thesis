@@ -12,3 +12,9 @@ thesis.blg
 thesis.bbl
 thesis.aux
 .DS_Store
+propositions.synctex.gz
+propositions.pdf
+propositions.log
+propositions.fls
+propositions.fdb_latexmk
+propositions.aux
