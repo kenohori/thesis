@@ -9,8 +9,8 @@ In order for them to be used in practice, it is therefore important to have meth
 
 While fully developing methods and algorithms to do so is outside the scope of this thesis, steps towards formalising this problem and looking for potential solutions were made within the context of this thesis, and they are thus documented here.
 The chapter starts by giving some of the background behind the problem in \refse{se:slicing-notions}, explaining at a high level the process to extract lower-dimensional information from a higher-dimensional model.
-Using a camera analogy common in computer graphics, \refse{se:3dto2d} explains how a 3D viewpoint is placed in a 3D scene through the application of different transformations, capturing a 2D view of it by applying a given projection.
-\refse{se:4dto3d} extends this process to higher dimensions, formulating a simple dimension-independent generalisation of the orthographic and perspective projection methods and explaining other projection possibilities.
+Using a simple camera analogy common in computer graphics, \refse{se:3dto2d} explains how a 3D viewpoint is placed in a 3D scene through the application of different transformations, capturing a 2D view of it by applying a given projection.
+\refse{se:4dto3d} uses this analogy to give an intuitive description of how this process extends to higher dimensions, later formulating a simple dimension-independent generalisation of the orthographic and perspective projection methods and explaining other projection possibilities.
 Finally, \refse{se:slicing-conclusions} concludes with some ideas on the value of these methods, what pieces are still missing and how the overall process could be implemented.
 
 \section{Background}
@@ -24,10 +24,10 @@ In computer graphics, these steps would normally be followed by \emph{rendering}
 
 \textbf{Selecting} a subset of a dataset is useful to bring certain parts of the dataset into view.
 For instance, this is commonly applied to parts of a dataset that are normally not visible, such as the interior of an object.
-It is also widely used to reduce the complexity of the overall problem (computational and otherwise), avoiding the need to make unnecessary computations, such as projecting and rendering parts of the dataset that will be clearly out of view.
+It is also widely used to reduce the difficulty of the overall problem and avoiding the need to make unnecessary computations, such as projecting and rendering parts of the dataset that will be clearly out of view.
 
 This selection process can be relatively simple, such as using all objects that are within a certain bounding box, that are within a certain distance of a point, or being of a given dimension.
-For instance, 3D computer graphics programs will commonly render only the faces of the objects lying (approximately) within a frustum, not their (filled-in) volumes or the objects that are clearly out of view.
+For instance, 3D rendering programs and 3D games will usually only render the 2D faces of the objects lying (approximately) within a region (\eg\ frustum), not their (filled-in) volumes or any 2D faces that are clearly out of view.
 
 However, more complex selection processes are useful in many instances, often requiring specialised data structures and geometric algorithms.
 In particular, a great number of visibility determination algorithms have been developed \citep[Ch.~36]{Hughes14}, which solve various approximations of the surfaces that are visible in a scene.
@@ -47,7 +47,7 @@ These are obtained by the Boolean set intersection of a pair of cones with a pla
 \textbf{Projecting} the selected subset yields a given view of the scene and reduces the actual dimension of the objects being represented.
 Many types of projections for this purpose can be defined, usually in the form of a transformation that is applied to the objects.
 For example, orthographic and perspective projections (\reffig{fig:scheduling}) can directly map an $n$D scene to an $m$D subspace.
-However, more complex schemes are also possible, such as projecting first to an $m$-sphere (for a hypothetical $(m+1)$D Nef polyhedra implementation), then to an $m$D subspace (\eg\ using an equiangular projection as shown in \reffig{fig:ioh-equiangle}).
+However, more complex schemes are also possible, such as projecting first inwards/outwards to an $m$-sphere (for a hypothetical $(m+1)$D Nef polyhedra implementation), then to an $m$D subspace (\eg\ using an equiangular projection as shown in \reffig{fig:ioh-equiangle}).
 
 \begin{figure}[tb]
 \centering
@@ -82,16 +82,24 @@ Such a viewpoint can be parametrised---and thus easily defined and stored---by a
 
 \item
 It is possible to obtain different views---intuitively corresponding to camera lenses---through various projections.
-These can have customisable parameters, such as their field of view.
+These can also have their own customisable parameters, such as their field of view.
 
 \item
-Despite the fact that the dimension of the data is reduced (from $n$ to $m$), the distance from an object to the camera (\ie\ the depth) is still used for computations.
-In the simplest case, it is used as a visual cue where objects that are near can occlude those that are farther away.
-In more complex cases, it is possible to consider other visual effects, such as transparency and reflectivity.
+Despite the fact that the dimension of the data is reduced (from $n$ to $m$), characteristics that would seem to have been lost in this process can be preserved in the form of attributes and used for further computations.
+For instance, in computer graphics, the distance from an object to the camera (\ie\ the depth) is regularly used for computations of 3D-to-2D projections, either as a simple computation where the objects that are nearer (along a line of sight) occlude those that are farther away, or for more complex effects, such as transparency and reflectivity.
+In cartography, hypsometric tints, shaded relief, contour lines are all frequently used to encode the height information in a 2D map (\reffig{fig:wigwam}).
 \end{itemize}
 
+\marginpar{
+\captionsetup{type=figure}
+\centering
+\includegraphics[width=\marginparwidth]{figs/wigwam}
+\caption[Grand Teton National Park map]{An excerpt of the map for the Grand Teton National Park. From \citet{Patterson02}.}
+\label{fig:wigwam}
+}
+
 Continuing with the camera analogy, it is useful to consider the $n$D scene as consisting of a set of 0D--$n$D objects.
-In the context of this thesis, these would be represented as an $n$-dimensional simplicial complex or cell complex with linear geometry, where every vertex is embedded in a location in $\mathbb{R}^n$.
+In the context of this thesis, these would be represented as an $n$-dimensional simplicial complex or cell complex with linear geometries, such that every vertex in the map is embedded in a location in $\mathbb{R}^n$.
 The simplices/cells of the complex can be translated, rotated or scaled, if necessary, using the operations described in \refse{se:ndmath}.
 They can then be individually projected by the camera, possibly taking into account occlusion or other visual effects, in order to obtain the $m$D scene.
 
@@ -99,6 +107,7 @@ This projection is simplest when two conditions are met: (i) the objects have li
 In this case, it is only necessary to apply the transformation to every vertex individually.
 
 However, even when one or both of these conditions are not met, it is possible to obtain a good approximation by first subdividing a simplex/cell into small simplices/cells (up to an arbitrary $\varepsilon$ threshold), assuming that linear geometries will remain approximately linear and projecting only the vertices of the subdivided complex.
+This subdivision and approximation method is used for the cover of this thesis and the example in \reffigp{fig:4dhouse}.
 
 The following sections will therefore assume that the data to be projected consists only of a set of $k$ points with $n$ coordinates, which is stored as a $k \times n$ matrix.
 These will be given new coordinates in $\mathbb{R}^m$ by applying one or more operations expressed in terms of linear algebra.
@@ -109,7 +118,7 @@ These will be given new coordinates in $\mathbb{R}^m$ by applying one or more op
 Projecting a set of 3D objects into a 2D view is one of the most common tasks in computer graphics.
 As such, most computer graphics books derive their own versions of the transformations required to apply different types of projections, most of which are interchangeable but are often parametrised in different ways.
 
-From a practical perspective, the OpenGL Programming Guide (more widely known as the Red Book) \citep{Shreiner13} provides very intuitive forms of 3D-to-2D perspective and orthographic projections, which are based on defining a \emph{viewing frustum} or \emph{box} where the objects to be viewed should be located/placed.
+From a practical perspective, the OpenGL Programming Guide (better known as the Red Book) \citep{Shreiner13} provides very intuitive forms of 3D-to-2D perspective and orthographic projections, which are based on defining a \emph{viewing frustum} or \emph{box} where the objects to be viewed should be located/placed.
 This can be achieved by translating, rotating and scaling the objects as described in \refse{se:ndmath}.
 
 Assuming a setup as shown in \reffig{fig:frustum}, where a camera is placed at $z = 0$ and pointing towards higher values on the $z$ axis, with parameters defining the $x$ coordinates for the left ($l$) and right ($r$), $y$ coordinates for the bottom ($b$) and top ($t$), and $z$ coordinates for the near ($n$) and far ($f$) planes, \citet[Ch.~5]{Shreiner13} define a transformation that applies a perspective projection $P_p$ and an orthographic projection $P_o$ as:
@@ -165,7 +174,7 @@ P_\mathrm{eye} = \begin{bmatrix} P_\mathrm{world} - from \end{bmatrix}
 In a 3D to 2D \textbf{orthographic projection}, the $x$ and $y$ coordinates of this matrix, here denoted as $x_\mathrm{eye}$ and $y_\mathrm{eye}$, are directly usable as the coordinates of the points in $\mathbb{R}^2$.
 As shown in \reffig{fig:trig-ortho}, the $z_\mathrm{eye}$ coordinates represent the distance between the point and the \emph{projection plane}, \ie\ the camera, and thus define the \emph{depth}.
 Points with positive $z_\mathrm{eye}$ values close to zero are thus close to the camera while points with larger $z_\mathrm{eye}$ values are farther away.
-Note that negative $z_\mathrm{eye}$ values mean that the point lies behind the camera, so these would be usually omitted from the projection.
+Note that negative $z_\mathrm{eye}$ values mean that the point lies behind the camera, and so these would be usually omitted.
 
 \marginpar{
 \captionsetup{type=figure}
@@ -251,7 +260,7 @@ The objects represented by these coordinates can also be discretised into images
 For instance, \citet{Hanson94} describes how to perform many of the operations that would be required, such as dimension-independent clipping tests and ray-tracing methods.
 
 In addition to orthographic and perspective projections, there are other interesting projections that can be applied in higher dimensions.
-In fact, since we lack an intuitive understanding of higher dimensions, there is little benefit in using projections that work in similar ways as we process 3D information.
+In fact, since we lack an intuitive understanding of higher dimensions, there is little benefit in using projections that work in similar ways as the ways in which we mentally process 3D information.
 For instance, Jenn 3D\footnote{\url{http://www.math.cmu.edu/~fho/jenn/}} visualises polyhedra and polychora by first projecting them inwards/outwards to the volume of a 3-sphere\footnote{Intuitively, an unbounded volume that wraps around itself, much like a 2-sphere can be seen as an unbounded surface that wraps around itself.}, resulting in curved edges, faces and volumes.
 In a dimension-independent setting, this projection can be easily done by considering the angles $\vartheta_0, \ldots, \vartheta_{n-2}$ in an \emph{$n$-dimensional spherical coordinate system}.
 \citet[\S{}12.2]{Steeb11} formulates such a system as:
@@ -302,16 +311,16 @@ x_i^\prime = \frac{x_i}{x_n-1}, \mathrm{\quad{}for\ } 0 \leq i < n
 
 \reffig{fig:4dhouse} shows the application of this method to a 4D model of a house.
 For this, all the cells of the model were manually defined similar to how it was done in \refse{se:concrete-example} using their boundary cells and 0-embeddings set in $\mathbb{R}^4$.
-The 1- and 2-cells were first refined, the 0-, 1- and 2-cells were then projected inwards/outwards to the volume of a 3-sphere ($S^3$), and then stereographically projected to $\mathbb{R}^3$.
+The 1- and 2-cells were first refined into small line segments and triangles, the 0-, 1- and 2-cells were then projected inwards/outwards to the volume of a 3-sphere ($S^3$), and then stereographically projected to $\mathbb{R}^3$.
 The refined 2-cells were exported as to an\ {}.obj file with materials that reflect which 3- and 4-cell they belong to.
-Icospheres with a set radius were generated around every 0-cell and approximations of cylinders around every refined 1-cell.
-This was then imported in Blender and rendered using a perspective projection down to 2D.
+Icospheres with a set radius were generated around every 0-cell and approximations of cylinders were generated around every refined 1-cell.
+All of these geometries were then imported into Blender 3D and rendered using a perspective projection down to 2D.
 
 \begin{figure}[tb]
 \centering
 \includegraphics[width=\linewidth]{figs/4dhouse}
 \caption[4D to 2D projection of a 4D house]{A 4D model of a house is projected from $\mathbb{R}^4$ inwards/outwards to the 3-sphere $S^3$, then stereographically to $\mathbb{R}^3$, finally using a perspective projection down to $\mathbb{R}^2$.
-A $\pi / 5$ rotation along the plane passing through the $x_0$ and $x_3$ axes makes the bottom and back 2-cells larger than the rest.}
+A $\pi / 5$ rotation along the plane passing through the $x_0$ and $x_3$ (LOD) axes makes the bottom and back 2-cells larger than the rest.}
 \label{fig:4dhouse}
 \end{figure}
 
@@ -324,7 +333,7 @@ However, simple selections of the objects within a region or selections involvin
 
 On the other hand, projecting higher-dimensional datasets into lower dimensions is simple.
 As the projection methods explained and developed in this chapter have shown, many projections have dimension-independent formulations using linear algebra that are not that different from their 3D-to-2D versions.
-They are therefore relatively easy to implement using similar pipelines as current processes \citep{Chu09}, even if they have not been implemented in this thesis due to time constraints.
+They are therefore relatively easy to implement using similar pipelines as current processes \citep{Chu09}, even if they have not been implemented for general datasets within this thesis due to time constraints.
 
 As this chapter focused on extracting lower-dimensional information from higher-dimensional models from a high-level perspective and in a generic way, many interesting techniques covering useful special cases have not been explored here.
 For instance, several authors discuss the visualisation of specific classes of objects, generally in 4D.
