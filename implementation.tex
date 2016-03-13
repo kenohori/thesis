@@ -27,7 +27,7 @@ A few other packages are used as dependencies of the aforementioned packages.
 \item[GDAL\footnotemark]
 \footnotetext{\url{http://www.gdal.org}}
 (the Geospatial Data Abstraction Library) reads and writes commonly used GIS file formats.
-Within this thesis, it is mainly used to read and write polygons described as well-known text \citep{SimpleFeatures1}, or in Esri Shapefile \citep{Shapefile} and FileGDB files.
+Within this thesis, its OGR vector module is mainly used to read and write polygons described as well-known text \citep{SimpleFeatures1}, or in Esri Shapefile \citep{Shapefile} and FileGDB files.
 
 \item[IfcOpenShell\footnotemark]
 \footnotetext{\url{http://www.ifcopenshell.org}}
@@ -45,7 +45,7 @@ However, in practice it performs poorly with GIS data, often failing due to nume
 \section{Geometric operations using computer arithmetic}
 \label{se:computerarithmetic}
 
-Theoretical descriptions of geometric objects and geometric algorithms generally start from the notions of the Euclidean space $\mathbb{R}^n$, in which the coordinates of a point can be described precisely using real numbers $\in \mathbb{R}$.
+Theoretical descriptions of geometric objects and geometric algorithms generally start from the notions of the Euclidean space $\mathbb{R}^n$, in which the coordinates of a point can be described precisely using real numbers ($\mathbb{R}$).
 However, as real numbers cannot be represented on (digital) computers, implementations usually opt for a combination of \emph{integer numbers} to represent whole numbers of known precision that are known to fall within a given interval and \emph{floating-point numbers} in all other cases.
 While integers can be precisely expressed as a sequence of binary digits of a given length, floating-point numbers often cannot.
 The latter are therefore usually\footnote{This is only the most common representation among those provided by the much broader IEEE 754 standard \citep{IEEE754-2008}, which provides for decimal numbers as well as special values for $\pm \infty$ and NaN (not a number), among other features.} expressed using binary numbers with a predefined number of bits.
@@ -80,7 +80,7 @@ Unfortunately, while this setup using multiple precision interval arithmetic can
 For instance, \citet{Held11} reports a factor of 70 for the computation of Voronoi diagrams.
 
 It is possible to go around this problem by fine-tuning a multiple-precision approach to a specific problem.
-Notably, this is done with very good results for a few geometric predicates by \citet{Shewchuk97}, and the simulation of simplicity paradigm advocated by \citep{Edelsbrunner90}.
+Notably, this is done with very good results for a few geometric predicates by \citet{Shewchuk97}, and the simulation of simplicity paradigm advocated by \citet{Edelsbrunner90}.
 A more generic and easier to implement solution is provided by the lazy evaluation scheme used in CGAL \citep{Pion11}, which is based on interval arithmetic and is the one used in this thesis.
 % , which is used in the implementations mentioned in this thesis.
 In it, the computationally expensive multiple precision operations are only computed when floating-point precision is not sufficient.
@@ -98,7 +98,7 @@ For instance, some simple types are directly dependent on the dimension, such as
 
 At the opposite end, consider the sets of extrusion intervals that were associated to each cell in \refch{ch:extrusion}, where an unknown number of cells need to be each associated with an unknown number of intervals.
 As the number of intervals per cell is not known, it is not possible to store the intervals in a fixed-length structure that is integrated into the embedding structure of each cell.
-Also, while it is possible to directly link a cell to its set of intervals from its embedding structure, these intervals are only temporarily needed, so allocating space for the link (\eg\ a pointer) in the embedding structure is wasteful at all other times and thus difficult to justify.
+Also, while it is possible to directly link a cell to its set of intervals from its embedding structure, these intervals are only temporarily needed, so allocating space for the intervals directly in the embedding structure is wasteful at all other times and thus difficult to justify.
 The end result was that the intervals per cell were kept in an external structure, where a \texttt{map} linked a cell embedding to a \texttt{set} of intervals.
 As \reftab{tab:complexitystd} shows, this means that accessing a given interval of a given cell---an operation that is performed a very large number of times---, takes logarithmic rather than constant time, significantly slowing the extrusion algorithm in practice.
 \marginpar{
