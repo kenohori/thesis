@@ -134,7 +134,7 @@ A possible approach to do so would involve higher-dimensional Nef polyhedra, whi
 There are various representations that store objects using an expression made of Boolean set operations on a set of (open or closed) half-spaces.
 Any convex object of any dimension can be represented as the intersection of a finite set of half-spaces, a common problem in both linear programming and computational geometry \citep{Shamos76,Preparata79}.
 As \reffig{fig:halfspace} shows, if a polyhedron is first decomposed into convex parts \citep{Chazelle79,Bajaj90}, it is then possible to represent an object as a union of these convex parts, which are then represented as intersections of half-spaces.
-\begin{figure}[b]
+\begin{figure}[tb]
 \centering
 \subfloat[]{
 \includegraphics[scale=0.16]{figs/halfspace}
@@ -320,7 +320,7 @@ Similarly, in a 3D simplicial complex, \ie\ a tetrahedralisation, every tetrahed
 Because of this, 2D simplicial complexes are usually stored using triangle-based data structures and 3D simplicial complexes using tetrahedron-based data structures.
 These respectively use triangles/tetrahedra as primitives, which can store attributes for themselves (\eg\ whether it is part of a given object) and for (some of) their faces, and are linked to their adjacent triangles/tetrahedra.
 As shown in \reffig{fig:2-simplex}, a minimal representation of this type would only consist of triangles/tetrahedra linked to their vertices, either as tuples of coordinates or as pointers to a member of a list of separate point primitives.
-\begin{figure}[tbp]
+\begin{figure}[b]
 \centering
 \subfloat[Adjacent triangles]{
 \includegraphics[width=0.27\linewidth]{figs/2-simplex-adjacency}
@@ -387,7 +387,7 @@ There are several data structures based on half-edges, oriented edges or vertex-
 All of these are functionality equivalent and are able to store a 2D cell complex or its dual.
 However, since cells in a cell complex are supposed to be manifold, special care is usually necessary to represent cells with a non-manifold domain.
 An example of this shown in \reffig{fig:nonmanifold-012}.
-\begin{figure}[b]
+\begin{figure}[tbp]
 \centering
 \subfloat[]{
 \includegraphics[width=0.29\linewidth]{figs/nonmanifold-0}
@@ -464,7 +464,7 @@ While data structures for 2D cell complexes can rely on the fact that an edge is
 The data structures for 3D cell complexes are therefore significantly more complex, requiring additional information in order to efficiently traverse the many faces incident to an edge and between different volumes.
 
 The facet-edge data structure \citep{Dobkin87}, shown in \reffig{fig:facet-edge}, considers an incident face-edge pair as a single primitive, which is known as a \emph{facet-edge}.
-\begin{figure}[tbp]
+\begin{figure}[b]
 \centering
 \subfloat[]{
 \includegraphics[width=0.3\linewidth]{figs/facet-edge}
@@ -592,6 +592,13 @@ This reflects the fact that in BIM every object is generally modelled independen
 Hierarchical descriptions of objects thus result in hierarchically applied coordinate system transformations.
 Boundary representation and tessellation geometries are supported as in other models, but IFC supports a much greater variety of geometry classes, which include implicit geometries based on half-space intersections, Constructive Solid Geometry (as a tree of Boolean set operations) and sweeps (based on a cross-section), such as the one shown in \reffig{fig:ifc}.
 
+\subsection{Models used in 2D and 3D GIS}
+
+When the first GIS were developed in 1960s and 1970s, such as SYMAP \citep{Chrisman88} and the Canada GIS \citep{Tomlinson88}, they used boundary representation, depicting 2D areas as polygons defined by a sequence of vertices.
+By the 1980s, a \emph{topological approach} based on planar partitions was instead used in systems like GRASS\footnote{\url{http://grass.osgeo.org}} and the coverages of ArcInfo \citep{ESRITopology}.
+This was done using an intermediate representation where all input objects are partitioned into homogeneous regions \citep{Rossignac89}, such that each region is linked to a set of input objects that are all present in the entire region.
+This intermediate representation is obtained by performing geometric intersection operations on all of the input objects and allows these partitions to be represented using the types of data structures for 2D cell complexes presented in \refse{ss:data-structures}.
+
 \marginpar{
 \captionsetup{type=figure}
 \centering
@@ -605,13 +612,6 @@ Boundary representation and tessellation geometries are supported as in other mo
 \caption[Sweeps in IFC]{The IFC standard supports objects defined through sweeps, which are defined by (a) an \texttt{IfcPCurve} (black spiral) and a \texttt{SweptArea} (blue disk), in this case resulting in (b) a screw shape.}
 \label{fig:ifc}
 }
-
-\subsection{Models used in 2D and 3D GIS}
-
-When the first GIS were developed in 1960s and 1970s, such as SYMAP \citep{Chrisman88} and the Canada GIS \citep{Tomlinson88}, they used boundary representation, depicting 2D areas as polygons defined by a sequence of vertices.
-By the 1980s, a \emph{topological approach} based on planar partitions was instead used in systems like GRASS\footnote{\url{http://grass.osgeo.org}} and the coverages of ArcInfo \citep{ESRITopology}.
-This was done using an intermediate representation where all input objects are partitioned into homogeneous regions \citep{Rossignac89}, such that each region is linked to a set of input objects that are all present in the entire region.
-This intermediate representation is obtained by performing geometric intersection operations on all of the input objects and allows these partitions to be represented using the types of data structures for 2D cell complexes presented in \refse{ss:data-structures}.
 
 However, current 2D GIS software has reverted to the use of simple data structures with very little or no topology, which are then supplemented by external spatial indices for speed.
 This type of representation has some drawbacks: it encourages inefficient representations where primitives are represented multiple times (\eg\ when a face is part of the boundary of two polyhedra) \citep[Ch.~3]{Cromley92}, which might not match exactly \citep{delaLosa99}, it makes it difficult to check that a set of bounding elements conforms to certain properties (\eg\ properly enclosing a space or being manifold), and the topological relationships between many elements need to be recomputed.
