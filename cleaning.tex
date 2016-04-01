@@ -40,10 +40,10 @@ They can be generated using a large variety of GIS, CAD and 3D modelling softwar
 Most importantly, GIS datasets are created for different purposes or meant for general-purpose applications (\eg\ CityGML \citep{CityGML2}).
 As such, a dataset's specifications are often only vaguely defined, are defined only with regard for a particular application, or are not conformed with in practice.
 
-\footnotetext[108]{\url{http://www.esri.com/software/arcgis/}}
-\footnotetext[109]{\url{http://www.qgis.org}}
-\footnotetext[110]{\url{http://www.safe.com/fme/}}
-\footnotetext[111]{\url{http://grass.osgeo.org/}}
+\footnotetext[141]{\url{http://www.esri.com/software/arcgis/}}
+\footnotetext[142]{\url{http://www.qgis.org}}
+\footnotetext[143]{\url{http://www.safe.com/fme/}}
+\footnotetext[144]{\url{http://grass.osgeo.org/}}
 
 It is thus perhaps unsurprising that invalid GIS datasets are prevalent \citep[Ch.~7]{Panigrahi14} and a major source of problems for those who work with them.
 As shown in \reffig{fig:partially}, invalid datasets can be interpreted inconsistently in different software, leading to inconsistent or erroneous results.
@@ -269,7 +269,7 @@ However, the approach is ultimately a more powerful representation that is close
 \label{fig:volumetric}
 \end{figure}
 
-Although the volumes in such a model do not generally fit together perfectly, they can nevertheless be better processed\footnote{Akin to how a set of polygons can be better processed into a planar partition compared to a rough line drawing with undershoots and overshoots (\ie\ a typical spaghetti dataset).} into a 3D space partition consisting of a set of non-overlapping 3D objects, where each of the volumes---and optionally also their vertices, edges and faces---is labelled with appropriate semantic information\footnote{As shown in \refse{se:duality}, these lower-dimensional cells can store important information about the relationships between them objects.}.
+Although the volumes in such a model do not generally fit together perfectly, they can nevertheless be better processed\footnote{Akin to how a set of polygons can be better processed into a planar partition compared to a rough line drawing with undershoots and overshoots (\ie\ a typical spaghetti dataset).} into a 3D space partition consisting of a set of non-overlapping 3D objects, where each of the volumes---and optionally also their vertices, edges and faces---is labelled with appropriate semantic information\footnote{As shown in \refse{se:duality}, these lower-dimensional cells can store important information about the relationships between the objects.}.
 The result is thus a \emph{space-partitioning 3D model}, which is analogous to the 2D planar partitions often used to model coverages in GIS.\@
 Such a model can be stored in a computer using the topological data structures for 3D (\refse{ss:data-structures}) or $n$D (\refse{ss:cell-complexes}) cell complexes.
 

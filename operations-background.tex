@@ -141,8 +141,9 @@ Intuitively, it is possible to link two $i$-cells along a common $(i-1)$-cell by
 \includegraphics[width=\linewidth]{figs/3-sew}
 \caption[3-sewing two cubes]{Two cubes in a 3D generalised map can be linked together by 3-sewing corresponding darts on the common face (highlighted) on each cube.
 This operation uses the orbits of each face on each cube in order to link all corresponding darts on both orbits.}
+\label{fig:3-sew}
 \end{figure}
-This operation is thus equivalent to a parallel traversal of two maps that links its corresponding darts along an $(i-1)$-cell.
+As shown in \reffig{fig:3-sew}, this operation is thus equivalent to a parallel traversal of two maps that links its corresponding darts along an $(i-1)$-cell.
 Given a generalised map $(D,\alpha_{0},\ldots,\alpha_{n})$ and two darts $d,d^\prime \in D$ that are $i$-sewable using the isomorphism $f$, $i$-sewing $d$ and $d^\prime$ means that $\forall e \in \langle\alpha_0, \ldots, \alpha_n\rangle(d)$, $\alpha_i(e)$ should be set to $f(e)$ and $\alpha_i\big(f(e)\big)$ should be set to $e$.
 Given a combinatorial map $(D, \beta_{1}, \ldots, \beta_{n})$ and two darts $d,d^\prime \in D$ that are $1$-sewable using the isomorphism $f$, $1$-sewing $d$ and $d^\prime$ means that $\forall e \in \langle \{\beta_i\circ \beta_j \mid \forall 3 \leq k \leq n, \forall 3 \leq j \leq k\} \rangle(d)$, $\beta_1(e)$ should be set to $f(e)$ and $\forall e^\prime \in \langle \{\beta_i\circ \beta_j \mid \forall 3 \leq k \leq n, \forall 3 \leq j \leq k\} \rangle(d^\prime)$, $\beta_1(f(e^\prime))$ should be set to $e^\prime$.
 For the cells of dimension two and higher, if $d$ and $d^\prime$ are $i$-sewable ($i \geq 2$), $i$-sewing them means that $\forall e \in \langle\beta_{1}, \ldots, \beta_{n}\rangle(d)$, $\beta_i(e)$ should be set to $f(e)$ and $\beta_i\big(f(e)\big)$ should be set to $e$.
@@ -541,7 +542,7 @@ The difference ranges from a factor of 4.17 for detecting a common 2-cell ridge 
 \toprule
 Test & c-maps & SFS & factor \\
 \midrule
-size (Kb) & 1 Kb & 5.9 Kb & 5.9 \\
+size (Kb) & 1.0 & 5.9 & 5.9 \\
 equality (comparisons) & 36 864 & 460 800 & 12.5 \\
 adjacency (comparisons) & 32 256 & 230 400 & 7.14 \\
 common 2-cell (comparisons) & 13 824 & 57 600 & 4.17 \\
