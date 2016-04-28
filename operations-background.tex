@@ -207,7 +207,7 @@ T = \begin{bmatrix}
 \end{equation*}
 
 In particular, it is often useful to apply a multiplication with a \emph{centering matrix} \citep[\S{}3.2]{Marden96}, which  moves a dataset to a position around the origin.
-Such a matrix would be defined as $\mathbb{I}_n - \frac{1}{n}\mathbb{1}$, where $\mathbb{I}$ is the identity matrix and $\mathbb{1}$ is a matrix where all entries are set to 1.
+Such a matrix would be defined as $\mathbb{I}_n - \frac{1}{n}\mathbb{1}_n$, where $\mathbb{I}_n$ is an $n \times n$ identity matrix and $\mathbb{1}_n$ is an $n \times n$ matrix where all entries are set to 1.
 
 \textbf{Scaling} is similarly simple.
 Given a vector $s = \left[ s_0, s_1, \ldots, s_n \right]$ that defines a scale factor per axis (which in the simplest case can be the same for all axes), it is possible to define a matrix to scale an object as:
