@@ -296,7 +296,7 @@
 \contentsline {figure}{\numberline {\relax 10.20}{\ignorespaces Cell complexes in the ISO 19107 standard}}{184}{figure.caption.166}
 \contentsline {figure}{\numberline {\relax 10.21}{\ignorespaces An $n$D space subdivision harmonised with ISO 19107}}{184}{figure.caption.167}
 \addvspace {10\p@ }
-\contentsline {figure}{\numberline {\relax A.1}{\ignorespaces Using C++ templates to convert a \texttt {string} into any number type}}{201}{figure.caption.170}
+\contentsline {figure}{\numberline {\relax A.1}{\ignorespaces Using C++ templates to convert a \texttt {string} into any number type}}{200}{figure.caption.170}
 \contentsline {figure}{\numberline {\relax A.2}{\ignorespaces Creating a dependent type using C++ templates}}{201}{figure.caption.171}
 \contentsline {figure}{\numberline {\relax A.3}{\ignorespaces Using recursive C++ templates to produce dimension independent code}}{202}{figure.caption.172}
 \contentsline {figure}{\numberline {\relax A.4}{\ignorespaces Dimension-independent algorithms using recursive C++ templates}}{203}{figure.caption.173}
