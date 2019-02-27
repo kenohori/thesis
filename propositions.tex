@@ -9,12 +9,25 @@
 \usepackage{unicode-math}           % Use unicode math font, not TeX
 \usepackage[english]{babel}         % Correct hyphenation
 
-\usepackage[paperwidth=18.90cm,
-            paperheight=24.58cm,
+% For printing on A4
+\usepackage[a4paper,
+            layoutwidth=17.955cm,
+            layoutheight=23.351cm,
+            layouthoffset=1.5225cm,
+            layoutvoffset=3.1745cm,
+            showcrop,
             top=2.170cm,
             bottom=3.510cm,
-            inner=1.668cm,
-            outer=2.699cm]{geometry}
+            inner=2.1835cm,
+            outer=2.1835cm]{geometry}
+
+% Actual size: 95% of crown quarto
+% \usepackage[paperwidth=17.955cm,
+%             paperheight=23.351cm,
+%             top=2.170cm,
+%             bottom=3.510cm,
+%             inner=2.1835cm,
+%             outer=2.1835cm]{geometry}
 
 % Font setup
 \setmainfont[Ligatures=TeX,ItalicFont=Feijoa-MediumItalic,StylisticSet=6]{Feijoa}

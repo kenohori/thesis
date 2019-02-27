@@ -62,7 +62,7 @@ A common operation that generates tuples is the Cartesian product.
 The Cartesian product of sets $\mathbb{A}$ and $\mathbb{B}$, denoted as $\mathbb{A} \times \mathbb{B}$, is defined as $\left\{ (a,b) \mid a \in \mathbb{A} \wedge b \in \mathbb{B} \right\}$.
 In other words, it is a set of pairs, where the first element of a pair is an element of $\mathbb{A}$ and the second element of the pair is an element of $\mathbb{B}$.
 This can be generalised to more than two sets, such that the $n$-fold Cartesian product of $n$ sets is an $n$-tuple.
-The $n$-fold Cartesian product of a set $\mathbb{A}$ with itself, \ie\ $\mathbb{A} \times \mathbb{A} \times \ldots \mathbb{A}$, is denoted as $\mathbb{A}^n$.
+The $n$-fold Cartesian product of a set $\mathbb{A}$ with itself, \ie\ $\mathbb{A} \times \mathbb{A} \times \cdots \mathbb{A}$, is denoted as $\mathbb{A}^n$.
 
 \section{Geometry}
 \label{se:geometry}
@@ -311,7 +311,7 @@ Considering only linear geometries, 1-cells are thus line segments, 2-cells poly
 \end{figure*}
 
 A $j$-dimensional face ($j$-face) of an $i$-cell is a $j$-cell, $j \leq i$, that lies on the boundary of the $i$-cell.
-A facet of an $i$-cell is an $(n-1)$-face of the cell.
+A facet of an $i$-cell is an $(i-1)$-face of the cell.
 As in a simplicial complex, two $i$-cells are said to be adjacent if they have a common facet, and an $i$-cell and a $j$-cell, $i \neq j$, are said to be incident if either is a face of the other.
 In the context of an $i$-dimensional cell complex, a face refers to each of the $i$-cells in the complex, such as the polygons in a polygonal mesh.
 
